@@ -278,14 +278,18 @@ abstract class AnnotationListing {
     }
 
     def getMaxDistanceAnnotationConst() {
-        if(maxDistanceBaseAnnotation) {
+        if(maxDistanceBaseAnnotation!=null) {
+            if(!baseAnnotation) {
+                throw new ObjectNotFoundException("You need to provide a 'baseAnnotation' parameter (annotation id/location = ${baseAnnotation})!")
+            }
             try {
                 AnnotationDomain baseAnnotation = AnnotationDomain.getAnnotationDomain(baseAnnotation)
-                return (maxDistanceBaseAnnotation ? "AND ST_DWithin(a.location,ST_GeometryFromText('${baseAnnotation.wktLocation}',$maxDistanceBaseAnnotation))\n" : "")
+                //ST_distance(a.location,ST_GeometryFromText('POINT (0 0)'))
+                return "AND ST_distance(a.location,ST_GeometryFromText('${baseAnnotation.wktLocation}')) <= $maxDistanceBaseAnnotation\n"
             } catch (Exception e) {
-                throw new ObjectNotFoundException("You need to provide a 'baseAnnotation' parameter (annotation id)!")
+                return "AND ST_distance(a.location,ST_GeometryFromText('${baseAnnotation}')) <= $maxDistanceBaseAnnotation\n"
             }
-        }
+        } else return ""
     }
     //
 

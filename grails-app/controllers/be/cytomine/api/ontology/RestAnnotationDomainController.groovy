@@ -103,7 +103,7 @@ class RestAnnotationDomainController extends RestController {
         @RestApiParam(name="kmeans", type="boolean", paramType = RestApiParamType.QUERY, description = "(Optional) Enable or not kmeans (only for GUI)"),
         @RestApiParam(name="bbox", type="string", paramType = RestApiParamType.QUERY, description = "(Optional) Get only annotations having intersection with the bbox (WKT)"),
         @RestApiParam(name="bboxAnnotation", type="Long", paramType = RestApiParamType.QUERY, description = "(Optional) Get only annotations having intersection with this annotation"),
-        @RestApiParam(name="baseAnnotation", type="Long", paramType = RestApiParamType.QUERY, description = "(Optional) The base annotation id for spatial request"),
+        @RestApiParam(name="baseAnnotation", type="Long", paramType = RestApiParamType.QUERY, description = "(Optional) The base annotation for spatial request (annotation id or wkt location)"),
         @RestApiParam(name="maxDistanceBaseAnnotation", type="Long", paramType = RestApiParamType.QUERY, description = "(Optional) Only get annotation inside the max distance")
 
 
@@ -378,10 +378,10 @@ class RestAnnotationDomainController extends RestController {
             al.bboxAnnotation = AnnotationDomain.getAnnotationDomain(params.getLong('bboxAnnotation')).wktLocation
         }
         if(params.get('baseAnnotation')) {
-            al.baseAnnotation = params.getLong('baseAnnotation')
+            al.baseAnnotation = params.baseAnnotation
         }
         if(params.get('maxDistanceBaseAnnotation')) {
-            al.baseAnnotation = params.getLong('maxDistanceBaseAnnotation')
+            al.maxDistanceBaseAnnotation = params.getLong('maxDistanceBaseAnnotation')
         }
         annotationListingService.listGeneric(al)
     }
