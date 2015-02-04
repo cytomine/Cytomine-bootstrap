@@ -1,9 +1,9 @@
 dataSource {
-  pooled = true
-  driverClassName = "org.postgresql.Driver"
+    pooled = true
+    driverClassName = "org.postgresql.Driver"
 //    driverClassName = "com.p6spy.engine.spy.P6SpyDriver" // use this driver to enable p6spy logging
-  username = "postgres"
-  dialect = org.hibernate.spatial.dialect.postgis.PostgisDialect
+    username = "postgres"
+    dialect = org.hibernate.spatial.dialect.postgis.PostgisDialect
     properties {
         //specifies that this tc Server is enabled to be monitored using JMX
         jmxEnabled = true
@@ -35,7 +35,7 @@ hibernate {
     //CLUSTER
 //    cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
 //    cache.provider_class = 'net.sf.ehcache.hibernate.SingletonEhCacheProvider'
-   // hibernate.cache.region.factory_class = 'net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory'
+    // hibernate.cache.region.factory_class = 'net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory'
     cache.use_second_level_cache = true
     cache.use_query_cache = false
     //cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory' // Hibernate 3
@@ -49,58 +49,58 @@ environments {
             dbCreate = "update"
 //      url="jdbc:postgresql://139.165.144.107:5432/cytominedev"
 //      password = 'postgres'
-            url="jdbc:postgresql://localhost:5432/cytomineempty"
+            url = "jdbc:postgresql://localhost:5432/cytomineempty"
             password = "postgres"
         }
     }
-  development {
-    dataSource {
-      dbCreate = "update"
+    development {
+        dataSource {
+            dbCreate = "update"
 //      url="jdbc:postgresql://139.165.144.107:5432/cytominedev"
 //      password = 'postgres'
-      url="jdbc:postgresql://localhost:5432/cytomine"
-      password = "postgres"
+            url = "jdbc:postgresql://localhost:5432/cytomine"
+            password = "postgres"
 
+        }
     }
-  }
     cluster {
         dataSource {
             dbCreate = "update"
 //      url="jdbc:postgresql://139.165.144.107:5432/cytominedev"
 //      password = 'postgres'
-            url="jdbc:postgresql://localhost:5432/cytomine"
+            url = "jdbc:postgresql://localhost:5432/cytomine"
             password = "postgres"
 
         }
     }
-  test {
-    dataSource {
-      //loggingSql = true
-      dbCreate = "create"
-      url="jdbc:postgresql://localhost:5432/cytominetest"
-      password = "postgres"
+    test {
+        dataSource {
+            //loggingSql = true
+            dbCreate = "create"
+            url = "jdbc:postgresql://localhost:5432/cytominetest"
+            password = "postgres"
+        }
     }
-  }
-  production {
-      dataSource {
-          dbCreate = "update"
-          url="jdbc:postgresql://localhost:5432/cytomine"
-          password = "postgres"
-      }
-  }
-  perf {
-    dataSource {
-        //loggingSql = true
-        dbCreate = "update"
-        url="jdbc:postgresql://localhost:5433/cytomineperf"
-        password = "postgres"
-      }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:postgresql://localhost:5432/cytomine"
+            password = "postgres"
+        }
+    }
+    perf {
+        dataSource {
+            //loggingSql = true
+            dbCreate = "update"
+            url = "jdbc:postgresql://localhost:5433/cytomineperf"
+            password = "postgres"
+        }
     }
     testrun {
         dataSource {
             //loggingSql = true
             dbCreate = "create"
-            url="jdbc:postgresql://localhost:5432/cytominetestrun"
+            url = "jdbc:postgresql://localhost:5432/cytominetestrun"
             password = "postgres"
         }
     }

@@ -2,6 +2,7 @@ package be.cytomine.command
 
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.api.RestController
+import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 
 /**

@@ -74,4 +74,5 @@ class RestOntologyController extends RestController {
         Task task = taskService.read(params.getLong("task"))
         delete(ontologyService, JSON.parse("{id : $params.id}"),task)
     }
+
 }

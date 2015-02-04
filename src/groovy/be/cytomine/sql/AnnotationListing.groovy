@@ -1,5 +1,6 @@
 package be.cytomine.sql
 
+import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
@@ -53,6 +54,9 @@ abstract class AnnotationListing {
     def multipleTerm = false
 
     def bboxAnnotation = null
+
+    def baseAnnotation = null
+    def maxDistanceBaseAnnotation = null
 
 
     def bbox = null
@@ -175,6 +179,7 @@ abstract class AnnotationListing {
                         getAvoidEmptyCentroidConst() +
                         getIntersectConst() +
                         getIntersectAnnotationConst() +
+                        getMaxDistanceAnnotationConst() +
                         createOrderBy()
 
         return getSelect(sqlColumns) + getFrom() + whereRequest
@@ -270,6 +275,17 @@ abstract class AnnotationListing {
 
     def getIntersectAnnotationConst() {
         return (bboxAnnotation ? "AND ST_Intersects(a.location,ST_GeometryFromText('${bboxAnnotation.toString()}',0))\n" : "")
+    }
+
+    def getMaxDistanceAnnotationConst() {
+        if(maxDistanceBaseAnnotation) {
+            try {
+                AnnotationDomain baseAnnotation = AnnotationDomain.getAnnotationDomain(baseAnnotation)
+                return (maxDistanceBaseAnnotation ? "AND ST_DWithin(a.location,ST_GeometryFromText('${baseAnnotation.wktLocation}',$maxDistanceBaseAnnotation))\n" : "")
+            } catch (Exception e) {
+                throw new ObjectNotFoundException("You need to provide a 'baseAnnotation' parameter (annotation id)!")
+            }
+        }
     }
     //
 

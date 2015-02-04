@@ -8,6 +8,7 @@ BrowseImageView = Backbone.View.extend({
     currentAnnotation: null,
     userJobForImage: null,
     maggicWandLoaded : false,
+    processInProgress : false,
     /**
      * BrowseImageView constructor
      * Accept options used for initialization
@@ -1017,7 +1018,7 @@ BrowseImageView = Backbone.View.extend({
                 return;
             }
 
-            if (processInProgress) {
+            if (self.processInProgress) {
                 window.app.view.message("Warning", "Magic Wand in progress...", "warning");
                 return;
             }
@@ -1048,7 +1049,6 @@ BrowseImageView = Backbone.View.extend({
             }
             var startX = evt.xy.x;
             var startY = evt.xy.y;
-
             var imgd = newContext.getImageData(0, 0, newCanvasWidth, newCanvasHeight);
             //TMP HACK in order to decide if we use the GREEN Channel or not
             var toleranceKey = "mw_tolerance" + window.app.status.currentProject;
@@ -1074,7 +1074,7 @@ BrowseImageView = Backbone.View.extend({
                 tolerance: tolerance
             });
             if (!wandResult.success) {
-                processInProgress = false;
+                self.processInProgress = false;
                 document.body.removeChild(newCanvas);
                 window.app.view.message("Warning", "Can't find interesting region", "error");
                 return;
@@ -1088,7 +1088,7 @@ BrowseImageView = Backbone.View.extend({
                 bbox: wandResult.bbox
             });
             console.log("done");
-            processInProgress = false;
+            self.processInProgress  = false;
             var debug = false;
             if (debug) {
                 newContext.putImageData(imgd, 0, 0);

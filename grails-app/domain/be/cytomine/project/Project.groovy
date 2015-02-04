@@ -241,4 +241,6 @@ class Project extends CytomineDomain implements Serializable {
         return !isReadOnly
     }
 
+
+
 }
