@@ -33,6 +33,11 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     public boolean isInLdap(String username) {
         LdapUlgMemberPerson inetOrgPerson;
 
+        boolean casDisabled = grailsApplication.config.grails.plugin.springsecurity.cas.active.toString()=="false"
+        if(casDisabled) {
+            return false
+        }
+
         try {
             inetOrgPerson= (LdapUlgMemberPerson) ldapUserDetailsService.loadUserByUsername(username)
         } catch(UsernameNotFoundException e) {
