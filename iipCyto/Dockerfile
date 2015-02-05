@@ -9,7 +9,7 @@ RUN cd /tmp && wget http://archive.mirror.blix.com/ubuntu/pool/universe/o/openjp
 RUN cd /tmp && wget http://archive.mirror.blix.com/ubuntu/pool/universe/o/openjpeg/libopenjpeg-dev_1.3%2bdfsg-4.6ubuntu2_amd64.deb && dpkg -i libopenjpeg-dev_1.3+dfsg-4.6ubuntu2_amd64.deb 
 
 #openslide
-RUN cd /tmp && git clone https://github.com/cytomine/openslide && cd /tmp/openslide && git checkout 162c1d977d36f351a4e2a30cc380282ab0caeec0 && autoreconf -i && ./configure && make && make install
+RUN cd /tmp && git clone https://github.com/openslide/openslide && cd /tmp/openslide && git checkout 619ea0b1c2c851fbf6d5ceb27f61f61112b8071b && autoreconf -i && ./configure && make && make install
 
 #IIP Image Server
 RUN apt-get install -y unzip

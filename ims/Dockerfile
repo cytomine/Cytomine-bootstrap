@@ -13,7 +13,7 @@ RUN apt-get -y build-dep iipimage-server
 RUN apt-get -y build-dep libvips-dev 
 
 #openslide
-RUN cd /tmp && git clone https://github.com/cytomine/openslide && cd /tmp/openslide && autoreconf -i && ./configure && make && make install
+RUN cd /tmp && git clone https://github.com/cytomine/openslide --branch ventana && cd /tmp/openslide && autoreconf -i && ./configure && make && make install
 
 # use previous lib of lipopenjpeg-dev due to the bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=734238
 RUN cd /tmp && wget http://archive.mirror.blix.com/ubuntu/pool/universe/o/openjpeg/libopenjpeg2_1.3%2bdfsg-4.6ubuntu2_amd64.deb && dpkg -i libopenjpeg2_1.3+dfsg-4.6ubuntu2_amd64.deb
