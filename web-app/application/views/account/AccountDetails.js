@@ -100,19 +100,19 @@ var AccountDetails = Backbone.View.extend({
             $("#input_new_password").closest('.form-group').removeClass("has-warning");
             $("#input_new_password").closest('.form-group').removeClass("has-success");
             if ($(this).val() != "") {
+                $("#submit_edit_password").removeAttr("disabled");
                 if (self.validatePassword()) {
                     $("#input_new_password_confirm").closest('.form-group').addClass("has-success");
                     $("#input_new_password").closest('.form-group').addClass("has-success");
-                    $("#submit_edit_password").removeAttr("disabled");
-                } else {
-                    $("#input_new_password_confirm").closest('.form-group').addClass("has-warning");
-                    $("#input_new_password").closest('.form-group').addClass("has-warning");
-                    $("#submit_edit_password").attr("disabled", "disabled");
                 }
+            } else {
+                /*$("#input_new_password_confirm").closest('.form-group').addClass("has-warning");
+                 $("#input_new_password").closest('.form-group').addClass("has-warning");*/
+                 $("#submit_edit_password").attr("disabled", "disabled");
             }
         });
         $("#input_new_password").keyup(function () {
-            if ($(this).val() != "") {
+            if ($(this).val().length >= 5) {
                 $("#input_new_password_confirm").removeAttr("disabled");
             } else {
                 $("#input_new_password_confirm").attr("disabled", "disabled");
@@ -161,6 +161,8 @@ var AccountDetails = Backbone.View.extend({
                         }
                     }
                 });
+            } else {
+                window.app.view.message("Change Password", "Confirmation password is not equal to the new password!", "error");
             }
             e.preventDefault();
         });

@@ -108,7 +108,7 @@
 
 
         <div class="alert alert-danger" ng-show="user.error.resetPassword">
-            {{user.error.resetPassword.message}} ({{user.error.resetPassword.status}}).
+            {{user.error.resetPassword.message}} <span ng-if="user.error.resetPassword.status">({{user.error.resetPassword.status}}).</span>
         </div>
     </form>
 

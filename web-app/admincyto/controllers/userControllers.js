@@ -144,7 +144,7 @@ angular.module("cytomineUserArea")
             $log.info("idUser="+idUser +" password=" + password + " passwordConfirm="+passwordConfirm + " form="+form + " defin="+angular.isDefined(password));
             $scope.resetPasswordForm = form;
 
-            if(!angular.isDefined(password) || password<5) {
+            if(!angular.isDefined(password) || password.length<5) {
                 $scope.user.error.resetPassword = {status:status,message:"Password is too short!"};
             }else if(password!=passwordConfirm) {
                 $scope.user.error.resetPassword = {status:status,message:"Confirm password is invalid!"};
