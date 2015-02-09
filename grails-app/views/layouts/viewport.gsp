@@ -291,6 +291,7 @@ body {
 <script type="text/javascript" src="application/views/project/ProjectView.js" ></script>
 <script type="text/javascript" src="application/views/project/ProjectPanelView.js" ></script>
 <script type="text/javascript" src="application/views/project/ProjectAddDialog.js" ></script>
+<script type="text/javascript" src="application/views/project/ProjectCommandView.js" ></script>
 <script type="text/javascript" src="application/views/project/ProjectEditDialog.js" ></script>
 <script type="text/javascript" src="application/views/project/ProjectSearchPanel.js" ></script>
 <script type="text/javascript" src="application/views/project/ProjectDescriptionDialog.js" ></script>
