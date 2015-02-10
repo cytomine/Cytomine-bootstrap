@@ -171,7 +171,7 @@ var ActivityView = Backbone.View.extend({
             if(self.model) {
                 idProj = self.model.id; //if idProj = null, get all projects data
             }
-            new CommandHistoryCollection({project: idProj,user:idUser,max: 30}).fetch({
+            new CommandHistoryCollection({project: idProj,user:idUser,max: 30, fullData: true}).fetch({
                 success: function (collection, response) {
                     self.historyCollection=collection;
                     self.createCommandPanel();
@@ -274,25 +274,10 @@ var ActivityView = Backbone.View.extend({
             $("#getMoreActivity").replaceWith("");
         } else {
             $("#getMoreActivity").replaceWith("");
-            collection.each(function (command) {
 
+            var commandHistory = new ProjectCommandsView({idProject: self.model.id, collection: collection, splitByDay: true, displayAll: true});
+            $(self.el).append(commandHistory.render().el);
 
-                var date = window.app.convertLongToDate(command.get('created'));
-                var shortDate = date.substring(0,10);
-
-                if(self.startDate!=shortDate) {
-                    self.startDate=shortDate;
-                    $(self.el).append('<li class="nav-header">'+self.startDate+'</li>');
-                }
-
-                var projectName ="";
-                if(self.model==null) {
-                    projectName = "- "+ window.app.models.projects.get(command.get('project')).get('name');
-                }
-                var commandHTML = _.template("<li><%=date%> <%=project%>: <%= prefix %> <%= message %></li>", { date: date, prefix: command.get("prefix"),message: command.get("message"),project:projectName});
-
-                $(self.el).append(commandHTML);
-            });
             $(self.el).append("<button id='getMoreActivity' class='btn btn-default btn-primary'>Get more...</button>");
 
             $("#getMoreActivity").click(function() {

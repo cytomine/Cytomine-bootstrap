@@ -313,37 +313,31 @@ var ProjectDashboardView = Backbone.View.extend({
     },
     fetchCommands: function () {
         var self = this;
-        require([
-            "text!application/templates/dashboard/CommandAnnotation.tpl.html",
-            "text!application/templates/dashboard/CommandGeneric.tpl.html",
-            "text!application/templates/dashboard/CommandImageInstance.tpl.html"],
-            function (commandAnnotationTpl, commandGenericTpl, commandImageInstanceTpl) {
-                var commandCollection = new CommandHistoryCollection({project: self.model.get('id'), max: self.maxCommandsView, fullData: true});
-                var commandCallback = function (collection, response) {
-                    $("#lastcommandsitem").empty();
-                    if (collection.size() == 0) {
-                        var noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>", {});
-                        $("#lastcommandsitem").append(noDataAlert);
-                    }
+        var commandCollection = new CommandHistoryCollection({project: self.model.get('id'), max: self.maxCommandsView, fullData: true});
+        var commandCallback = function (collection, response) {
+            $("#lastcommandsitem").empty();
+            if (collection.size() == 0) {
+                var noDataAlert = _.template("<br /><br /><div class='alert alert-block'>No data to display</div>", {});
+                $("#lastcommandsitem").append(noDataAlert);
+            }
 
-                    var commandHistory = new ProjectCommandsView({idProject: self.model.id, collection: collection});
-                    $("#lastcommandsitem").append(commandHistory.render().el);
+            var commandHistory = new ProjectCommandsView({idProject: self.model.id, collection: collection});
+            $("#lastcommandsitem").append(commandHistory.render().el);
+        }
+
+        if(!window.app.status.currentProjectModel.get('blindMode')) {
+            commandCollection.fetch({
+                success: function (collection, response) {
+                    commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
                 }
-
-                if(!window.app.status.currentProjectModel.get('blindMode')) {
-                    commandCollection.fetch({
-                        success: function (collection, response) {
-                            commandCallback(collection, response); //fonctionne mais très bourrin de tout refaire à chaque fois...
-                        }
-                    });
-                } else {
-                    $("#lastcommandsitem").empty();
-                    $("#lastcommandsitem").append('<div style="margin: 10px 10px 10px 0px" class="alert alert-warning"> <i class="icon-remove"/> Not available in blind mode!</div>');
-                }
-
-
-
             });
+        } else {
+            $("#lastcommandsitem").empty();
+            $("#lastcommandsitem").append('<div style="margin: 10px 10px 10px 0px" class="alert alert-warning"> <i class="icon-remove"/> Not available in blind mode!</div>');
+        }
+
+
+
     },
     fetchTasks: function () {
         var self = this;
