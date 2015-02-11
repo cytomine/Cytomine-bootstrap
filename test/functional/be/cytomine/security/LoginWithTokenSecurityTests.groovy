@@ -39,8 +39,8 @@ class LoginWithTokenSecurityTests extends SecurityTestsAbstract {
         def result = UserRoleAPI.buildToken(user2.username,60.5,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         String tokenKey = JSON.parse(result.data).token.tokenKey
         Thread.sleep(1000)
-        def result2 = UserRoleAPI.showCurrentUserWithToken(user2.username,tokenKey,"user1","bad")
-//        assert user2.id==JSON.parse(result2.data).id
+        def result2 = UserRoleAPI.showCurrentUserWithToken(user2.username,tokenKey, "user1","password")
+        assert user1.id==JSON.parse(result2.data).id
     }
 
     void testLogWithBadToken() {
