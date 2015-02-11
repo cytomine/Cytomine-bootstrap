@@ -65,7 +65,6 @@ var AccountDetails = Backbone.View.extend({
     doLayout: function (tpl) {
         var self = this;
         this.model.set({ host : window.location.host });
-        this.model.set({ version : window.app.status.version });
         $(this.el).html(_.template(tpl, this.model.toJSON()));
 
         if (self.model.get("passwordExpired")) {

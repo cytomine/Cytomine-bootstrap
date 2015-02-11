@@ -158,6 +158,35 @@ var ApplicationView = Backbone.View.extend({
             e.preventDefault();
 			FreshWidget.show();
         });
+
+        $("#a-info-cytomine").click(function () {
+            console.log("test");
+
+            var body;
+            require([
+                    "text!application/templates/about/About.tpl.html"
+                ],
+                function (tpl) {
+                    body = _.template(tpl, {version : window.app.status.version});
+
+                    var modal = new CustomModal({
+                        idModal: "about" + "DialogModal" + "lala",
+                        header: null,
+                        body: body,
+                        wide: true
+                    });
+
+                    modal.render();
+                    $('#' + "about" + 'DialogModal' + "lala").modal();// display the dialog box
+
+                    //$(".modal-header").hide();
+                    $(".modal-footer").hide();
+                    $("#aboutCyt").css('width', 'auto');
+                }
+            );
+            return false;
+        });
+
     },
     showHideMenuAction : function() {
         _.each(window.app.status.customUI.global,function(val,key) {
