@@ -159,16 +159,9 @@ var ProjectCommandView = Backbone.View.extend({
                 return _.template(commandGenericTpl, {icon: "ui-icon-pencil", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, image: ""});
             }
             else if (commandHistory.get('serviceName') == "imageInstanceService") {
-                //var cropStyle = "block";
-                //var cropURL = jsonCommand.thumb;
-                console.log(jsonCommand.newImageInstance.deleted);
-                console.log(jsonCommand.previousImageInstance.deleted);
-                console.log(jsonCommand.newImageInstance.deleted != null && jsonCommand.previousImageInstance.deleted == null);
-                console.log(commandHistory.get('action'));
-                commandHistory.set('action', commandHistory.get('action') + " (deletion)");
-                console.log(commandHistory.get('action'));
-                //si cela alors change le edited in project by deleted in project crade mais bon, faute de mieux.
-                //return _.template(commandImageInstanceTpl, {idProject: self.idProject, idImage: jsonCommand.id, imageFilename: jsonCommand.filename, icon: "delete.gif", text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'), datestr: dateStr, cropURL: cropURL, cropStyle: cropStyle});
+                if (jsonCommand.newImageInstance.deleted != null && jsonCommand.previousImageInstance.deleted == null) {
+                    commandHistory.set('action', commandHistory.get('action') + " (deletion)");
+                }
             }
         }
 
