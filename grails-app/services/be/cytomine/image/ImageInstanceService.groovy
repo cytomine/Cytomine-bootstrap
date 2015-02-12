@@ -123,7 +123,8 @@ class ImageInstanceService extends ModelService {
         result.results().each {
             try {
                 ImageInstance image = read(it['_id'])
-                 data << [id:it['_id'],date:it['date'], thumb: UrlApi.getAbstractImageThumbURL(image.baseImage.id),originalFilename:image.baseImage.originalFilename,project:image.project.id]
+                String filename = image.instanceFilename == null ? image.baseImage.originalFilename : image.instanceFilename;
+                 data << [id:it['_id'],date:it['date'], thumb: UrlApi.getAbstractImageThumbURL(image.baseImage.id),instanceFilename:filename,project:image.project.id]
             } catch(CytomineException e) {
                //if user has data but has no access to picture,  ImageInstance.read will throw a forbiddenException
             }

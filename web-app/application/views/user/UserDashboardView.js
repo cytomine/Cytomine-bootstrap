@@ -288,11 +288,11 @@ var UserDashboardView = Backbone.View.extend({
                 item.lastOpen = window.app.convertLongToDate(item.date)
                 item.maxW = Math.min(elem.width(),300);
                 var maxNumberOfChar = 15;
-                var title = item.originalFilename;
+                var title = item.instanceFilename;
                 if (title.length > maxNumberOfChar) {
                     title = title.substr(0, maxNumberOfChar) + "...";
                 }
-                item.originalFilename = title;
+                item.instanceFilename = title;
                 elem.append(_.template(tpl,item));
             });
         });
