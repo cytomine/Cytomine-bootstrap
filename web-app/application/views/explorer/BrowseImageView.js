@@ -691,15 +691,23 @@ BrowseImageView = Backbone.View.extend({
                             magnification = maxMagnification / (Math.pow(2, deltaZoom));
                         }
                         magnification = Math.round(magnification * 100) / 100;
-                        if (magnification > self.model.get("magnification")) {
+
+                        if(magnification == 0) {
                             $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "red");
-                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X<br/>digital");
-                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 40);
-                        } else {
-                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "white");
-                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X");
+                            $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : unknown");
                             $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 20);
+                        } else {
+                            if (magnification > self.model.get("magnification")) {
+                                $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "red");
+                                $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X<br/>digital");
+                                $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 40);
+                            } else {
+                                $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("color", "white");
+                                $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).html("magnitude : " + magnification + "X");
+                                $("#" + self.divId).find("#zoomInfoPanel" + self.model.id).css("height", 20);
+                            }
                         }
+
 
                         self.broadcastPosition(metadata.width,metadata.height);
                     },
@@ -909,7 +917,9 @@ BrowseImageView = Backbone.View.extend({
                     }
                 }
             });
-            self.map.addControl(scaleline);
+            if (self.model.get("magnification") != null) {
+                self.map.addControl(scaleline);
+            }
 
         }
 
