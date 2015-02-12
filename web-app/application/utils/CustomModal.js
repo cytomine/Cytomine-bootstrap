@@ -94,16 +94,15 @@ var DescriptionModal = {
         //add host url for images
         text = text.split('/api/attachedfile').join(window.location.protocol + "//" + window.location.host + '/api/attachedfile');
 
-        var editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)
         var message = "Add the keyword STOP_PREVIEW where you want to delimit the preview text.";
-        if (!editable) {
+        if (!self.editable) {
             text = text.replace("STOP_PREVIEW", "");
             message = "";
         }
 
         var callBackAfterCreation = function() {
 
-            $("iframe").contents().find("body").attr('contenteditable', editable);
+            $("iframe").contents().find("body").attr('contenteditable', self.editable);
             if (window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
                 $("#saveDescription" + idDescription).hide();
             }
@@ -153,9 +152,7 @@ var DescriptionModal = {
 //                </textarea>
 
 
-                var editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin);
-
-                if (editable) {
+                if (self.editable) {
                     CKEDITOR.replace("descriptionArea" + domainIdent,
                         {    filebrowserBrowseUrl: '/test/browse.php',
                             filebrowserImageBrowseUrl: '/browser/browse.php?type=Images',
@@ -195,11 +192,16 @@ var DescriptionModal = {
     },
     initDescriptionView: function (domainIdent, domainClassName, container, maxPreviewCharNumber, callbackGet, callbackUpdate) {
         var self = this;
+        self.editable = !window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)
+
         new DescriptionModel({domainIdent: domainIdent, domainClassName: domainClassName}).fetch(
                 {success: function (description, response) {
                     container.empty();
                     var text = description.get('data');
-                    var textButton = "See full text and edit";
+                    var textButton = "See full text";
+                    if(self.editable) {
+                        textButton = textButton + " and edit";
+                    }
                     text = text.split('STOP_PREVIEW')[0];
                     text = text.split('\\"').join('"');
                     if (text.replace(/<[^>]*>/g, "").length > maxPreviewCharNumber) {
