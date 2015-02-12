@@ -593,10 +593,10 @@ environments {
 
     }
 }
-
+grails.admin.email = "info@cytomine.be"
 
 grails.client = "NO"//"AURORA"
-grails.admin.email = "info@cytomine.be"
+
 grails.integration.aurora.url = "http://localhost:8000/api/image/notify.json?test=true"
 grails.integration.aurora.username = "xxx"
 grails.integration.aurora.password = "xxx"

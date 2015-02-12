@@ -11,16 +11,20 @@ class AuroraController extends RestController {
     def dataSource
     def springSecurityService
     def auroraService
+//
+//    def retrieveAurora() {
+//        List<AbstractImage> imagesToNotify = auroraService.getAuroraImageNotYetNotificated()
+//        String request = auroraService.doRequestContent(imagesToNotify)
+//        responseSuccess(JSON.parse(request))
+//    }
+//
+//    def markNotifyAurora() {
+//        def json = request.JSON
+//        auroraService.processResponse(json)
+//        responseSuccess([:])
+//    }
 
-    def retrieveAurora() {
-        List<AbstractImage> imagesToNotify = auroraService.getAuroraImageNotYetNotificated()
-        String request = auroraService.doRequestContent(imagesToNotify)
-        responseSuccess(JSON.parse(request))
-    }
-
-    def markNotifyAurora() {
-        def json = request.JSON
-        auroraService.processResponse(json)
-        responseSuccess([:])
+    def test() {
+        auroraService.notifyImage()
     }
 }

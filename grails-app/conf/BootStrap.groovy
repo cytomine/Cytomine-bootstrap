@@ -210,10 +210,28 @@ class BootStrap {
         println "********************************************"
         println grailsApplication.config.grails.client
 
-        if(Environment.getCurrent() != Environment.TEST) {
+
+
+
+        //             properties.put("patient_id","PATIENT"+i);
+//             properties.put("sample_id","SAMPLE"+i);
+//             properties.put("image_type","IMAGETYPE"+i);
+//             properties.put("version","VERSION"+i);
+
+
             if(grailsApplication.config.grails.client=="AURORA") {
-                NotifyAuroraUploadJob.schedule(c, grailsApplication.config.grails.integration.aurora.interval, [:])
+//                if(Environment.getCurrent() == Environment.DEVELOPMENT) {
+//                    if(!Property.findByKeyLike("patient_id")) {
+//                        new Property(key:"patient_id",value:"0001",domainIdent: 140736353,domainClassName: "be.cytomine.image.AbstractImage").save(flush:true,failOnError: true)
+//                        new Property(key:"sample_type",value:"Primary",domainIdent: 140736353,domainClassName: "be.cytomine.image.AbstractImage").save(flush:true,failOnError: true)
+//                        new Property(key:"image_type",value:"HER2",domainIdent: 140736353,domainClassName: "be.cytomine.image.AbstractImage").save(flush:true,failOnError: true)
+//                    }
+//                }
+
+                if(Environment.getCurrent() != Environment.TEST) {
+                    NotifyAuroraUploadJob.schedule(grailsApplication.config.grails.integration.aurora.interval,-1, [:])
+                }
+
             }
-        }
     }
 }
