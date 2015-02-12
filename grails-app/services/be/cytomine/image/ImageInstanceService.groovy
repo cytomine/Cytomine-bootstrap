@@ -395,7 +395,7 @@ class ImageInstanceService extends ModelService {
     }
 
     def getStringParamsI18n(def domain) {
-        return [domain.id, domain.baseImage?.originalFilename, domain.project.name]
+        return [domain.id, domain.instanceFilename == null ? domain.baseImage?.originalFilename : domain.instanceFilename, domain.project.name]
     }
 
 //    def deleteDependentAlgoAnnotation(ImageInstance image,Transaction transaction, Task task = null) {

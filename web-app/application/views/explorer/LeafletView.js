@@ -78,7 +78,7 @@ var LeafletView = Backbone.View.extend({
 
         var tabTpl =
             "<li>" +
-                "<a style='float: left;' id='" + self.divPrefixId + "-<%= idImage %>' rel='tooltip' title='<%= originalFilename %>' href='#" + self.divPrefixId + "-<%= idProject %>-<%= idImage %>-' data-toggle='tab'>" +
+                "<a style='float: left;' id='" + self.divPrefixId + "-<%= idImage %>' rel='tooltip' title='<%= filename %>' href='#" + self.divPrefixId + "-<%= idProject %>-<%= idImage %>-' data-toggle='tab'>" +
                 "<i class='icon-search' /> <%= shortOriginalFilename %> " +
                 "</a>" +
                 "</li>";
@@ -89,7 +89,7 @@ var LeafletView = Backbone.View.extend({
         tabs.append(_.template(tabTpl, 
 			{ idProject: window.app.status.currentProject, 
 			  idImage: this.model.get('id'), 
-			  originalFilename: this.model.get('originalFilename'), 
+			  filename: this.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode')),
 			  shortOriginalFilename: shortOriginalFilename
 			}
 		));
