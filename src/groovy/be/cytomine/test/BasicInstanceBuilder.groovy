@@ -8,6 +8,7 @@ import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.image.server.*
 import be.cytomine.laboratory.Sample
+import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.ontology.*
 import be.cytomine.processing.*
 import be.cytomine.project.Discipline
@@ -38,7 +39,7 @@ class BasicInstanceBuilder {
     private static Log log = LogFactory.getLog(BasicInstanceBuilder.class)
 
     /**
-     * Check if a domain is valide during test
+     * Check if a domain is valid during test
      * @param domain Domain to check
      */
     static def checkDomain(def domain) {
@@ -62,7 +63,7 @@ class BasicInstanceBuilder {
     /**
      * Compare  expected data (in map) to  new data (json)
      * This method is used in update test method to check if data are well changed
-     * @param map Excpected data
+     * @param map Expected data
      * @param json New Data
      */
     static void compare(map, json) {
@@ -178,6 +179,12 @@ class BasicInstanceBuilder {
     static String getRandomString() {
         def random = new Random()
         new Date().time.toString() + random.nextInt()
+    }
+
+    static getRandomInteger(int rangeMin, int rangeMax) {
+        def random = new Random()
+        Integer randInt = random.nextInt((rangeMax - rangeMin) + 1) + rangeMin
+        randInt
     }
 
     static UserJob getUserJobNotExist(boolean save = false) {
@@ -1558,5 +1565,20 @@ class BasicInstanceBuilder {
 
         def layer = new ProjectDefaultLayer(project: project, user: user, hideByDefault: false)
         save ? saveDomain(layer) : checkDomain(layer)
+    }
+
+    static MessageBrokerServer getMessageBrokerServer() {
+        MessageBrokerServer msb = MessageBrokerServer.findByName("BasicMessageBrokerServer")
+        if (!msb) {
+            msb = new MessageBrokerServer(host: "localhost", port: getRandomInteger(1024, 65535), name: "BasicMessageBrokerServer", user: User.findByUsername(Infos.SUPERADMINLOGIN))
+            saveDomain(msb)
+        }
+        msb
+    }
+
+    static MessageBrokerServer getMessageBrokerServerNotExist(boolean save = false) {
+        MessageBrokerServer messageBrokerServers = new MessageBrokerServer(host: "localhost", port: getRandomInteger(1024, 65535), name: getRandomString(), user: User.findByUsername(Infos.SUPERADMINLOGIN))
+        save ? saveDomain(messageBrokerServers) : checkDomain(messageBrokerServers)
+        messageBrokerServers
     }
 }

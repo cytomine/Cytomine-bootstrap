@@ -11,6 +11,8 @@ import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.ImageServerStorage
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.middleware.MessageBrokerServer
+import be.cytomine.middleware.MessageBrokerServerService
 import be.cytomine.ontology.*
 import be.cytomine.processing.Job
 import be.cytomine.project.Project
@@ -52,6 +54,7 @@ class SecUserService extends ModelService {
     def currentRoleServiceProxy
     def securityACLService
     def projectDefaultLayerService
+    def messageBrokerServerService
 
     def currentDomain() {
         User
@@ -648,6 +651,14 @@ class SecUserService extends ModelService {
         if(user instanceof User) {
             ProjectDefaultLayer.findAllByUser(user).each {
                 projectDefaultLayerService.delete(it,transaction, null,false)
+            }
+        }
+    }
+
+    def deleteDependentMessageBrokerServer(SecUser user, Transaction transaction, Task task = null) {
+        if(user instanceof User) {
+            MessageBrokerServer.findAllByUser(user).each {
+                messageBrokerServerService.delete(it, transaction, null, false)
             }
         }
     }

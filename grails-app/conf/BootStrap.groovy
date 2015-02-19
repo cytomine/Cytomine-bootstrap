@@ -6,6 +6,7 @@ import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.integration.NotifyAuroraUploadJob
 import be.cytomine.image.Mime
+import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
@@ -109,6 +110,12 @@ class BootStrap {
         //if database is empty, put minimal data
         if (SecUser.count() == 0 && Environment.getCurrent() != Environment.TEST && !Environment.getCurrent().name.equals("testrun")) {
             bootstrapTestDataService.initData()
+        }
+
+        //Inserting a MessageBrokerServer for testing purpose
+        if (Environment.getCurrent() == Environment.DEVELOPMENT) {
+            MessageBrokerServer messageBrokerServer = new MessageBrokerServer(host: "localhost", port: 5000, name: "BrokerTest", user: User.findByUsername(Infos.SUPERADMINLOGIN))
+            messageBrokerServer.save()
         }
 
         //ventana
