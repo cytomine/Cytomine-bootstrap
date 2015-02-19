@@ -90,6 +90,7 @@ var DescriptionModal = {
     initDescriptionModal: function (container, idDescription, domainIdent, domainClassName, text, callback) {
         var width = Math.round($(window).width() * 0.58);
         var height = Math.round($(window).height() * 0.58);
+        var self = this;
 
         //add host url for images
         text = text.split('/api/attachedfile').join(window.location.protocol + "//" + window.location.host + '/api/attachedfile');
