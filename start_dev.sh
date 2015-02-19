@@ -52,7 +52,7 @@ docker run -d --name postgis_data cytomine/data_postgis
 docker run -d --name retrieval_data cytomine/data_postgres
 
 # create mongodb docker
-docker run -d -p 22 --name mongodb cytomine/mongodb
+docker run -d -p 22 -p 27017:27017 --name mongodb cytomine/mongodb
 
 # create database docker
 
