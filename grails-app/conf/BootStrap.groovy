@@ -13,6 +13,8 @@ import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
+import be.cytomine.security.User
+import be.cytomine.test.Infos
 import be.cytomine.utils.Version
 import grails.util.Environment
 import grails.util.Holders
