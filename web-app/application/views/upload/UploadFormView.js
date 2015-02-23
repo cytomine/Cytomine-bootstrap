@@ -26,8 +26,8 @@ var UploadFormView = Backbone.View.extend({
     render: function () {
         var self = this;
         require([
-            "text!application/templates/upload/UploadForm.tpl.html"
-        ],
+                "text!application/templates/upload/UploadForm.tpl.html"
+            ],
             function (tpl) {
 
                 if(!window.app.status.user.model.get('guest')) {
@@ -424,9 +424,15 @@ var UploadFormView = Backbone.View.extend({
                 var button = $(this),
                     tmpl = button.closest('.template-upload'),
                     data = tmpl.data('data');
-                if (data && data.submit && !data.jqXHR && data.submit()) {
-                    button.prop('disabled', true);
-                }
+
+                var size = data.files[0].size
+                /*if(size > AVAILABLE_SPACE) {
+                    //return
+                } else {*/
+                    if (data && data.submit && !data.jqXHR && data.submit()) {
+                        button.prop('disabled', true);
+                    }
+                //}
             },
 
             _cancelHandler: function (e) {
@@ -496,8 +502,17 @@ var UploadFormView = Backbone.View.extend({
                     ns = this.options.namespace;
                 fileUploadButtonBar.find('.start')
                     .bind('click.' + ns, function (e) {
+                        var allFiles = $(".template-upload");
+                        var size = 0
+                        for(var i = 0; i< allFiles.length; i++){
+                            size += $(allFiles[i]).data('data').files[0].size;
+                        }
                         e.preventDefault();
-                        filesList.find('.start button').click();
+                        /*if(size > AVAILABLE_SPACE) {
+                            //return
+                        } else {*/
+                            filesList.find('.start button').click();
+                        //}
                     });
                 fileUploadButtonBar.find('.cancel')
                     .bind('click.' + ns, function (e) {
