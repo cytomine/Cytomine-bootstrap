@@ -719,7 +719,7 @@ var UploadFormView = Backbone.View.extend({
                 },
                 {
                     "fnRender": function (o, val) {
-                        return "<button class='btn btn-info btn-xs deleteimage' id='deleteimage"+o.aData.image+"'>Delete</button>";
+                        return "<button class='btn btn-info btn-xs deleteimage' id='deleteimage"+o.aData.image+"' disabled>Delete</button>";
                     },
                     "aTargets": [ 5 ]
                 }
@@ -730,13 +730,11 @@ var UploadFormView = Backbone.View.extend({
                 new UploadedFileCollection().fetch({
                     success: function(model,response) {
 
-                        for(var i = 0; i<response.collection.length;i++) {
-                            $.get( "/api/abstractimage/"+ response.collection[i].image+"/used.json", function( data ) {
-                                if(data.result == true) {
-                                    $("#deleteimage"+data.id).prop("disabled",true);
-                                }
-                            });
-                        }
+                        $.get( "/api/abstractimage/unused.json", function( data ) {
+                            for(var i = 0; i<data.collection.length;i++) {
+                                $("#deleteimage"+data.collection[i].id).prop("disabled",false);
+                            }
+                        });
                     }
                 });
             }

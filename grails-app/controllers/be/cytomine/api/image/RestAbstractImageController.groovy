@@ -133,12 +133,10 @@ class RestAbstractImageController extends RestController {
     @RestApiParams(params=[
             @RestApiParam(name="id", type="long", paramType = RestApiParamType.QUERY, description = "The id of abstract image"),
     ])
-    def isUsed() {
-        def result = abstractImageService.isUsed(params.id)
-        def returnArray = [:]
-        returnArray["id"] = params.id
-        returnArray["result"] = result
-        responseSuccess(returnArray)
+    def listUnused() {
+        SecUser user = cytomineService.getCurrentUser()
+        def result = abstractImageService.listUnused(user);
+        responseSuccess(result);
     }
 
 
