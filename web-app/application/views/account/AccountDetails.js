@@ -65,7 +65,16 @@ var AccountDetails = Backbone.View.extend({
     doLayout: function (tpl) {
         var self = this;
         this.model.set({ host : window.location.host });
-        $(this.el).html(_.template(tpl, this.model.toJSON()));
+
+        if(window.app.status.user.model.attributes.adminByNow) {
+            this.model.set({ role : "admin" });
+        } else if(window.app.status.user.model.attributes.userByNow) {
+            this.model.set({ role : "user" });
+        } else if(window.app.status.user.model.attributes.guestByNow) {
+            this.model.set({ role : "guest" });
+        }
+
+git diff         $(this.el).html(_.template(tpl, this.model.toJSON()));
 
         if (self.model.get("passwordExpired")) {
             $("#input_password").closest('.form-group').hide();

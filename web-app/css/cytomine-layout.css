@@ -132,6 +132,29 @@ span.label {
 }
 
 
+.label-right-admin {
+    float:right;
+    background-color:#d9534f;
+}
+span.label-right-admin {
+    min-height: 10px;
+}
+.label-right-user {
+    float:right;
+    background-color:#5cb85c;
+}
+span.label-right-user {
+    min-height: 10px;
+}
+.label-right-guest {
+    float:right;
+    background-color:#428bca;
+}
+span.label-right-guest {
+    min-height: 10px;
+}
+
+
 .thumb-wrap{
     text-align: left;
     vertical-align: top;
