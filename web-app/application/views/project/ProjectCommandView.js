@@ -4,7 +4,7 @@
 var ProjectCommandsView = Backbone.View.extend({
 
     tagName: 'ul',
-    class: 'nav',
+    className: 'nav',
     initialize: function (options) {
         if(options != undefined) {
             // Since 1.1.0, Backbone Views no longer automatically attach options passed to the constructor as this.options
@@ -48,9 +48,6 @@ var ProjectCommandsView = Backbone.View.extend({
     }
 });
 
-/**
- * Created by hoyoux on 09.02.15.
- */
 var ProjectCommandView = Backbone.View.extend({
 
     tagName: 'li',
@@ -81,19 +78,19 @@ var ProjectCommandView = Backbone.View.extend({
 
         if (commandHistory.get('className') == "be.cytomine.command.AddCommand") {
             if (commandHistory.get('serviceName') == "userAnnotationService") {
-            var cropStyle = "block";
-            var cropURL = jsonCommand.cropURL;
-            return _.template(commandAnnotationTpl,
-                {   idProject: self.idProject,
-                    idAnnotation: jsonCommand.id,
-                    idImage: jsonCommand.image,
-                    imageFilename: jsonCommand.imageFilename,
-                    icon: "add.png",
-                    text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'),
-                    datestr: dateStr,
-                    cropURL: cropURL,
-                    cropStyle: cropStyle
-                });
+                var cropStyle = "block";
+                var cropURL = jsonCommand.cropURL;
+                return _.template(commandAnnotationTpl,
+                    {   idProject: self.idProject,
+                        idAnnotation: jsonCommand.id,
+                        idImage: jsonCommand.image,
+                        imageFilename: jsonCommand.imageFilename,
+                        icon: "add.png",
+                        text: commandHistory.get("prefixAction") + " " + commandHistory.get('action'),
+                        datestr: dateStr,
+                        cropURL: cropURL,
+                        cropStyle: cropStyle
+                    });
             }
             else if (commandHistory.get('serviceName') == "reviewedAnnotationService") {
                 var cropStyle = "block";
