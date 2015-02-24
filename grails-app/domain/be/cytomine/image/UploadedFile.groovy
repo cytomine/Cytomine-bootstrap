@@ -2,6 +2,7 @@ package be.cytomine.image
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
+import be.cytomine.api.UrlApi
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
@@ -122,6 +123,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
         returnArray['image'] = uploaded?.getAbstractImage()
         returnArray['parent'] = uploaded?.parent?.id
         returnArray['downloadParent'] = uploaded?.downloadParent?.id
+        returnArray['thumbURL'] = uploaded?.status == UploadedFile.DEPLOYED && uploaded?.image ? UrlApi.getAssociatedImage(uploaded?.image?.id, "macro", 512) : null
         returnArray
     }
 

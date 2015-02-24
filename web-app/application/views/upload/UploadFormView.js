@@ -713,7 +713,13 @@ var UploadFormView = Backbone.View.extend({
              { "sWidth": "20%", "aTargets": [ 4 ] }
              ],*/
             "aoColumns": [
-                { "mDataProp": "originalFilename" },
+                { "mDataProp": "originalFilename", fnRender : function (o, originalFilename) {
+                    return '<span onmouseout="$(\'#thumbcommand'+o.aData.image+'\').hide();" '+
+                        'onMouseOver="$(\'#thumbcommand'+o.aData.image+'\').css(\'display\',\'block\');"> '+
+                        '<img class="thumbcommand" id="thumbcommand'+o.aData.image+'" '+
+                        'src="'+o.aData.thumbURL +'" style="display:none;position: absolute;z-index: 100;max-width: 300px;margin-top: 20px;margin-left: 30px;"/>'+originalFilename+'</span>';
+
+                }},
                 { "mDataProp": "created", fnRender : function (o, created) {
                     return window.app.convertLongToDate(created);
                 }},
