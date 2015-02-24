@@ -167,7 +167,7 @@ var ApplicationView = Backbone.View.extend({
                     "text!application/templates/about/About.tpl.html"
                 ],
                 function (tpl) {
-                    body = _.template(tpl, {version : window.app.status.version});
+                    body = _.template(tpl, {version : window.app.status.version, mail : "info@cytomine.be"});
 
                     var modal = new CustomModal({
                         idModal: "about" + "DialogModal" + "lala",
