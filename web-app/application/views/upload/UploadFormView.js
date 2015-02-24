@@ -901,6 +901,8 @@ var UploadFormView = Backbone.View.extend({
             self.refreshProjectAndStorage();
         });
 
+        // here fill the free storage_space.
+
         // Render uploaded file
         this.renderUploadedFiles();
         // Render Upload Form
