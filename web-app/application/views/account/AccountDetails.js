@@ -74,7 +74,7 @@ var AccountDetails = Backbone.View.extend({
             this.model.set({ role : "guest" });
         }
 
-git diff         $(this.el).html(_.template(tpl, this.model.toJSON()));
+        $(this.el).html(_.template(tpl, this.model.toJSON()));
 
         if (self.model.get("passwordExpired")) {
             $("#input_password").closest('.form-group').hide();
