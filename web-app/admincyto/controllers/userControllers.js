@@ -20,6 +20,7 @@ angular.module("cytomineUserArea")
                         user = $scope.setSelectedUser($routeParams["id"]);
                     }
                     $scope.currentEditedUser = user ? angular.copy(user) : {};
+                    userService.checkLdap($scope.currentEditedUser);
                 });
             }
 

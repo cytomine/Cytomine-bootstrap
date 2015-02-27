@@ -2,7 +2,8 @@ angular.module("cytomineUserArea")
 .constant("userUrl", "/api/user.json")
 .constant("userEditUrl", "/api/user/{id}.json")
 .constant("resetPasswordUrl","/api/user/{idUser}/password.json?password={password}")
-.factory("userService",function($http,userUrl,userEditUrl,resetPasswordUrl) {
+.constant("ldapUrl","/api/ldap/{username}/user.json")
+.factory("userService",function($http,userUrl,userEditUrl,resetPasswordUrl,ldapUrl) {
 
     var users=[];
 
@@ -53,6 +54,17 @@ angular.module("cytomineUserArea")
 //                });
 //            }
             return goodUser;
+        },
+
+        checkLdap : function(user) {
+            $http.get(ldapUrl.replace("{username}", user.username))
+                .success(function (data) {
+                    user.ldap = data.result
+                })
+                .error(function (data, status, headers, config) {
+                    console.log("error in ldap checking");
+                    user.ldap = false
+                })
         },
 
         addUser : function(user,callbackSuccess,callbackError) {
