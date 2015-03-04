@@ -6,6 +6,7 @@ import grails.plugin.springsecurity.userdetails.GrailsUser
 import groovy.sql.Sql
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.dao.DataAccessException
+import org.springframework.ldap.NameNotFoundException
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -31,7 +32,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     }
 
     public boolean isInLdap(String username) {
-        LdapUlgMemberPerson inetOrgPerson;
+        InetOrgPerson inetOrgPerson;
 
         boolean ldapDisabled = grailsApplication.config.grails.plugin.springsecurity.ldap.active.toString()=="false"
         if(ldapDisabled) {
@@ -39,7 +40,7 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
         }
 
         try {
-            inetOrgPerson= (LdapUlgMemberPerson) ldapUserDetailsService.loadUserByUsername(username)
+            inetOrgPerson= (InetOrgPerson) ldapUserDetailsService.loadUserByUsername(username)
         } catch(UsernameNotFoundException e) {
             inetOrgPerson = null;
         }
@@ -51,6 +52,9 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
     }
 
 
+    /*
+    * Used for authentification
+    */
     @Override
     public UserDetails loadUserByUsername(String username, boolean loadRoles)
     throws UsernameNotFoundException, DataAccessException {
@@ -58,14 +62,37 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
         SecUser user = SecUser.findByUsername(username)
         boolean casDisabled = grailsApplication.config.grails.plugin.springsecurity.cas.active.toString()=="false"
 
-        def authorities = []
-        if(user) {
-            def auth = SecUserSecRole.findAllBySecUser(user).collect{new GrantedAuthorityImpl(it.secRole.authority)}
-            //by default, we remove the role_admin for the current session
-            authorities.addAll(auth.findAll{it.authority!="ROLE_ADMIN"})
-        }
+       def authorities = []
 
         if(user==null && casDisabled)  {
+            log.info "return null"
+            return null
+        }
+
+        if (user == null) { //User does not exists in our database
+            user = getUserByUsername(username)
+        }
+
+        def auth = SecUserSecRole.findAllBySecUser(user).collect{new GrantedAuthorityImpl(it.secRole.authority)}
+        //by default, we remove the role_admin for the current session
+        authorities.addAll(auth.findAll{it.authority!="ROLE_ADMIN"})
+
+        return new GrailsUser(user.username, user.password, user.enabled, !user.accountExpired,
+                !user.passwordExpired, !user.accountLocked,
+                authorities, user.id)
+    }
+
+    /*
+    * get User of LDAP and create it in the database if not present
+    */
+    public User getUserByUsername(String username)
+            throws UsernameNotFoundException, DataAccessException {
+
+        SecUser user = SecUser.findByUsername(username)
+        boolean ldapDisabled = grailsApplication.config.grails.plugin.springsecurity.ldap.active.toString()=="false"
+
+
+        if(user==null && ldapDisabled)  {
             log.info "return null"
             return null
         }
@@ -116,7 +143,6 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
                     secUsersecRole.secUser = user
                     secUsersecRole.secRole = userRole
                     secUsersecRole.save(flush: true)
-                    authorities << new GrantedAuthorityImpl(userRole.authority)
 
                 } else {
                     user.errors.each {
@@ -126,8 +152,6 @@ class CASLdapUserDetailsService extends GormUserDetailsService {
             }
         }
 
-        return new GrailsUser(user.username, user.password, user.enabled, !user.accountExpired,
-                !user.passwordExpired, !user.accountLocked,
-                authorities, user.id)
+        return user
     }
 }

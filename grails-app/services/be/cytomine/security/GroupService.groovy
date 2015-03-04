@@ -1,9 +1,10 @@
 package be.cytomine.security
 
-
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.command.*
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import grails.converters.JSON
 
 class GroupService extends ModelService {
 
@@ -13,6 +14,8 @@ class GroupService extends ModelService {
     def userGroupService
     def transactionService
     def securityACLService
+    def ldapSearchService
+    def CASLdapUserDetailsService
 
     def currentDomain() {
         Group
@@ -75,6 +78,87 @@ class GroupService extends ModelService {
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)
     }
+
+
+    public boolean isInLdap(Long id) {
+        SecUser currentUser = cytomineService.getCurrentUser()
+        securityACLService.checkGuest(currentUser)
+        def group = Group.get(id)
+        return !ldapSearchService.searchByUid(group.gid, "cn", "uid").isEmpty();
+    }
+
+    def createFromLDAP(def json) {
+
+        SecUser currentUser = cytomineService.getCurrentUser()
+        securityACLService.checkGuest(currentUser)
+
+        def map = ldapSearchService.searchByCn(json.name, "uid", "member");
+
+        if (map.isEmpty()) throw ObjectNotFoundException;
+
+        Group result = new Group();
+        result.name = json.name
+        result.gid = map.get("uid")[0]
+
+        // create group here
+        result.discard()
+        def reponse = add(JSON.parse(result.encodeAsJSON()))
+
+        result = Group.get(reponse.data.group.id)
+
+
+        def usernames = map.get("member").collect {it.split(",")[0].split("=")[1]}
+
+        def users = usernames.collect {CASLdapUserDetailsService.getUserByUsername(it)}
+
+        users.each {
+            user ->
+                //for each user, create a user Group
+                UserGroup userGroup = new UserGroup(user:user, group:result)
+                userGroup.save()
+        }
+        return reponse;
+    }
+
+    def resetFromLDAP(Long id) {
+
+        SecUser currentUser = cytomineService.getCurrentUser()
+        securityACLService.checkGuest(currentUser)
+
+        def group = Group.get(id)
+
+        def map = ldapSearchService.searchByUid(group.gid, "cn", "uid", "member");
+
+        if (map.isEmpty()) throw ObjectNotFoundException;
+
+        def json = JSON.parse(group.encodeAsJSON());
+        json["cn"] = map.get("cn")[0]
+        json["uid"] = map.get("uid")[0]
+
+        update(group, json)
+
+        group = Group.get(id)
+
+        // delete all the previous user and add the users as described in LDAP
+        def users = UserGroup.findAllByGroup(group)
+        users.each {
+            it.delete()
+        }
+
+        def usernames = map.get("member").collect {it.split(",")[0].split("=")[1]}
+
+        users = usernames.collect {CASLdapUserDetailsService.getUserByUsername(it)}
+
+        users.each {
+            user ->
+                //for each user, create a user Group
+                UserGroup userGroup = new UserGroup(user:user, group:group)
+                userGroup.save()
+        }
+
+        return group
+    }
+
 
     def getStringParamsI18n(def domain) {
         return [domain.id, domain.name]
