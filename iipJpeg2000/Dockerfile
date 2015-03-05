@@ -1,6 +1,6 @@
 FROM ubuntu:12.04
 
-MAINTAINER RH "support@cytomine.be"
+MAINTAINER Cytomine Team "support@cytomine.be"
 
 
 RUN apt-get update

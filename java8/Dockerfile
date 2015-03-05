@@ -1,6 +1,6 @@
 FROM cytomine/base
 
-MAINTAINER BS "support@cytomine.be"
+MAINTAINER Cytomine Team "support@cytomine.be"
 
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository -y ppa:webupd8team/java

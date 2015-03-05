@@ -1,6 +1,6 @@
 FROM cytomine/tomcat7 
 
-MAINTAINER BS "support@cytomine.be"
+MAINTAINER Cytomine Team "support@cytomine.be"
 
 ADD cytomineconfig.groovy /tmp/cytomineconfig.groovy
 

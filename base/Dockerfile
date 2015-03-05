@@ -2,7 +2,7 @@
 
 FROM ubuntu:14.04
 
-MAINTAINER Stévens Benjamin "support@cytomine.be"
+MAINTAINER Cytomine Team "support@cytomine.be"
 
 RUN apt-get update
 RUN apt-get install -y openssh-server

@@ -1,6 +1,6 @@
 FROM cytomine/base
 
-MAINTAINER BS "support@cytomine.be"
+MAINTAINER Cytomine Team "support@cytomine.be"
 
 ADD start.sh /tmp/start.sh
 RUN chmod +x /tmp/start.sh

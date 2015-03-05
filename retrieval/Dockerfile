@@ -1,6 +1,6 @@
 FROM cytomine/tomcat7 
 
-MAINTAINER "Renaud Hoyoux support@cytomine.be"
+MAINTAINER "Cytomine Team support@cytomine.be"
 
 ADD retrieval-web.war /tmp/retrieval-web.war
 ADD retrievalwebconfig.properties /tmp/retrievalwebconfig.properties

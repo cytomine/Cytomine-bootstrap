@@ -3,7 +3,7 @@
 #
 
 FROM cytomine/base
-MAINTAINER "Renaud Hoyoux support@cytomine.be"
+MAINTAINER "Cytomine Team support@cytomine.be"
 
 RUN apt-get update
 

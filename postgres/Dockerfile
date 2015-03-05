@@ -3,7 +3,7 @@
 #
 
 FROM cytomine/base
-MAINTAINER "Benjamin Stevens support@cytomine.be"
+MAINTAINER "Cytomine Team support@cytomine.be"
 
 # Add the PostgreSQL PGP key to verify their Debian packages.
 # It should be the same key as https://www.postgresql.org/media/keys/ACCC4CF8.asc

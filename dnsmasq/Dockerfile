@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-MAINTAINER Benjamin Stevens "support@cytomine.be"
+MAINTAINER Cytomine Team "support@cytomine.be"
 
 VOLUME [ "/dnsmasq.hosts" ]
 

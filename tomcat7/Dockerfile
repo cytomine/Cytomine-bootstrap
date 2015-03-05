@@ -1,6 +1,6 @@
 FROM cytomine/java7
 
-MAINTAINER BS "support@cytomine.be"
+MAINTAINER Cytomine Team "support@cytomine.be"
 
 RUN apt-get -y install tomcat7
 
