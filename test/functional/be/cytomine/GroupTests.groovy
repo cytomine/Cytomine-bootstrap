@@ -90,18 +90,44 @@ class GroupTests  {
       assert 409 == result.code
   }
 
-  void testDeleteGroup() {
-      def groupToDelete = BasicInstanceBuilder.getGroupNotExist()
-      assert groupToDelete.save(flush: true)!= null
-      def id = groupToDelete.id
-      def result = GroupAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      assert 200 == result.code
+    void testDeleteGroup() {
+        def groupToDelete = BasicInstanceBuilder.getGroupNotExist()
+        assert groupToDelete.save(flush: true)!= null
+        def id = groupToDelete.id
+        def result = GroupAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
 
-      def showResult = GroupAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      assert 404 == showResult.code
-  }
+        def showResult = GroupAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == showResult.code
+    }
 
-  void testDeleteGroupNotExist() {
+    void testDeleteDependanciesWithLDAP() {
+        def ldapDisabled = Holders.getGrailsApplication().config.grails.plugin.springsecurity.ldap.active.toString()=="false"
+        println "CREATE FROM LDAP"
+        def groupToDelete = BasicInstanceBuilder.getGroupNotExist()
+        groupToDelete.name = '2e an. master sc. mathématiques, fin. appr.'
+        def result = GroupAPI.createFromLDAP(groupToDelete.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+
+        if(ldapDisabled) {
+            assert 404 == result.code
+        } else {
+            assert 200 == result.code
+            assert JSON.parse(result.data).name == '2e an. master sc. mathématiques, fin. appr.'
+
+            def group = Group.read(JSON.parse(result.data).id)
+
+            def id = group.id
+            result = GroupAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+            assert 200 == result.code
+
+            assert 0 == UserGroup.findAllByGroup(group).size()
+
+            def showResult = GroupAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+            assert 404 == showResult.code
+        }
+    }
+
+    void testDeleteGroupNotExist() {
       def result = GroupAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
       assert 404 == result.code
   }
@@ -171,7 +197,11 @@ class GroupTests  {
 
         def ldapDisabled = Holders.getGrailsApplication().config.grails.plugin.springsecurity.ldap.active.toString()=="false"
 
-        def id = Group.findByName("BASICGROUP").id
+        def group = Group.findByName("BASICGROUP")
+        if(group == null) {
+            group = Group.findByName("NEWNAME")
+        }
+        def id = group.id
         println "RESET FROM LDAP"
         def result = GroupAPI.resetFromLDAP(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 

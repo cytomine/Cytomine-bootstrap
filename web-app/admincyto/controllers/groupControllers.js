@@ -45,8 +45,17 @@ angular.module("cytomineUserArea")
                 } else {
                     $scope.setSelectedGroup($scope.group.groups[0].id);
                 }
-
             });
+        };
+
+        $scope.getLDAPConfig = function () {
+            $http.get("/ldap.json")
+                .success(function (response) {
+                    $scope.canLdap = response.enabled;
+                })
+                .error(function (data, status, headers, config) {
+                    console.log("error LDAP")
+                })
         };
 
         $scope.createGroup = function (group,form) {
@@ -191,6 +200,9 @@ angular.module("cytomineUserArea")
 
 
         $scope.listGroups();
+        $scope.getLDAPConfig();
+
+
         userService.getAllUsers(
             function(data) {
                 $scope.group.users = data;
