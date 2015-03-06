@@ -81,7 +81,8 @@ var ProjectDashboardView = Backbone.View.extend({
     refreshConfig: function () {
         if (this.ProjectDashboardConfig == null) {
             this.ProjectDashboardConfig = new ProjectDashboardConfig({
-                model: this.model
+                model: this.model,
+                el: $("#editableConfigurations")
             });
         }
 

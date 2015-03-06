@@ -1,24 +1,117 @@
 var ProjectDashboardConfig = Backbone.View.extend({
     initialize: function (options) {
-        this.el = "#tabs-config-" + this.model.id;
         this.rendered = false;
     },
     render: function () {
-        new ImageFiltersProjectPanel({
-            el: this.el,
-            model: this.model
-        }).render();
-        new SoftwareProjectPanel({
-            el: this.el,
-            model: this.model
-        }).render();
-        new DefaultLayerPanel({
-            model: this.model
-        }).render();
-        new MagicWandConfig({}).render();
-        this.rendered = true;
 
-        new CutomUIPanel({}).render();
+        var self = this;
+        require(["text!application/templates/dashboard/config/DefaultProjectLayersConfig.tpl.html", "text!application/templates/dashboard/config/CustomUIConfig.tpl.html",
+            "text!application/templates/dashboard/config/MagicWandConfig.tpl.html", "text!application/templates/dashboard/config/ImageFiltersConfig.tpl.html",
+                "text!application/templates/dashboard/config/SoftwareConfig.tpl.html"],
+            function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareConfigTemplate) {
+            self.doLayout(defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate,imageFiltersTemplate,softwareConfigTemplate);
+            self.rendered = true;
+        });
+        return this;
+    },
+    doLayout: function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareTemplate) {
+
+        // generate the menu skeleton
+
+        var html = '';
+        html = html + '<div class="col-md-2">';
+        html = html + '    <div class="panel panel-default">';
+        html = html + '        <div class="panel-heading">';
+        html = html + '            <h4>Configurations</h4>';
+        html = html + '        </div>';
+
+        html = html + '    </div>';
+        html = html + '</div>';
+
+        var menu = $(html)
+
+        var configMenu = $('<div class="panel-body"></div>');
+
+
+        // generate the config tabs
+
+        var configList = $('<div class="col-md-9"></div>');
+        var idPanel;
+        var titlePanel;
+        var configs=[];
+
+        // Default Layers
+        idPanel = "defaultLayers";
+        titlePanel = "Default Layers Configuration";
+        configs.push({id: idPanel, title : titlePanel});
+        var defaultLayers = new DefaultLayerPanel({
+            el: _.template(defaultLayersTemplate, {titre : titlePanel, id : idPanel}),
+            model: this.model
+        }).render();
+        configList.append(defaultLayers.el);
+
+
+        // CustomUI
+        idPanel = "customUi";
+        titlePanel = "Custom UI Configuration";
+        configs.push({id: idPanel, title : titlePanel});
+        var uiPanel = new CutomUIPanel({
+            el: _.template(customUIConfigTemplate, {titre : titlePanel, id : idPanel})
+        }).render();
+        configList.append(uiPanel.el);
+
+
+        // Magic Wand
+        idPanel = "magicWand";
+        titlePanel = "Magic Wand Configuration";
+        configs.push({id: idPanel, title : titlePanel});
+        var magicWand = new MagicWandConfig({
+            el: _.template(magicWandTemplate, {titre : titlePanel, id : idPanel})
+        }).render();
+        configList.append(magicWand.el);
+
+
+        // Image Filters
+        idPanel = "imageFilters";
+        titlePanel = "Image filters";
+        configs.push({id: idPanel, title : titlePanel});
+        var filters = new ImageFiltersProjectPanel({
+            el: _.template(imageFiltersTemplate, {titre : titlePanel, id : idPanel}),
+            model: this.model
+        }).render();
+        configList.append(filters.el);
+
+
+        // Softwares Project
+        idPanel = "softwaresProject";
+        titlePanel = "Softwares";
+        configs.push({id: idPanel, title : titlePanel});
+        var softwares = new SoftwareProjectPanel({
+            el: _.template(softwareTemplate, {titre : titlePanel, id : idPanel}),
+            model: this.model
+        }).render();
+        configList.append(softwares.el);
+
+
+
+        // Generation of the left menu
+        $.each(configs, function (index, value) {
+            configMenu.append('<div><input id="'+value.id+'-config-checkbox" type="checkbox" checked> '+value.title+'</div>');
+            configMenu.find("input#"+value.id+"-config-checkbox").change(function () {
+                if ($(this).is(':checked')) {
+                    $("#config-panel-"+value.id).show()
+                } else {
+                    $("#config-panel-"+value.id).hide()
+                }
+            });
+
+        });
+
+        menu.find(".panel-default").append(configMenu);
+
+        $(this.el).append(menu);
+        $(this.el).append(configList);
+
     },
     refresh: function () {
         if (!this.rendered) {
@@ -46,16 +139,17 @@ var MagicWandConfig = Backbone.View.extend({
     render: function () {
         this.fillForm();
         this.initEvents();
+        return this;
     },
 
     initEvents: function () {
         var self = this;
-        var form = $("#mwToleranceForm");
+        var form = $(self.el).find("#mwToleranceForm")
         var max_euclidian_distance = Math.ceil(Math.sqrt(255 * 255 + 255 * 255 + 255 * 255)) //between pixels
         form.on("submit", function (e) {
             e.preventDefault();
             //tolerance
-            var toleranceValue = parseInt($("#input_tolerance").val());
+            var toleranceValue = parseInt($(self.el).find("#input_tolerance").val());
             if (_.isNumber(toleranceValue) && toleranceValue >= 0 && toleranceValue < max_euclidian_distance) {
                 window.localStorage.setItem(self.toleranceKey, Math.round(toleranceValue));
                 var successMessage = _.template("Tolerance value for project <%= name %> is now <%= tolerance %>", {
@@ -67,7 +161,7 @@ var MagicWandConfig = Backbone.View.extend({
                 window.app.view.message("Error", "Tolerance must be an integer between 0 and " + max_euclidian_distance, "error");
             }
 
-            var thresholdValue = parseInt($("#input_threshold").val());
+            var thresholdValue = parseInt($(self.el).find("#input_threshold").val());
             if (_.isNumber(thresholdValue) && thresholdValue >= 0 && thresholdValue < 255) {
                 window.localStorage.setItem(self.thresholdKey, Math.round(thresholdValue));
                 successMessage = _.template("Threshold value for project <%= name %> is now <%= threshold %>", {
@@ -82,8 +176,9 @@ var MagicWandConfig = Backbone.View.extend({
     },
 
     fillForm: function () {
-        $("#input_tolerance").val(window.localStorage.getItem(this.toleranceKey));
-        $("#input_threshold").val(window.localStorage.getItem(this.thresholdKey));
+        var self = this;
+        $(self.el).find("#input_tolerance").val(window.localStorage.getItem(this.toleranceKey));
+        $(self.el).find("#input_threshold").val(window.localStorage.getItem(this.thresholdKey));
     }
 });
 
@@ -122,7 +217,6 @@ var SoftwareProjectPanel = Backbone.View.extend({
 
     render: function () {
         var self = this;
-        var el = $(this.el).find(".softwares");
         new SoftwareCollection().fetch({
             success: function (softwareCollection, response) {
                 softwareCollection.each(function (software) {
@@ -163,13 +257,13 @@ var DefaultLayerPanel = Backbone.View.extend({
     render: function () {
         var self = this;
 
-        $("#selectedDefaultLayers").hide();
+        $(self.el).find("#selectedDefaultLayers").hide();
 
         // load all user and admin of the project
         new UserCollection({project: self.model.id}).fetch({
             success: function (projectUserCollection, response) {
                 projectUserCollection.each(function(user) {
-                    $('#availableprojectdefaultlayers').append('<option value="'+ user.id +'">' + user.prettyName() + '</option>');
+                    $(self.el).find('#availableprojectdefaultlayers').append('<option value="'+ user.id +'">' + user.prettyName() + '</option>');
                 });
             }
         });
@@ -177,33 +271,33 @@ var DefaultLayerPanel = Backbone.View.extend({
 
 
 
-        $('#projectadddefaultlayersbutton').click(function() {
+        $(self.el).find('#projectadddefaultlayersbutton').click(function() {
 
-            var container = $('#availableprojectdefaultlayers')[0];
+            var container = $(self.el).find('#availableprojectdefaultlayers')[0];
             var selected = container.options[container.options.selectedIndex];
             if(selected.value != null && selected.value != undefined && selected.value != '') {
-                $("#selectedDefaultLayers").show();
+                $(self.el).find("#selectedDefaultLayers").show();
                 // check if not already taken
-                if ($('#selectedDefaultLayers #defaultlayer' + selected.value).length == 0) {
-                    $('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + selected.value + '" class="hideByDefault"> Hide layers by default</div>');
-                    $('#selectedDefaultLayers').append('<div class="col-md-5"><p>' + selected.text + '</p></div>');
-                    $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + selected.value + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
+                if ($(self.el).find('#selectedDefaultLayers #defaultlayer' + selected.value).length == 0) {
+                    $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + selected.value + '" class="hideByDefault"> Hide layers by default</div>');
+                    $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-5"><p>' + selected.text + '</p></div>');
+                    $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + selected.value + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
                     save(selected.value, false);
                 }
             }
         });
-        $('#selectedDefaultLayers').on('click', '.projectremovedefaultlayersbutton', function() {
+        $(self.el).find('#selectedDefaultLayers').on('click', '.projectremovedefaultlayersbutton', function() {
             var id = $(this).attr("id").replace("defaultlayer","");
             $(this).parent().prev().prev().remove();
             $(this).parent().prev().remove();
             $(this).parent().remove();
-            if($("#selectedDefaultLayers").children().length ==0){
-                $("#selectedDefaultLayers").hide();
+            if($(self.el).find("#selectedDefaultLayers").children().length ==0){
+                $(self.el).find("#selectedDefaultLayers").hide();
             }
             destroy(id);
         });
 
-        $('#selectedDefaultLayers').on('click', '.hideByDefault', function() {
+        $(self.el).find('#selectedDefaultLayers').on('click', '.hideByDefault', function() {
             var id = $(this).attr("id").replace("hideByDefault","");
             var chkb = $(this);
 
@@ -227,9 +321,9 @@ var DefaultLayerPanel = Backbone.View.extend({
                 success: function (model, response) {
                     console.log("save success");
                     // with the project_default_layer id, we will be able to delete them more efficiently
-                    var id = $('#selectedDefaultLayers #defaultlayer' + userId).attr("id").replace(userId,response.projectdefaultlayer.id);
-                    $('#selectedDefaultLayers #defaultlayer' + userId).attr("id", id);
-                    $('#selectedDefaultLayers #hideByDefault' + userId).attr("id", id);
+                    var id = $(self.el).find('#selectedDefaultLayers #defaultlayer' + userId).attr("id").replace(userId,response.projectdefaultlayer.id);
+                    $(self.el).find('#selectedDefaultLayers #defaultlayer' + userId).attr("id", id);
+                    $(self.el).find('#selectedDefaultLayers #hideByDefault' + userId).attr("id", id);
                 },
                 error: function (x, y) {
                     console.log("save error");
@@ -260,16 +354,16 @@ var DefaultLayerPanel = Backbone.View.extend({
 
 
                 for(var i = 0; i<defaultLayersArray.length; i++){
-                    $("#selectedDefaultLayers").show();
+                    $(self.el).find("#selectedDefaultLayers").show();
                     // check if not already taken
-                    $('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + defaultLayersArray[i].id + '" class="hideByDefault"> Hide layers by default</div>');
-                    $('#hideByDefault' + defaultLayersArray[i].id)[0].checked = defaultLayersArray[i].hideByDefault;
-                    $('#selectedDefaultLayers').append('<div id = "tmp'+ defaultLayersArray[i].userId +'" class="col-md-5"><p></p></div>');
-                    $('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + defaultLayersArray[i].id + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
+                    $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + defaultLayersArray[i].id + '" class="hideByDefault"> Hide layers by default</div>');
+                    $(self.el).find('#hideByDefault' + defaultLayersArray[i].id)[0].checked = defaultLayersArray[i].hideByDefault;
+                    $(self.el).find('#selectedDefaultLayers').append('<div id = "tmp'+ defaultLayersArray[i].userId +'" class="col-md-5"><p></p></div>');
+                    $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + defaultLayersArray[i].id + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
                     new UserModel({id: defaultLayersArray[i].userId}).fetch({
                         success: function (model) {
-                            $('#tmp'+model.id).find("p").text(model.prettyName());
-                            $('#tmp'+model.id).removeAttr('id');
+                            $(self.el).find('#tmp'+model.id).find("p").text(model.prettyName());
+                            $(self.el).find('#tmp'+model.id).removeAttr('id');
                         }
                     });
                 }
@@ -351,9 +445,9 @@ var CutomUIPanel = Backbone.View.extend({
 
     refresh : function() {
         var self = this;
-        var elTabs = $("#custom-ui-table-tabs");
-        var elPanels = $("#custom-ui-table-panels");
-        var elTools = $("#custom-ui-table-tools");
+        var elTabs = $(self.el).find("#custom-ui-table-tabs");
+        var elPanels = $(self.el).find("#custom-ui-table-panels");
+        var elTools = $(self.el).find("#custom-ui-table-tools");
 
         var fn = function() {
             require(["text!application/templates/dashboard/config/CustomUIItem.tpl.html"], function (customUIItemTpl) {
@@ -371,12 +465,12 @@ var CutomUIPanel = Backbone.View.extend({
                     self.createComponentConfig(component,customUIItemTpl,elTools);
                 });
 
-                $("#btn-project-configuration-tab-ADMIN_PROJECT").attr("disabled", "disabled");
+                $(self.el).find("#btn-project-configuration-tab-ADMIN_PROJECT").attr("disabled", "disabled");
 
-                $("#custom-ui-table").find("button").click(function(eventData,ui) {
+                $(self.el).find("#custom-ui-table").find("button").click(function(eventData,ui) {
 
                     console.log(eventData.target.id);
-                    var currentButton = $("#"+eventData.target.id);
+                    var currentButton = $(self.el).find("#"+eventData.target.id);
                     var isActiveNow = self.obj[currentButton.data("component")][currentButton.data("role")]==true;
                     currentButton.removeClass(isActiveNow? "btn-success" : "btn-danger");
                     currentButton.addClass(isActiveNow? "btn-danger" : "btn-success");
