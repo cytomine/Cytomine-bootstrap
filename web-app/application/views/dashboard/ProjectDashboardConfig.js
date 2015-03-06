@@ -323,6 +323,7 @@ var DefaultLayerPanel = Backbone.View.extend({
                     // with the project_default_layer id, we will be able to delete them more efficiently
                     var id = $(self.el).find('#selectedDefaultLayers #defaultlayer' + userId).attr("id").replace(userId,response.projectdefaultlayer.id);
                     $(self.el).find('#selectedDefaultLayers #defaultlayer' + userId).attr("id", id);
+                    id = $(self.el).find('#selectedDefaultLayers #hideByDefault' + userId).attr("id").replace(userId,response.projectdefaultlayer.id);
                     $(self.el).find('#selectedDefaultLayers #hideByDefault' + userId).attr("id", id);
                 },
                 error: function (x, y) {
