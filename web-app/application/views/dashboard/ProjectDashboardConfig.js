@@ -7,14 +7,14 @@ var ProjectDashboardConfig = Backbone.View.extend({
         var self = this;
         require(["text!application/templates/dashboard/config/DefaultProjectLayersConfig.tpl.html", "text!application/templates/dashboard/config/CustomUIConfig.tpl.html",
             "text!application/templates/dashboard/config/MagicWandConfig.tpl.html", "text!application/templates/dashboard/config/ImageFiltersConfig.tpl.html",
-                "text!application/templates/dashboard/config/SoftwareConfig.tpl.html"],
-            function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareConfigTemplate) {
-            self.doLayout(defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate,imageFiltersTemplate,softwareConfigTemplate);
+                "text!application/templates/dashboard/config/SoftwareConfig.tpl.html", "text!application/templates/dashboard/config/GeneralConfig.tpl.html"],
+            function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareConfigTemplate, generalConfigTemplate) {
+            self.doLayout(defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate,imageFiltersTemplate,softwareConfigTemplate, generalConfigTemplate);
             self.rendered = true;
         });
         return this;
     },
-    doLayout: function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareTemplate) {
+    doLayout: function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareTemplate, generalConfigTemplate) {
 
         // generate the menu skeleton
 
@@ -39,6 +39,17 @@ var ProjectDashboardConfig = Backbone.View.extend({
         var idPanel;
         var titlePanel;
         var configs=[];
+
+        // General Configs
+        idPanel = "general";
+        titlePanel = "General Configuration";
+        configs.push({id: idPanel, title : titlePanel});
+        var defaultLayers = new GeneralConfigPanel({
+            el: _.template(generalConfigTemplate, {titre : titlePanel, id : idPanel}),
+            model: this.model
+        }).render();
+        configList.append(defaultLayers.el);
+
 
         // Default Layers
         idPanel = "defaultLayers";
@@ -117,6 +128,46 @@ var ProjectDashboardConfig = Backbone.View.extend({
         if (!this.rendered) {
             this.render();
         }
+    }
+
+});
+
+var GeneralConfigPanel = Backbone.View.extend({
+    render: function () {
+        var self = this;
+
+        // initialization
+        $(self.el).find("input#blindMode-checkbox-config").attr('checked', self.model.get('blindMode'));
+        $(self.el).find("input#hideUsersLayers-checkbox-config").attr('checked', self.model.get('hideUsersLayers'));
+        $(self.el).find("input#hideAdminsLayers-checkbox-config").attr('checked', self.model.get('hideAdminsLayers'));
+        $(self.el).find("input#isReadOnly-checkbox-config").attr('checked', self.model.get('isReadOnly'));
+
+        // update
+        $(self.el).on('click', '.general-checkbox-config', function() {
+            var project = self.model;
+
+            var blindMode = $(self.el).find("input#blindMode-checkbox-config").is(':checked');
+            var isReadOnly = $(self.el).find("input#isReadOnly-checkbox-config").is(':checked');
+            var hideUsersLayers = $(self.el).find("input#hideUsersLayers-checkbox-config").is(':checked');
+            var hideAdminsLayers = $(self.el).find("input#hideAdminsLayers-checkbox-config").is(':checked');
+
+            project.set({/*retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,*/
+                blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers});
+            project.save({/*retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,*/
+                blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
+                success: function (model, response) {
+                    console.log("1. Project edited!");
+                    window.app.view.message("Project", response.message, "success");
+                    var id = response.project.id;
+                },
+                error: function (model, response) {
+                    var json = $.parseJSON(response.responseText);
+                    window.app.view.message("Project", json.errors, "error");
+                }
+            });
+        });
+
+        return this;
     }
 
 });

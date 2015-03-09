@@ -1,0 +1,55 @@
+<div class="panel panel-default" id="config-panel-<%= id %>">
+    <div class="panel-heading">
+        <h4><%= titre %></h4>
+    </div>
+    <br/>
+
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2 col-md-offset-1">
+                <input type="checkbox" id="hideAdminsLayers-checkbox-config" class="general-checkbox-config"> Hide admins layers
+            </div>
+            <div class="col-md-8">
+                <div class="alert alert-info">
+                    If you check "Hide admin layers", a "simple" project user will not be able to see the layer of a project admin.
+                    A project admin will still be able to see all layers.
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 col-md-offset-1">
+                <input type="checkbox" id="hideUsersLayers-checkbox-config" class="general-checkbox-config"> Hide users layers
+            </div>
+            <div class="col-md-8">
+                <div class="alert alert-info">
+                    If you check "Hide user layers", a "simple" project user will not be able to see a layer from an other user.
+                    A project admin will still be able to see all layers.
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 col-md-offset-1">
+                <input type="checkbox" id="blindMode-checkbox-config" class="general-checkbox-config"> Blind Mode
+            </div>
+            <div class="col-md-8">
+                <div class="alert alert-info">
+                    If blind mode is enabled, a user will not see image filename. The filename will not influence his work. Filename potentially contains the type of experiment.
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 col-md-offset-1">
+                <input type="checkbox" id="isReadOnly-checkbox-config" class="general-checkbox-config"> Read-Only project
+            </div>
+            <div class="col-md-8">
+                <div class="alert alert-info">
+                    If you check read-only project, a "simple" project user will not be able to add/edit or delete data except annotation on his own layer.
+                    A project admin will still be able to see to add/edit or delete data for this project.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
