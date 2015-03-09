@@ -215,7 +215,6 @@ var EditProjectDialog = Backbone.View.extend({
         });
         $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + $('#login-form-edit-project').find("#project-edit-name").val() + '</option>');
 
-        $('#login-form-edit-project').find("#retrievalproject").multiselectNext('destroy');
         $('#login-form-edit-project').find("#retrievalproject").multiselectNext({
             selected: function (event, ui) {
                 //alert($(ui.option).val() + " has been selected");
