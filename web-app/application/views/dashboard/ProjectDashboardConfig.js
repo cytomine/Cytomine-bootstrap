@@ -133,6 +133,8 @@ var ProjectDashboardConfig = Backbone.View.extend({
 });
 
 var GeneralConfigPanel = Backbone.View.extend({
+    projectMultiSelectAlreadyLoad: false,
+    projects: [],
     render: function () {
         var self = this;
 
@@ -142,32 +144,127 @@ var GeneralConfigPanel = Backbone.View.extend({
         $(self.el).find("input#hideAdminsLayers-checkbox-config").attr('checked', self.model.get('hideAdminsLayers'));
         $(self.el).find("input#isReadOnly-checkbox-config").attr('checked', self.model.get('isReadOnly'));
 
-        // update
-        $(self.el).on('click', '.general-checkbox-config', function() {
-            var project = self.model;
 
-            var blindMode = $(self.el).find("input#blindMode-checkbox-config").is(':checked');
-            var isReadOnly = $(self.el).find("input#isReadOnly-checkbox-config").is(':checked');
-            var hideUsersLayers = $(self.el).find("input#hideUsersLayers-checkbox-config").is(':checked');
-            var hideAdminsLayers = $(self.el).find("input#hideAdminsLayers-checkbox-config").is(':checked');
+        new ProjectCollection().fetch({
+            success: function (collection, response) {
+                self.projects = collection;
 
-            project.set({/*retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,*/
-                blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers});
-            project.save({/*retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,*/
-                blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
-                success: function (model, response) {
-                    console.log("1. Project edited!");
-                    window.app.view.message("Project", response.message, "success");
-                    var id = response.project.id;
-                },
-                error: function (model, response) {
-                    var json = $.parseJSON(response.responseText);
-                    window.app.view.message("Project", json.errors, "error");
+                // change handler
+                $(self.el).find("input#retrievalProjectSome-radio-config,input#retrievalProjectAll-radio-config,input#retrievalProjectNone-radio-config").change(function (test) {
+                    self.refreshRetrievalProjectSelect();
+                    self.update();
+                });
+
+                if (self.model.get('retrievalDisable')) {
+                    $(self.el).find("input#retrievalProjectNone-radio-config").attr("checked", "checked");
+                } else if (self.model.get('retrievalAllOntology')) {
+                    $(self.el).find("input#retrievalProjectAll-radio-config").attr("checked", "checked");
+                } else {
+                    $(self.el).find("input#retrievalProjectSome-radio-config").attr("checked", "checked");
                 }
-            });
+                self.refreshRetrievalProjectSelect();
+            }
+        });
+
+        // if the project name change !
+        /*$(self.el).find("input#project-name").change(function () {
+            console.log("change");
+            if (self.projectMultiSelectAlreadyLoad) {
+                self.createRetrievalProjectSelect();
+            }
+        });*/
+
+        $(self.el).on('click', '.general-checkbox-config', function() {
+            self.update();
         });
 
         return this;
+    },
+    refreshRetrievalProjectSelect: function () {
+        var self = this;
+        if ($(self.el).find("input#retrievalProjectSome-radio-config").is(':checked')) {
+            if (!self.projectMultiSelectAlreadyLoad) {
+                self.createRetrievalProjectSelect(self.projects);
+                self.projectMultiSelectAlreadyLoad = true
+            } else {
+                $(self.el).find("div#retrievalGroup").find(".ui-multiselect").show();
+            }
+        } else {
+            $(self.el).find("div#retrievalGroup").find(".ui-multiselect").hide();
+        }
+    },
+    createRetrievalProjectSelect: function (projects) {
+        var self = this;
+        /* Create Projects List */
+        $(self.el).find("#retrievalproject").empty();
+
+        projects.each(function (project) {
+            if (project.get('ontology') == self.model.get('ontology') && project.id != self.model.id) {
+                if (_.indexOf(self.model.get('retrievalProjects'), project.id) == -1) {
+                    $(self.el).find("#retrievalproject").append('<option value="' + project.id + '">' + project.get('name') + '</option>');
+                }
+                else {
+                    $(self.el).find("#retrievalproject").append('<option value="' + project.id + '" selected="selected">' + project.get('name') + '</option>');
+                }
+            }
+        });
+
+        // try to change dynamically the name
+        //$(self.el).find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + $('#login-form-edit-project').find("#project-edit-name").val() + '</option>');
+        $(self.el).find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + self.model.get('name') + '</option>');
+
+        $(self.el).find("#retrievalproject").multiselectNext({
+            selected: function (event, ui) {
+                console.log($(ui.option).val() + " has been selected");
+                self.update();
+            },
+            deselected: function (event, ui) {
+                console.log($(ui.option).val() + " has been unselected");
+                self.update();
+            }
+        });
+
+
+
+        $("div.ui-multiselect").find("ul.available").css("height", "150px");
+        $("div.ui-multiselect").find("ul.selected").css("height", "150px");
+        $("div.ui-multiselect").find("input.search").css("width", "75px");
+
+        $("div.ui-multiselect").find("div.actions").css("background-color", "#DDDDDD");
+    },
+    update: function() {
+        var self = this;
+
+        var project = self.model;
+
+        var blindMode = $(self.el).find("input#blindMode-checkbox-config").is(':checked');
+        var isReadOnly = $(self.el).find("input#isReadOnly-checkbox-config").is(':checked');
+        var hideUsersLayers = $(self.el).find("input#hideUsersLayers-checkbox-config").is(':checked');
+        var hideAdminsLayers = $(self.el).find("input#hideAdminsLayers-checkbox-config").is(':checked');
+
+        var retrievalDisable = $(self.el).find("input#retrievalProjectNone-radio-config").is(':checked');
+        var retrievalProjectAll = $(self.el).find("input#retrievalProjectAll-radio-config").is(':checked');
+        var retrievalProjectSome = $(self.el).find("input#retrievalProjectSome-radio-config").is(':checked');
+        var projectRetrieval = [];
+        if (retrievalProjectSome) {
+            projectRetrieval = $(self.el).find("#retrievalproject").multiselectNext('selectedValues');
+        }
+
+
+        project.set({retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,
+            blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers});
+        project.save({retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,
+            blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
+            success: function (model, response) {
+                console.log("1. Project edited!");
+                window.app.view.message("Project", response.message, "success");
+                var id = response.project.id;
+            },
+            error: function (model, response) {
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Project", json.errors, "error");
+            }
+        });
     }
 
 });

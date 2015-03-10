@@ -41,7 +41,6 @@ var EditProjectDialog = Backbone.View.extend({
         self.createProjectInfo();
         self.createUserList();
         $("#project-edit-name").val(self.model.get('name'));
-        self.createRetrievalProject();
 //        self.createUserList(usersChoicesTpl);
 
         //Build dialog
@@ -159,73 +158,6 @@ var EditProjectDialog = Backbone.View.extend({
             }});
 
     },
-    createRetrievalProject: function () {
-        var self = this;
-        $('#login-form-edit-project').find("input#retrievalProjectSome,input#retrievalProjectAll,input#retrievalProjectNone").change(function () {
-            console.log("change1");
-            if ($('#login-form-edit-project').find("input#retrievalProjectSome").is(':checked')) {
-                console.log("createRetrievalProject=" + self.projectMultiSelectAlreadyLoad);
-                if (!self.projectMultiSelectAlreadyLoad) {
-                    self.createRetrievalProjectSelect();
-                    self.projectMultiSelectAlreadyLoad = true
-                } else {
-                    console.log("Show");
-                    $('#login-form-edit-project').find("div#retrievalGroup").find(".ui-multiselect").show();
-                }
-            } else {
-                console.log("Hide");
-                $('#login-form-edit-project').find("div#retrievalGroup").find(".ui-multiselect").hide();
-            }
-        });
-
-        $('#login-form-edit-project').find("input#project-name").change(function () {
-            console.log("change");
-            if (self.projectMultiSelectAlreadyLoad) {
-                self.createRetrievalProjectSelect();
-            }
-        });
-
-        if (self.model.get('retrievalDisable')) {
-            $('#login-form-edit-project').find("input#retrievalProjectNone").attr("checked", "checked");
-            $('#login-form-edit-project').find("input#retrievalProjectNone").change();
-        } else if (self.model.get('retrievalAllOntology')) {
-            $('#login-form-edit-project').find("input#retrievalProjectAll").attr("checked", "checked");
-            $('#login-form-edit-project').find("input#retrievalProjectAll").change();
-        } else {
-            $('#login-form-edit-project').find("input#retrievalProjectSome").attr("checked", "checked");
-            $('#login-form-edit-project').find("input#retrievalProjectSome").change();
-            //retrievalProjectAll
-
-        }
-    },
-    createRetrievalProjectSelect: function () {
-        var self = this;
-        /* Create Users List */
-        $('#login-form-edit-project').find("#retrievalproject").empty();
-
-        window.app.models.projects.each(function (project) {
-            if (project.get('ontology') == self.model.get('ontology') && project.id != self.model.id) {
-                if (_.indexOf(self.model.get('retrievalProjects'), project.id) == -1) {
-                    $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + project.id + '">' + project.get('name') + '</option>');
-                }
-                else {
-                    $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + project.id + '" selected="selected">' + project.get('name') + '</option>');
-                }
-            }
-        });
-        $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + $('#login-form-edit-project').find("#project-edit-name").val() + '</option>');
-
-        $('#login-form-edit-project').find("#retrievalproject").multiselectNext({
-            selected: function (event, ui) {
-                //alert($(ui.option).val() + " has been selected");
-            }});
-
-        $("div.ui-multiselect").find("ul.available").css("height", "150px");
-        $("div.ui-multiselect").find("ul.selected").css("height", "150px");
-        $("div.ui-multiselect").find("input.search").css("width", "75px");
-
-        $("div.ui-multiselect").find("div.actions").css("background-color", "#DDDDDD");
-    },
     fillForm: function () {
 
         var self = this;
@@ -297,14 +229,6 @@ var EditProjectDialog = Backbone.View.extend({
         var name = $("#project-edit-name").val().toUpperCase();
         var users = self.userMaggicSuggest.getValue();
         var admins = self.adminMaggicSuggest.getValue();
-        var retrievalDisable = $('#login-form-edit-project').find("input#retrievalProjectNone").is(':checked');
-        var retrievalProjectAll = $('#login-form-edit-project').find("input#retrievalProjectAll").is(':checked');
-        var retrievalProjectSome = $('#login-form-edit-project').find("input#retrievalProjectSome").is(':checked');
-        var projectRetrieval = [];
-        if (retrievalProjectSome) {
-            projectRetrieval = $('#login-form-edit-project').find("#retrievalproject").multiselectNext('selectedValues');
-        }
-
         var divToFill = $("#login-form-edit-project");
         divToFill.hide();
 //        $("#login-form-add-project-titles").empty();
@@ -323,8 +247,8 @@ var EditProjectDialog = Backbone.View.extend({
                 var taskId = response.task.id;
                 //create project
                 project.task = taskId
-                project.set({users: users, admins:admins,name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval});
-                project.save({users:users, admins:admins, name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval}, {
+                project.set({users: users, admins:admins,name: name});
+                project.save({users:users, admins:admins, name: name}, {
                     success: function (model, response) {
                         console.log("1. Project edited!");
                         clearInterval(timer);
