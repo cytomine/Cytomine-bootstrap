@@ -511,7 +511,7 @@ class RestUserController extends RestController {
 
         //Get all project user online
         def users = secUserService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
-        def usersId = users.collect {it.id}
+        def usersId = users.collect {it}
 
         //Get all user oonline and their pictures
         def db = mongo.getDB(noSQLCollectionService.getDatabaseName())

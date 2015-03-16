@@ -292,6 +292,33 @@ class HttpClient {
 
     }
 
+//    public int post(byte[] data) throws Exception {
+//        log.debug("Put " + URL.getPath());
+//        HttpPut httpPut = new HttpPut(URL.getPath());
+//        if (isAuthByPrivateKey) httpPut.setHeaders(headersArray);
+//        log.debug("Put send :" + data.length);
+//
+////        InputStreamEntity reqEntity = new InputStreamEntity(new ByteArrayInputStream(data), data.length);
+////        reqEntity.setContentType("binary/octet-stream");
+////        reqEntity.setChunked(false);
+////
+////        BufferedHttpEntity myEntity = null;
+////                   try {
+////                       myEntity = new BufferedHttpEntity(reqEntity);
+////                   } catch (IOException e) {
+////                       // TODO Auto-generated catch block
+////                       e.printStackTrace();
+////                   }
+//        MultipartEntity myEntity = new MultipartEntity();
+//        myEntity.addPart("files[]",new ByteArrayBody(data,"toto")) ;
+//        //int code = client.post(entity);
+//
+//
+//        httpPut.setEntity(myEntity);
+//        response = client.execute(targetHost, httpPut, localcontext);
+//        return response.getStatusLine().getStatusCode();
+//    }
+
     /**
      * Do put action
      * Response is saved and can be retrieved with getResponseCode()/getResponseData()
