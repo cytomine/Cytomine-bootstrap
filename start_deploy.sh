@@ -30,6 +30,8 @@ RETRIEVAL_ENGINE=kyoto
 IMS_STORAGE_PATH=/data
 IMS_BUFFER_PATH=/data/_buffer
 
+BIOFORMAT_ENABLED="false"
+
 # You don't to change the datas below this line instead of advanced customization
 # ---------------------------
 
@@ -37,6 +39,10 @@ CORE_WAR_URL="http://cytomine.be/release/core/ROOT.war"
 IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 
 MEMCACHED_PASS="mypass"
+
+BIOFORMAT_LOCATION="localhost"
+BIOFORMAT_PORT="4321"
+
 # create memcached docker
 docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 cytomine/memcached
 docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 cytomine/memcached
@@ -153,6 +159,9 @@ docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
 -e IS_LOCAL=$IS_LOCAL \
 -e HAS_GLUSTER=$HAS_GLUSTER \
 -e CORE_URL=$CORE_URL \
+-e BIOFORMAT_ENABLED=$BIOFORMAT_ENABLED \
+-e BIOFORMAT_LOCATION=$BIOFORMAT_LOCATION \
+-e BIOFORMAT_PORT=$BIOFORMAT_PORT \
 cytomine/ims
 
 # create CORE docker

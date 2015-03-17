@@ -45,7 +45,18 @@ then
 	echo "cytomine.iipImageServerVentana=http://$IIP_VENT_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 	echo "cytomine.iipImageServerCyto=http://$IIP_CYTO_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 	echo "cytomine.iipImageServerJpeg2000=http://$IIP_JP2_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+
+	echo "bioformat.application.enabled=$BIOFORMAT_ENABLED" >> imageserverconfig.properties
+	echo "bioformat.application.location=$BIOFORMAT_LOCATION" >> imageserverconfig.properties
+	echo "bioformat.application.port=$BIOFORMAT_PORT" >> imageserverconfig.properties
 fi
+
+if [ $BIOFORMAT_ENABLED = true ]; then
+	if [ $BIOFORMAT_LOCATION == "localhost" ]; then
+		java -jar /tmp/bioformat.tar.gz/BioFormatTest_jar/BioFormatTest.jar $BIOFORMAT_PORT &
+	fi
+fi
+
 service tomcat7 start
 
 echo "/var/log/tomcat7/catalina.out {"   > /etc/logrotate.d/tomcat7
