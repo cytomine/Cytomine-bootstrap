@@ -126,6 +126,9 @@ environments {
         grails.plugin.springsecurity.useBasicAuth = false
         grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
         grails.readOnlyProjectsByDefault = true
+        grails.adminPassword="admin"
+        grails.ImageServerPrivateKey="70f35a45-c317-405a-8056-353db3d2bf56"
+        grails.ImageServerPublicKey="4a5c7004-b6f8-4705-a118-c15d5c90dcdb"
     }
     test {
         grails.serverURL = "http://localhost:8090"
