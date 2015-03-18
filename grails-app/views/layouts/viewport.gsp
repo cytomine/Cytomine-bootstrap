@@ -336,7 +336,6 @@ body {
         setTimeout(function(){
             if (navigator.appVersion.indexOf("Linux")!=-1) {
                 $("#j_username").val("lrollus");
-                $("#j_username").val("rhoyoux");
                 $("#j_password").val("lR$2011");
             }
             if (navigator.appVersion.indexOf("Mac")!=-1) {

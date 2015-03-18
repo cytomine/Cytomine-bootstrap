@@ -32,6 +32,7 @@ class LoginController extends RestController {
     def notificationService
 
     def loginWithoutLDAP () {
+        println "loginWithoutLDAP"
         if (springSecurityService.isLoggedIn()) {
             redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
         }
@@ -60,6 +61,8 @@ class LoginController extends RestController {
      */
     def auth () {
         def config = SpringSecurityUtils.securityConfig
+
+        println "auth:$config"
 
         if (springSecurityService.isLoggedIn()) {
             redirect uri: config.successHandler.defaultTargetUrl
