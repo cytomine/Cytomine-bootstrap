@@ -153,6 +153,9 @@ docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_
 cytomine/iipjpeg2000
 nb_docker=$((nb_docker+1))
 
+IMS_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
+IMS_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
+
 # create IMS docker
 docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
 -v /tmp/uploaded/ \
@@ -166,6 +169,8 @@ docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
 -e IS_LOCAL=$IS_LOCAL \
 -e HAS_GLUSTER=$HAS_GLUSTER \
 -e CORE_URL=$CORE_URL \
+-e IMS_PUB_KEY=$IMS_PUB_KEY \
+-e IMS_PRIV_KEY=$IMS_PRIV_KEY \
 -e BIOFORMAT_ENABLED=$BIOFORMAT_ENABLED \
 -e BIOFORMAT_LOCATION=$BIOFORMAT_LOCATION \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
@@ -183,6 +188,8 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e WAR_URL=$CORE_WAR_URL \
 -e IS_LOCAL=$IS_LOCAL \
 -e ADMIN_PWD=$admin_pwd \
+-e IMS_PUB_KEY=$IMS_PUB_KEY \
+-e IMS_PRIV_KEY=$IMS_PRIV_KEY \
 cytomine/core
 nb_docker=$((nb_docker+1))
 
