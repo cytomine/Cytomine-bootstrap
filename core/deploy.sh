@@ -39,6 +39,7 @@ then
 
 	echo "grails.uploadURL='http://$UPLOAD_URL'" >> cytomineconfig.groovy
 
+	echo "grails.adminPassword=$ADMIN_PWD" >> cytomineconfig.groovy
 
 fi
 
