@@ -51,10 +51,10 @@ cytomine/rabbitmq
 nb_docker=$((nb_docker+1))
 
 # create data only containers
-docker run -d --name postgis_data cytomine/data_postgis
+docker run -d --name postgis_data cytomine/data_postgis || docker start postgis_data
 nb_docker=$((nb_docker+1))
 #TODO mongodb
-docker run -d --name retrieval_data cytomine/data_postgres
+docker run -d --name retrieval_data cytomine/data_postgres || docker start retrieval_data
 nb_docker=$((nb_docker+1))
 
 # create mongodb docker
@@ -68,7 +68,6 @@ nb_docker=$((nb_docker+1))
 
 docker run -p 22 -m 8g -d --name db --volumes-from postgis_data cytomine/postgis
 nb_docker=$((nb_docker+1))
-
 
 if [ $BACKUP_BOOL = true ] 
 then
@@ -153,6 +152,7 @@ docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_
 cytomine/iipjpeg2000
 nb_docker=$((nb_docker+1))
 
+
 IMS_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
 IMS_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 
@@ -226,7 +226,8 @@ nb_docker=$((nb_docker+1))
 
 nb_started_docker=$(echo "$(sudo docker ps)" | wc -l)
 nb_started_docker=$((nb_started_docker-1)) # remove the header line
-
+#echo "number of started docker = $nb_started_docker"
+#echo "number of asked docker = $nb_docker"
 if [ $nb_started_docker -eq $nb_docker ]
 then
 	touch ./.cookies
