@@ -11,7 +11,7 @@ import be.cytomine.api.RestController
 //TODO:APIDOC
 class RestRetrievalController extends RestController {
 
-    def retrievalService
+    def imageRetrievalService
     def cytomineService
 
     /**
@@ -27,7 +27,7 @@ class RestRetrievalController extends RestController {
             if(!annotation) {
                 responseNotFound("AnnotationDomain",params.idannotation)
             } else {
-                def data = retrievalService.listSimilarAnnotationAndBestTerm(annotation.project, annotation)
+                def data = imageRetrievalService.listSimilarAnnotationAndBestTerm(annotation.project, annotation)
                responseSuccess(data)
             }
         } catch (CytomineException e) {
@@ -42,7 +42,7 @@ class RestRetrievalController extends RestController {
 
     def missingAnnotation = {
         log.info "get missing annotation"
-        retrievalService.indexMissingAnnotation()
+        imageRetrievalService.indexMissingAnnotation()
         responseSuccess([])
     }
 }

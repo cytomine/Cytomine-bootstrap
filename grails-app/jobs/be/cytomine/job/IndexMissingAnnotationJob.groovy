@@ -3,7 +3,7 @@ package be.cytomine.job
 
 class IndexMissingAnnotationJob {
 
-    def retrievalService
+    def imageRetrievalService
 
     static triggers = {
         String cronexpr = "0 0 1 * * ?"
@@ -12,7 +12,7 @@ class IndexMissingAnnotationJob {
 
      def execute(){
          //ask indexed annotation
-         retrievalService.indexMissingAnnotation()
+         imageRetrievalService.indexMissingAnnotation()
      }
 
 

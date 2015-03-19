@@ -23,6 +23,8 @@ import groovy.sql.Sql
 import org.hibernate.criterion.Restrictions
 import org.hibernate.spatial.criterion.SpatialRestrictions
 
+import javax.imageio.ImageIO
+
 //import org.hibernatespatial.criterion.SpatialRestrictions
 
 import static org.springframework.security.acls.domain.BasePermission.READ
@@ -33,7 +35,7 @@ class UserAnnotationService extends ModelService {
     def cytomineService
     def transactionService
     def annotationTermService
-    def retrievalService
+    def imageRetrievalService
     def algoAnnotationTermService
     def modelService
     def simplifyGeometryService
@@ -44,6 +46,7 @@ class UserAnnotationService extends ModelService {
     def annotationListingService
     def securityACLService
     def currentRoleServiceProxy
+    //def imageRetrievalService
 
     def currentDomain() {
         return UserAnnotation
@@ -86,11 +89,13 @@ class UserAnnotationService extends ModelService {
     def listLightForRetrieval() {
         securityACLService.checkAdmin(cytomineService.currentUser)
         //String request = "SELECT a.id as id, a.project_id as project FROM user_annotation a WHERE GeometryType(a.location) != 'POINT' ORDER BY id desc"
+        extractAnnotationForRetrieval(dataSource)
+    }
 
-        //SELECT a.id, st_area(a.location) FROM user_annotation a where st_area(a.location) < 1500000 order by st_area(a.location) DESC;
+    static def extractAnnotationForRetrieval(def dataSource) {
         String request = "" +
                 "SELECT a.id as id, a.project_id as project FROM user_annotation a, image_instance ii, abstract_image ai WHERE a.image_id = ii.id AND ii.base_image_id = ai.id AND ai.original_filename not like '%ndpi%svs%' AND GeometryType(a.location) != 'POINT' AND st_area(a.location) < 1500000 ORDER BY st_area(a.location) DESC"
-        selectUserAnnotationLightForRetrieval(request)
+        return selectUserAnnotationLightForRetrieval(dataSource,request)
     }
 
     /**
@@ -209,7 +214,9 @@ class UserAnnotationService extends ModelService {
                 if (!currentUser.algo()) {
                     try {
                         log.info "log.addannotation2"
-                        if (annotationID) indexRetrievalAnnotation(annotationID)
+                        if (annotationID) {
+                            indexRetrievalAnnotation(annotationID)
+                        }
                     } catch (CytomineException ex) {
                         log.error "CytomineException index in retrieval:" + ex.toString()
                     } catch (Exception e) {
@@ -269,30 +276,33 @@ class UserAnnotationService extends ModelService {
 //        return [status:200,data:[]]
     }
 
+    def abstractImageService
     /**
      * Add annotation to retrieval server for similar annotation listing and term suggestion
      */
     private indexRetrievalAnnotation(Long id) {
-        //index in retrieval (asynchronous)
-        log.info "log.addannotation3"
-        RetrievalServer retrieval = RetrievalServer.findByDeletedIsNull()
-        log.info "userAnnotation.id=" + id + " stevben-server=" + retrieval
-        if (id && retrieval) {
-            log.info "index userAnnotation " + id + " on  " + retrieval.getFullURL()
-            retrievalService.indexAnnotationAsynchronous(UserAnnotation.read(id), retrieval)
+        //index in retrieval
+            log.info "index userAnnotation $id"
+            AnnotationDomain annotation = UserAnnotation.read(id)
 
-        }
+            log.info "urlCrop=${annotation.urlImageServerCrop(abstractImageService)}"
+            imageRetrievalService.indexImageAsync(
+                    ImageIO.read(new URL(annotation.urlImageServerCrop(abstractImageService))),
+                    id+"",
+                    annotation.project.id+"",
+                    [:]
+            )//indexAnnotationAsynchronous(UserAnnotation.read(id), retrieval)
     }
 
     /**
      * Add annotation from retrieval server
      */
-    private deleteRetrievalAnnotation(Long id) {
+    private deleteRetrievalAnnotation(Long id,Long project) {
         RetrievalServer retrieval = RetrievalServer.findByDeletedIsNull()
         log.info "userAnnotation.id=" + id + " retrieval-server=" + retrieval
         if (id && retrieval) {
             log.info "delete userAnnotation " + id + " on  " + retrieval.getFullURL()
-            retrievalService.deleteAnnotationAsynchronous(id)
+            imageRetrievalService.deleteAnnotationAsynchronous(id, project+"")
         }
     }
 
@@ -302,9 +312,10 @@ class UserAnnotationService extends ModelService {
     private updateRetrievalAnnotation(Long id) {
         RetrievalServer retrieval = RetrievalServer.findByDeletedIsNull()
         log.info "userAnnotation.id=" + id + " retrieval-server=" + retrieval
+        log.warn "UPDATE NOT IMPLEMENTED"
         if (id && retrieval) {
-            log.info "update userAnnotation " + id + " on  " + retrieval.getFullURL()
-            retrievalService.updateAnnotationAsynchronous(id)
+//            log.info "update userAnnotation " + id + " on  " + retrieval.getFullURL()
+//            imageRetrievalService.updateAnnotationAsynchronous(id)
         }
     }
 
@@ -332,7 +343,7 @@ class UserAnnotationService extends ModelService {
     /**
      * Execute request and format result into a list of map
      */
-    private def selectUserAnnotationLightForRetrieval(String request) {
+    private static def selectUserAnnotationLightForRetrieval(def dataSource,String request) {
         def data = []
         def sql = new Sql(dataSource)
         sql.eachRow(request) {

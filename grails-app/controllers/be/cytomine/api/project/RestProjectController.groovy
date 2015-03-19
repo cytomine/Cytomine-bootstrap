@@ -30,7 +30,6 @@ class RestProjectController extends RestController {
     def projectService
     def ontologyService
     def cytomineService
-    def retrievalService
     def imageInstanceService
     def taskService
     def secUserService
@@ -123,7 +122,6 @@ class RestProjectController extends RestController {
             log.info "project = ${domain}"
             def result = projectService.delete(domain,transactionService.start(),task)
             //delete container in retrieval
-            try {retrievalService.deleteContainerAsynchronous(params.id) } catch(Exception e) {log.error e}
             responseResult(result)
         } catch (CytomineException e) {
             log.error(e)
