@@ -33,5 +33,8 @@ rm -r ./reporting/iipJ2
 rm -r ./reporting/iipCyto
 rm -r ./reporting/iipventana
 
+cp ./configuration.sh ./reporting/configuration.sh
+cp ./start_deploy.sh ./reporting/start_deploy.sh
+
 tar -zcvf reporting.tgz reporting
 rm -r ./reporting
