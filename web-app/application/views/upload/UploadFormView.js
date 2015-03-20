@@ -714,6 +714,9 @@ var UploadFormView = Backbone.View.extend({
              ],*/
             "aoColumns": [
                 { "mDataProp": "originalFilename", fnRender : function (o, originalFilename) {
+                    if (o.aData.image == null) {
+                        return originalFilename;
+                    }
                     return '<span onmouseout="$(\'#thumbcommand'+o.aData.image+'\').hide();" '+
                         'onMouseOver="$(\'#thumbcommand'+o.aData.image+'\').css(\'display\',\'block\');"> '+
                         '<img class="thumbcommand" id="thumbcommand'+o.aData.image+'" '+
