@@ -51,11 +51,18 @@ then
 	echo "bioformat.application.port=$BIOFORMAT_PORT" >> imageserverconfig.properties
 fi
 
-if [ $BIOFORMAT_ENABLED = true ]; then
-	if [ $BIOFORMAT_LOCATION == "localhost" ]; then
-		java -jar /tmp/bioformat.tar.gz/BioFormatTest_jar/BioFormatTest.jar $BIOFORMAT_PORT &
+if [ ! -z "$BIOFORMAT_JAR_URL" ]
+then
+	cd /tmp/ && wget -q $BIOFORMAT_JAR_URL -O BioFormatStandAlone.tar.gz
+	tar -zxvf BioFormatStandAlone.tar.gz
+	cd BioFormatStandAlone_jar/
+	if [ $BIOFORMAT_ENABLED = true ]; then
+		if [ $BIOFORMAT_LOCATION == "localhost" ]; then
+			java -jar BioFormatStandAlone.jar $BIOFORMAT_PORT &
+		fi
 	fi
 fi
+
 
 service tomcat7 start
 

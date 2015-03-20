@@ -37,7 +37,6 @@ EXPOSE 8082
 
 RUN ldconfig -v
 
-ADD bioformat.tar.gz /tmp/bioformat.tar.gz
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 
