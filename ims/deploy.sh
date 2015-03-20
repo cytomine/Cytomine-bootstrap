@@ -59,6 +59,17 @@ then
 	if [ $BIOFORMAT_ENABLED = true ]; then
 		if [ $BIOFORMAT_LOCATION == "localhost" ]; then
 			java -jar BioFormatStandAlone.jar $BIOFORMAT_PORT &
+
+			echo "#Setting env var" >> /tmp/crontab
+			echo "BIOFORMAT_PORT=$BIOFORMAT_PORT" >> /tmp/crontab
+			echo "#End setting env var" >> /tmp/crontab
+
+			echo "*/1 * * * * python /tmp/check_bioformat.py $BIOFORMAT_PORT" >> /tmp/crontab
+			crontab /tmp/crontab
+			rm /tmp/crontab
+
+			echo "run cron"
+			cron
 		fi
 	fi
 fi
