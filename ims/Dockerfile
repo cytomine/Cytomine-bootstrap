@@ -4,7 +4,7 @@ MAINTAINER Cytomine Team "support@cytomine.be"
 
 #storage mount commands
 RUN apt-get install -y software-properties-common
-RUN add-apt-repository -y ppa:semiosis/ubuntu-glusterfs-3.5
+RUN add-apt-repository -y ppa:semiosis/ppa
   
 # prepare openslide + iip + vips installation 
 RUN apt-get -y install git libopenjpeg-dev libjpeg8-dev libtiff5-dev libmemcached-dev 
