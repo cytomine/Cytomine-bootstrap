@@ -166,7 +166,6 @@ IMS_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 
 # create IMS docker
 docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
---link bioformat:$BIOFORMAT_ALIAS \
 -v /tmp/uploaded/ \
 -e IIP_OFF_URL=$IIP_OFF_URL \
 -e IIP_VENT_URL=$IIP_VENT_URL \
@@ -185,6 +184,13 @@ docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
 cytomine/ims
 nb_docker=$((nb_docker+1))
+
+# add a dynamic link to bioformat
+if [ $BIOFORMAT_ENABLED = true ]
+then
+	BIOFORMAT_IP = $(docker inspect --format '{{ .NetworkSettings.IPAddress }}' bioformat)
+	docker exec memcached1 /bin/bash -c "echo $BIOFORMAT_IP       $BIOFORMAT_ALIAS >>  /tmp/lalala2"
+fi
 
 # create CORE docker
 docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link mongodb:mongodb \
