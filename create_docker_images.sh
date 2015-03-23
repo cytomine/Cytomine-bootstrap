@@ -16,6 +16,7 @@ cd ../iipCyto && docker build -t="cytomine/iipcyto" .
 cd ../iipJpeg2000 && docker build -t="cytomine/iipjpeg2000" .
 cd ../iipOfficiel && docker build -t="cytomine/iipofficiel" .
 cd ../iipVentana && docker build -t="cytomine/iipventana" .
+cd ../bioformat && docker build -t="cytomine/bioformat" .
 cd ../ims && docker build -t="cytomine/ims" .
 cd ../nginx && docker build -t="cytomine/nginx" .
 cd ../mongodb && docker build -t="cytomine/mongodb" .

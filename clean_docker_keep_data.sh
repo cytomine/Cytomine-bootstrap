@@ -28,6 +28,8 @@ docker stop iipVent
 docker rm -v iipVent
 docker stop iipJ2
 docker rm -v iipJ2
+docker stop bioformat
+docker rm -v bioformat
 docker stop ims
 docker rm -v ims
 docker stop core

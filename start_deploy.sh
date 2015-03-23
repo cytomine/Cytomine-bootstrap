@@ -152,12 +152,21 @@ docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_
 cytomine/iipjpeg2000
 nb_docker=$((nb_docker+1))
 
+if [ $BIOFORMAT_ENABLED = true ]
+then
+	docker run -p 22 -d --name bioformat -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+	-e BIOFORMAT_PORT=$BIOFORMAT_PORT \
+	-e BIOFORMAT_JAR_URL=$BIOFORMAT_JAR_URL \
+	cytomine/bioformat
+	nb_docker=$((nb_docker+1))
+fi
 
 IMS_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
 IMS_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 
 # create IMS docker
 docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
+--link bioformat:$BIOFORMAT_ALIAS \
 -v /tmp/uploaded/ \
 -e IIP_OFF_URL=$IIP_OFF_URL \
 -e IIP_VENT_URL=$IIP_VENT_URL \
@@ -172,9 +181,8 @@ docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
 -e IMS_PUB_KEY=$IMS_PUB_KEY \
 -e IMS_PRIV_KEY=$IMS_PRIV_KEY \
 -e BIOFORMAT_ENABLED=$BIOFORMAT_ENABLED \
--e BIOFORMAT_LOCATION=$BIOFORMAT_LOCATION \
+-e BIOFORMAT_LOCATION=$BIOFORMAT_ALIAS \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
--e BIOFORMAT_JAR_URL=$BIOFORMAT_JAR_URL \
 cytomine/ims
 nb_docker=$((nb_docker+1))
 

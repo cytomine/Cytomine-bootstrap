@@ -40,6 +40,6 @@ IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 MEMCACHED_PASS="mypass"
 
 BIOFORMAT_JAR_URL="http://cytomine.be/release/bioformat/BioFormatStandAlone.tar.gz"
-BIOFORMAT_LOCATION="localhost"
+BIOFORMAT_ALIAS="bioformat"
 BIOFORMAT_PORT="4321"
 
