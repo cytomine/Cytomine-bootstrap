@@ -188,8 +188,8 @@ nb_docker=$((nb_docker+1))
 # add a dynamic link to bioformat
 if [ $BIOFORMAT_ENABLED = true ]
 then
-	BIOFORMAT_IP = $(docker inspect --format '{{ .NetworkSettings.IPAddress }}' bioformat)
-	docker exec memcached1 /bin/bash -c "echo $BIOFORMAT_IP       $BIOFORMAT_ALIAS >>  /tmp/lalala2"
+	BIOFORMAT_IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' bioformat)
+	docker exec ims /bin/bash -c "echo $BIOFORMAT_IP       $BIOFORMAT_ALIAS >>  /etc/hosts"
 fi
 
 # create CORE docker
