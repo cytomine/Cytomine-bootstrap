@@ -116,6 +116,33 @@ var ProjectDashboardConfig = Backbone.View.extend({
         }).render();
         configList.append(softwares.el);
 
+        var callBack = function(users) {
+            new ProjectDefaultLayerCollection({project: this.model.id}).fetch({
+                success: function (collection) {
+                    var layersToDelete = 0;
+                    var layersDeleted = 0;
+                    collection.each(function(layer) {
+                        if(users.indexOf(layer.attributes.user) == -1) {
+                            layersToDelete++;
+                            console.log("deletion de ");
+                            console.log(layer.id);
+                            layer.destroy({
+                                success: function (model, response) {
+                                    layersDeleted++;
+                                    if(layersToDelete == layersDeleted) {
+                                        defaultLayers.refresh();
+                                    }
+                                }
+                            });
+                        }
+                        if(layersToDelete == 0) {
+                            defaultLayers.refresh();
+                        }
+                    });
+                }
+            });
+        }
+        users.setCallback(callBack);
 
 
         // Generation of the left menu
@@ -282,6 +309,7 @@ var UsersConfigPanel = Backbone.View.extend({
     projectUsers: [],
     projectAdmins: [],
     groups: null,
+    callback: null,
     render: function() {
         var self = this;
         self.createUserList();
@@ -504,30 +532,6 @@ var UsersConfigPanel = Backbone.View.extend({
     update: function(callbackSuccess) {
         var self = this;
 
-        // TODO
-        // here, we need a refresh of the DefaultLayerPanel as the users have changed !!!
-
-        // here the function from the old config panel
-        /*self.editProjectDefaultLayers(id, users.concat(admins));
-        editProjectDefaultLayers : function(projectId, users) {
-            console.log("editProjectDefaultLayers");
-            console.log(projectId);
-            console.log(users);
-            for(var i = 0; i< users.length ; i++) {
-                console.log(users[i]);
-            }
-            new ProjectDefaultLayerCollection({project: projectId}).fetch({
-                success: function (collection) {
-                    collection.each(function(layer) {
-                        if(users.indexOf(layer.attributes.user) == -1) {
-                            console.log("deletion de ");
-                            console.log(layer.id);
-                            layer.destroy();
-                        }
-                    });
-                }
-            });
-        },*/
 
 
 
@@ -547,14 +551,18 @@ var UsersConfigPanel = Backbone.View.extend({
                 if(callbackSuccess != null && callbackSuccess != undefined) {
                     callbackSuccess()
                 }
+                // here, we need a refresh of the DefaultLayerPanel as the users have changed !!!
+                self.callback(users.concat(admins))
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
                 window.app.view.message("Project", json.errors, "error");
             }
         });
+    },
+    setCallback : function(callback) {
+        this.callback = callback;
     }
-
 });
 
 var MagicWandConfig = Backbone.View.extend({
@@ -695,16 +703,7 @@ var DefaultLayerPanel = Backbone.View.extend({
 
         $(self.el).find("#selectedDefaultLayers").hide();
 
-        // load all user and admin of the project
-        new UserCollection({project: self.model.id}).fetch({
-            success: function (projectUserCollection, response) {
-                projectUserCollection.each(function(user) {
-                    $(self.el).find('#availableprojectdefaultlayers').append('<option value="'+ user.id +'">' + user.prettyName() + '</option>');
-                });
-            }
-        });
-
-
+        self.refresh();
 
 
         $(self.el).find('#projectadddefaultlayersbutton').click(function() {
@@ -781,6 +780,23 @@ var DefaultLayerPanel = Backbone.View.extend({
             });
         };
 
+        return this;
+    },
+    refresh : function(){
+        var self = this;
+        $(self.el).find('#availableprojectdefaultlayers').empty();
+        $(self.el).find('#selectedDefaultLayers').empty();
+
+
+        // load all user and admin of the project
+        new UserCollection({project: self.model.id}).fetch({
+            success: function (projectUserCollection, response) {
+                projectUserCollection.each(function(user) {
+                    $(self.el).find('#availableprojectdefaultlayers').append('<option value="'+ user.id +'">' + user.prettyName() + '</option>');
+                });
+            }
+        });
+
         // load existing default layers
         new ProjectDefaultLayerCollection({project: self.model.id}).fetch({
             success: function (collection) {
@@ -790,8 +806,8 @@ var DefaultLayerPanel = Backbone.View.extend({
                 });
 
 
+                $(self.el).find("#selectedDefaultLayers").show();
                 for(var i = 0; i<defaultLayersArray.length; i++){
-                    $(self.el).find("#selectedDefaultLayers").show();
                     // check if not already taken
                     $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + defaultLayersArray[i].id + '" class="hideByDefault"> Hide layers by default</div>');
                     $(self.el).find('#hideByDefault' + defaultLayersArray[i].id)[0].checked = defaultLayersArray[i].hideByDefault;
@@ -806,8 +822,6 @@ var DefaultLayerPanel = Backbone.View.extend({
                 }
             }
         });
-
-        return this;
     }
 
 });
