@@ -24,7 +24,8 @@
 
 <link href="lib/dynatree/skin/ui.dynatree.css" rel="stylesheet" type="text/css"/>
 <link rel='stylesheet' href='lib/stepy/css/jquery.stepy.bootstrap.css' type='text/css'/>
-<link rel='stylesheet' href='lib/multiselect-next/css/ui.multiselect.css' type='text/css'/>
+<link rel='stylesheet' href='lib/multiselect-next/css/jquery.uix.multiselect.css' type='text/css'/>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
 <link rel='stylesheet' href='lib/OpenLayers-2.13.1/theme/default/style.css' type='text/css'/>
 <link rel="stylesheet" href="lib/bootstrap-3.0.3/css/bootstrap.min.css"/>
 
@@ -133,8 +134,7 @@ body {
 
 
 
-<script type="text/javascript" src="lib/multiselect-next/js/ui.multiselect.js"></script>
-<script type="text/javascript" src="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"></script>
+<script type="text/javascript" src="lib/multiselect-next/js/jquery.uix.multiselect.js"></script>
 
 <script type="text/javascript" src="lib/multiselectResolveConflict.js"></script>
 
@@ -181,6 +181,7 @@ body {
 <script type="text/javascript" src="application/models/OntologyModel.js" ></script>
 
 <script type="text/javascript" src="application/models/UserModel.js" ></script>
+<script type="text/javascript" src="application/models/GroupModel.js" ></script>
 <script type="text/javascript" src="application/models/ProjectModel.js" ></script>
 <script type="text/javascript" src="application/models/AnnotationModel.js" ></script>
 <script type="text/javascript" src="application/models/SlideModel.js" ></script>

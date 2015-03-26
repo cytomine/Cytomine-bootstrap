@@ -7,14 +7,16 @@ var ProjectDashboardConfig = Backbone.View.extend({
         var self = this;
         require(["text!application/templates/dashboard/config/DefaultProjectLayersConfig.tpl.html", "text!application/templates/dashboard/config/CustomUIConfig.tpl.html",
             "text!application/templates/dashboard/config/MagicWandConfig.tpl.html", "text!application/templates/dashboard/config/ImageFiltersConfig.tpl.html",
-                "text!application/templates/dashboard/config/SoftwareConfig.tpl.html", "text!application/templates/dashboard/config/GeneralConfig.tpl.html"],
-            function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareConfigTemplate, generalConfigTemplate) {
-            self.doLayout(defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate,imageFiltersTemplate,softwareConfigTemplate, generalConfigTemplate);
+                "text!application/templates/dashboard/config/SoftwareConfig.tpl.html", "text!application/templates/dashboard/config/GeneralConfig.tpl.html",
+                "text!application/templates/dashboard/config/UsersConfig.tpl.html"
+            ],
+            function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareConfigTemplate, generalConfigTemplate, usersConfigTemplate) {
+            self.doLayout(defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate,imageFiltersTemplate,softwareConfigTemplate, generalConfigTemplate, usersConfigTemplate);
             self.rendered = true;
         });
         return this;
     },
-    doLayout: function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareTemplate, generalConfigTemplate) {
+    doLayout: function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareTemplate, generalConfigTemplate, usersConfigTemplate) {
 
         // generate the menu skeleton
 
@@ -44,11 +46,22 @@ var ProjectDashboardConfig = Backbone.View.extend({
         idPanel = "general";
         titlePanel = "General Configuration";
         configs.push({id: idPanel, title : titlePanel});
-        var defaultLayers = new GeneralConfigPanel({
+        var general = new GeneralConfigPanel({
             el: _.template(generalConfigTemplate, {titre : titlePanel, id : idPanel}),
             model: this.model
         }).render();
-        configList.append(defaultLayers.el);
+        configList.append(general.el);
+
+
+        // Users Management
+        idPanel = "users";
+        titlePanel = "Users Management";
+        configs.push({id: idPanel, title : titlePanel});
+        var users = new UsersConfigPanel({
+            el: _.template(usersConfigTemplate, {titre : titlePanel, id : idPanel}),
+            model: this.model
+        }).render();
+        configList.append(users.el);
 
 
         // Default Layers
@@ -135,6 +148,7 @@ var ProjectDashboardConfig = Backbone.View.extend({
 var GeneralConfigPanel = Backbone.View.extend({
     projectMultiSelectAlreadyLoad: false,
     projects: [],
+    projectRetrieval: [],
     render: function () {
         var self = this;
 
@@ -187,10 +201,10 @@ var GeneralConfigPanel = Backbone.View.extend({
                 self.createRetrievalProjectSelect(self.projects);
                 self.projectMultiSelectAlreadyLoad = true
             } else {
-                $(self.el).find("div#retrievalGroup").find(".ui-multiselect").show();
+                $(self.el).find("div#retrievalGroup").find(".uix-multiselect").show();
             }
         } else {
-            $(self.el).find("div#retrievalGroup").find(".ui-multiselect").hide();
+            $(self.el).find("div#retrievalGroup").find(".uix-multiselect").hide();
         }
     },
     createRetrievalProjectSelect: function (projects) {
@@ -213,24 +227,18 @@ var GeneralConfigPanel = Backbone.View.extend({
         //$(self.el).find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + $('#login-form-edit-project').find("#project-edit-name").val() + '</option>');
         $(self.el).find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + self.model.get('name') + '</option>');
 
-        $(self.el).find("#retrievalproject").multiselectNext({
-            selected: function (event, ui) {
-                console.log($(ui.option).val() + " has been selected");
-                self.update();
-            },
-            deselected: function (event, ui) {
-                console.log($(ui.option).val() + " has been unselected");
-                self.update();
-            }
+        $(self.el).find("#retrievalproject").multiselectNext().bind("multiselectChange", function(evt, ui) {
+            self.projectRetrieval = [];
+            //var values = $.map(ui.optionElements, function(opt) { return $(opt).attr('value'); });
+            //console.log("Multiselect change event! " + ui.optionElements.length + ' value ' + (ui.selected ? 'selected' : 'deselected') + ' (' + values + ')');
+            $(this).find("option:selected").each(function(i, o) {
+                self.projectRetrieval.push(o.value);
+            });
+            self.update();
         });
 
-
-
-        $("div.ui-multiselect").find("ul.available").css("height", "150px");
-        $("div.ui-multiselect").find("ul.selected").css("height", "150px");
-        $("div.ui-multiselect").find("input.search").css("width", "75px");
-
-        $("div.ui-multiselect").find("div.actions").css("background-color", "#DDDDDD");
+        $(self.el).find(".ui-button-icon-only .ui-icon").css("margin-top", "-8px");
+        $(self.el).find("div.uix-multiselect").css("background-color", "#DDDDDD");
     },
     update: function() {
         var self = this;
@@ -245,20 +253,300 @@ var GeneralConfigPanel = Backbone.View.extend({
         var retrievalDisable = $(self.el).find("input#retrievalProjectNone-radio-config").is(':checked');
         var retrievalProjectAll = $(self.el).find("input#retrievalProjectAll-radio-config").is(':checked');
         var retrievalProjectSome = $(self.el).find("input#retrievalProjectSome-radio-config").is(':checked');
-        var projectRetrieval = [];
-        if (retrievalProjectSome) {
-            projectRetrieval = $(self.el).find("#retrievalproject").multiselectNext('selectedValues');
+        if (!retrievalProjectSome) {
+            self.projectRetrieval = [];
         }
 
 
-        project.set({retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,
+        project.set({retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: self.projectRetrieval,
             blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers});
-        project.save({retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,
+        project.save({retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: self.projectRetrieval,
             blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
             success: function (model, response) {
                 console.log("1. Project edited!");
                 window.app.view.message("Project", response.message, "success");
                 var id = response.project.id;
+            },
+            error: function (model, response) {
+                var json = $.parseJSON(response.responseText);
+                window.app.view.message("Project", json.errors, "error");
+            }
+        });
+    }
+
+});
+
+var UsersConfigPanel = Backbone.View.extend({
+    userMaggicSuggest : null,
+    adminMaggicSuggest : null,
+    projectUsers: [],
+    projectAdmins: [],
+    groups: null,
+    render: function() {
+        var self = this;
+        self.createUserList();
+        self.createMultiSelectUser();
+
+        $(self.el).find("input#addUsersByName-radio-config,input#addUsersByGroup-radio-config").change(function (test) {
+            if ($(self.el).find("input#addUsersByName-radio-config").is(':checked')) {
+                $(self.el).find("div#projectedituser").show();
+                $(self.el).find(".uix-multiselect").hide();
+            } else {
+                $(self.el).find("div#projectedituser").hide();
+                $(self.el).find(".uix-multiselect").show();
+            }
+        });
+        $(self.el).find("input#addUsersByName-radio-config,input#addUsersByGroup-radio-config").trigger('change');
+
+        return this;
+    },
+    createMultiSelectUser: function() {
+
+        var self = this;
+
+        $(self.el).find("#usersByGroup").multiselectNext().bind("multiselectChange", function(evt, ui) {
+
+            self.projectUsers = [];
+            //var values = $.map(ui.optionElements, function(opt) { return $(opt).attr('value'); });
+            //console.log("Multiselect change event! " + ui.optionElements.length + ' value ' + (ui.selected ? 'selected' : 'deselected') + ' (' + values + ')');
+            $(this).find("option:selected").each(function(i, o) {
+                self.projectUsers.push(o.value);
+            });
+            self.update(function() {
+                self.refreshUserList();
+            });
+
+            $(self.el).find("#usersByGroup").multiselectNext('refresh', function() {
+                $(self.el).find(".ui-button-icon-only .ui-icon").css("margin-top", "-8px");
+            });
+        });
+
+        $(self.el).find(".ui-button-icon-only .ui-icon").css("margin-top", "-8px");
+        $(self.el).find("div.uix-multiselect").css("background-color", "#DDDDDD");
+
+        self.loadMultiSelectUser();
+    },
+    loadMultiSelectUser: function() {
+
+        var self = this;
+        var currentUsers;
+
+        $(self.el).find("#usersByGroup").empty();
+        $(self.el).find("#usersByGroup").multiselectNext('refresh');
+
+        // I need to restart multiselect to include to options append to the select
+        var reload = function(currentUsers, groupUsers) {
+            if(currentUsers==null || groupUsers==null || currentUsers==undefined || groupUsers==undefined) {
+                return;
+            }
+
+            currentUsers.each(function(user) {
+                if($.inArray( user.id, self.projectAdmins ) == -1){
+                    $(self.el).find("#usersByGroup").append('<option value="' + user.id + '" selected>' + user.prettyName() + '</option>');
+                } else {
+                    $(self.el).find("#usersByGroup").append('<option value="' + user.id + '" selected disabled>' + user.prettyName() + '</option>');
+                }
+            });
+
+            var ids = $.map( currentUsers.models, function( a ) {
+                return a.id;
+            });
+
+            groupUsers.each(function(group) {
+
+                $(self.el).find("#usersByGroup").append('<optgroup label="'+group.attributes.name+'">');
+                var optGroup = $(self.el).find("#usersByGroup optgroup").last()
+                for(var i=0; i<group.attributes.users.length ; i++) {
+                    var currentUser = group.attributes.users[i];
+                    if($.inArray( currentUser.id, ids ) == -1){
+                        optGroup.append('<option value="' + currentUser.id + '">' + currentUser.lastname + ' ' + currentUser.firstname + '(' + currentUser.username + ')' + '</option>');
+                    } else {
+                        optGroup.append('<option value="' + currentUser.id + '" disabled>' + currentUser.lastname + ' ' + currentUser.firstname + '(' + currentUser.username + ')' + '</option>');
+                    }
+                }
+                $(self.el).find("#usersByGroup").append('</optgroup>');
+
+
+            });
+            $(self.el).find("#usersByGroup").multiselectNext('refresh', function() {
+                $(self.el).find(".ui-button-icon-only .ui-icon").css("margin-top", "-8px");
+            });
+        };
+
+
+        // load current users
+        new UserCollection({project:self.model.id}).fetch({
+            success: function (currentUsersCollection, response) {
+                currentUsers = currentUsersCollection;
+                reload(currentUsers, self.groups);
+            }
+        });
+
+        // TODO
+
+        // do a request to have all users of this group
+        new GroupWithUserCollection().fetch({
+            success: function (groupUsersCollection, response) {
+                self.groups = groupUsersCollection;
+                reload(currentUsers, self.groups);
+            }
+        });
+    },
+    createUserList: function () {
+        var self = this;
+        var allUser = null;
+        var projectUser = null;
+        var projectAdmin = null;
+
+
+        var loadUser = function() {
+            if(allUser == null || projectUser == null || projectAdmin == null) {
+                return;
+            }
+            var allUserArray = [];
+
+            allUser.each(function(user) {
+                allUserArray.push({id:user.id,label:user.prettyName()});
+            });
+
+            var projectUserArray=[]
+            projectUser.each(function(user) {
+                projectUserArray.push(user.id);
+            });
+
+            projectAdmin.each(function(user) {
+                self.projectAdmins.push(user.id);
+            });
+
+            self.userMaggicSuggest = $(self.el).find('#projectedituser').magicSuggest({
+                data: allUserArray,
+                displayField: 'label',
+                value: projectUserArray,
+                width: 590,
+                maxSelection:null
+            });
+            $(self.userMaggicSuggest).on('selectionchange', function(e,m){
+                self.projectUsers = this.getValue()
+                self.update(function() {
+                    self.loadMultiSelectUser()
+                })
+            });
+
+            self.adminMaggicSuggest = $(self.el).find('#projecteditadmin').magicSuggest({
+                data: allUserArray,
+                displayField: 'label',
+                value: self.projectAdmins,
+                width: 590,
+                maxSelection:null
+            });
+            $(self.adminMaggicSuggest).on('selectionchange', function(e,m){
+                self.update(function() {
+                    self.loadMultiSelectUser()
+                })
+            });
+        }
+
+        new UserCollection({}).fetch({
+            success: function (allUserCollection, response) {
+                allUser = allUserCollection;
+                loadUser();
+            }});
+
+        new UserCollection({project: self.model.id}).fetch({
+            success: function (projectUserCollection, response) {
+                projectUser = projectUserCollection;
+                window.app.models.projectUser = projectUserCollection;
+                loadUser();
+            }});
+
+        new UserCollection({project: self.model.id, admin:true}).fetch({
+            success: function (projectUserCollection, response) {
+                projectAdmin = projectUserCollection;
+                window.app.models.projectAddmin = projectUserCollection;
+                loadUser();
+            }});
+
+    },
+    refreshUserList: function () {
+        // try to not reload the user list but pass it as an argument
+        var self = this;
+        var projectUser = null;
+
+        var loadUser = function() {
+
+            var projectUserArray=[]
+            projectUser.each(function(user) {
+                projectUserArray.push(user.id);
+            });
+
+            // Avoid an infinite loop between the 2 listeners.
+            $(self.userMaggicSuggest).off('selectionchange');
+            self.userMaggicSuggest.clear();
+            self.userMaggicSuggest.setValue(projectUserArray);
+
+            $(self.userMaggicSuggest).on('selectionchange', function(e,m){
+                self.projectUsers = this.getValue()
+                self.update(function() {
+                    self.loadMultiSelectUser()
+                })
+            });
+        }
+
+        new UserCollection({project: self.model.id}).fetch({
+            success: function (projectUserCollection, response) {
+                projectUser = projectUserCollection;
+                window.app.models.projectUser = projectUserCollection;
+                loadUser();
+            }});
+
+
+    },
+    update: function(callbackSuccess) {
+        var self = this;
+
+        // TODO
+        // here, we need a refresh of the DefaultLayerPanel as the users have changed !!!
+
+        // here the function from the old config panel
+        /*self.editProjectDefaultLayers(id, users.concat(admins));
+        editProjectDefaultLayers : function(projectId, users) {
+            console.log("editProjectDefaultLayers");
+            console.log(projectId);
+            console.log(users);
+            for(var i = 0; i< users.length ; i++) {
+                console.log(users[i]);
+            }
+            new ProjectDefaultLayerCollection({project: projectId}).fetch({
+                success: function (collection) {
+                    collection.each(function(layer) {
+                        if(users.indexOf(layer.attributes.user) == -1) {
+                            console.log("deletion de ");
+                            console.log(layer.id);
+                            layer.destroy();
+                        }
+                    });
+                }
+            });
+        },*/
+
+
+
+        var project = self.model;
+
+        var users = self.projectUsers;
+
+        var admins = self.adminMaggicSuggest.getValue();
+        self.projectAdmins = admins
+
+        project.set({users: users, admins:admins});
+        project.save({users:users, admins:admins}, {
+            success: function (model, response) {
+                console.log("1. Project edited!");
+                window.app.view.message("Project", response.message, "success");
+                var id = response.project.id;
+                if(callbackSuccess != null && callbackSuccess != undefined) {
+                    callbackSuccess()
+                }
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);

@@ -2,7 +2,6 @@ var EditProjectDialog = Backbone.View.extend({
     projectsPanel: null,
     editProjectDialog: null,
     projectMultiSelectAlreadyLoad: false,
-    userMaggicSuggest : null,
     initialize: function (options) {
         this.container = options.container;
         this.projectPanel = options.projectPanel;
@@ -39,9 +38,7 @@ var EditProjectDialog = Backbone.View.extend({
 
         self.initStepy();
         self.createProjectInfo();
-        self.createUserList();
         $("#project-edit-name").val(self.model.get('name'));
-//        self.createUserList(usersChoicesTpl);
 
         //Build dialog
         self.editProjectDialog = $("#editproject").modal({
@@ -54,6 +51,7 @@ var EditProjectDialog = Backbone.View.extend({
 
     },
     initStepy: function () {
+        // When we need only one tab, replace this
         $('#login-form-edit-project').stepy({next: function (index) {
             //check validate name
             if (index == 2) {
@@ -72,6 +70,10 @@ var EditProjectDialog = Backbone.View.extend({
                 $("#editProjectButton").hide();
             }
         }});
+        // by this
+        //$("#editProjectButton").show();
+
+
         $('#login-form-edit-project').find("fieldset").find("a.button-next").css("float", "right");
         $('#login-form-edit-project').find("fieldset").find("a.button-back").css("float", "left");
         $('#login-form-edit-project').find("fieldset").find("a").removeClass("button-next");
@@ -91,71 +93,6 @@ var EditProjectDialog = Backbone.View.extend({
             }
         });
 
-
-    },
-    createUserList: function () {
-        var self = this;
-        var allUser = null;
-        var projectUser = null;
-        var projectAdmin = null;
-
-
-        var loadUser = function() {
-            if(allUser == null || projectUser == null/* || defaultLayers == null*/) {
-                return;
-            }
-            var allUserArray = [];
-
-            allUser.each(function(user) {
-                allUserArray.push({id:user.id,label:user.prettyName()});
-            });
-
-            var projectUserArray=[]
-            projectUser.each(function(user) {
-                projectUserArray.push(user.id);
-            });
-
-            var projectAdminArray=[]
-            projectAdmin.each(function(user) {
-                projectAdminArray.push(user.id);
-            });
-
-            self.userMaggicSuggest = $('#projectedituser').magicSuggest({
-                data: allUserArray,
-                displayField: 'label',
-                value: projectUserArray,
-                width: 590,
-                maxSelection:null
-            });
-
-            self.adminMaggicSuggest = $('#projecteditadmin').magicSuggest({
-                data: allUserArray,
-                displayField: 'label',
-                value: projectAdminArray,
-                width: 590,
-                maxSelection:null
-            });
-        }
-
-        new UserCollection({}).fetch({
-            success: function (allUserCollection, response) {
-                allUser = allUserCollection;
-                loadUser();
-            }});
-
-        new UserCollection({project: self.model.id}).fetch({
-            success: function (projectUserCollection, response) {
-                projectUser = projectUserCollection;
-                window.app.models.projectUser = projectUserCollection;
-                loadUser();
-            }});
-
-        new UserCollection({project: self.model.id, admin:true}).fetch({
-            success: function (projectUserCollection, response) {
-                projectAdmin = projectUserCollection;
-                window.app.models.projectAddmin = projectUserCollection;
-                loadUser();
-            }});
 
     },
     fillForm: function () {
@@ -200,25 +137,6 @@ var EditProjectDialog = Backbone.View.extend({
         }
         return diff;
     },
-    editProjectDefaultLayers : function(projectId, users) {
-        console.log("editProjectDefaultLayers");
-        console.log(projectId);
-        console.log(users);
-        for(var i = 0; i< users.length ; i++) {
-            console.log(users[i]);
-        }
-        new ProjectDefaultLayerCollection({project: projectId}).fetch({
-            success: function (collection) {
-                collection.each(function(layer) {
-                    if(users.indexOf(layer.attributes.user) == -1) {
-                        console.log("deletion de ");
-                        console.log(layer.id);
-                        layer.destroy();
-                    }
-                });
-            }
-        });
-    },
     editProject: function () {
 
         var self = this;
@@ -227,8 +145,6 @@ var EditProjectDialog = Backbone.View.extend({
         $("#projectediterrorlabel").hide();
 
         var name = $("#project-edit-name").val().toUpperCase();
-        var users = self.userMaggicSuggest.getValue();
-        var admins = self.adminMaggicSuggest.getValue();
         var divToFill = $("#login-form-edit-project");
         divToFill.hide();
 //        $("#login-form-add-project-titles").empty();
@@ -247,14 +163,13 @@ var EditProjectDialog = Backbone.View.extend({
                 var taskId = response.task.id;
                 //create project
                 project.task = taskId
-                project.set({users: users, admins:admins,name: name});
-                project.save({users:users, admins:admins, name: name}, {
+                project.set({name: name});
+                project.save({name: name}, {
                     success: function (model, response) {
                         console.log("1. Project edited!");
                         clearInterval(timer);
                         window.app.view.message("Project", response.message, "success");
                         var id = response.project.id;
-                        self.editProjectDefaultLayers(id, users.concat(admins));
                         $("#editproject").modal("hide");
                         window.app.controllers.dashboard.destroyView()
                         window.app.controllers.browse.closeAll();
