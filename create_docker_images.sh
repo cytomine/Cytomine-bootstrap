@@ -1,6 +1,5 @@
 #!/bin/bash
 cd base && docker build -t="cytomine/base" .
-cd ../postgresql_datastore && docker build -t="cytomine/postgresql_datastore" .
 cd ../memcached && docker build -t="cytomine/memcached" .
 cd ../dnsmasq && docker build -t="cytomine/dnsmasq" .
 cd ../rabbitmq && docker build -t="cytomine/rabbitmq" .
