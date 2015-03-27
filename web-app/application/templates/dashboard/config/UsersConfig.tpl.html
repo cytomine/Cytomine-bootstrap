@@ -1,0 +1,46 @@
+<div class="panel panel-default" id="config-panel-<%= id %>">
+    <div class="panel-heading">
+        <h4><%= titre %></h4>
+    </div>
+    <br/>
+
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <label class="control-label">Project users:</label>
+            </div>
+        </div>
+
+        <div class="col-md-9 col-md-offset-2">
+            <div id="AddUserGroup">
+                <input type="radio" id="addUsersByName-radio-config" name="AddUserGroup" value="name" checked>
+                Add users by name<br>
+                <div id="projectedituser"></div> <br>
+                <input type="radio" id="addUsersByGroup-radio-config" name="AddUserGroup" value="group">
+                Add users by group<br>
+                <div class="ui-helper-clearfix">
+                    <select multiple="multiple" id="usersByGroup" style="width:600px;height: 250px;display:none;"></select><br>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <label class="control-label">Project admins:</label>
+            </div>
+        </div>
+
+        <div class="col-md-10 col-md-offset-1">
+            <div class="alert alert-info">
+                A project admin can edit/delete annotations from all users in the new project
+            </div>
+            <div>
+                <div id="projecteditadmin"></div>
+            </div>
+        </div>
+        <div class="col-md-9 col-md-offset-2">
+        </div>
+    </div>
+</div>

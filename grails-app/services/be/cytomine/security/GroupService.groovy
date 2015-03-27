@@ -5,6 +5,9 @@ import be.cytomine.command.*
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import grails.converters.JSON
+import groovy.sql.Sql
+import org.codehaus.groovy.grails.web.json.JSONArray
+import org.codehaus.groovy.grails.web.json.JSONObject
 
 class GroupService extends ModelService {
 
@@ -16,6 +19,7 @@ class GroupService extends ModelService {
     def securityACLService
     def ldapSearchService
     def CASLdapUserDetailsService
+    def dataSource
 
     def currentDomain() {
         Group
@@ -24,6 +28,54 @@ class GroupService extends ModelService {
     def list() {
         securityACLService.checkGuest(cytomineService.currentUser)
         return Group.list(sort: "name", order: "asc")
+    }
+
+    def listWithUser() {
+        securityACLService.checkGuest(cytomineService.currentUser)
+        log.info "listWithUser"
+
+        String request = "SELECT g.id as group_id, g.name as group_name, u.id as user_id, u.username as user_name, u.lastname as user_lastname, u.firstname  as user_firstname " +
+                "FROM user_group ug, \"group\" g, sec_user u " +
+                "WHERE ug.user_id=u.id AND g.id = ug.group_id " +
+                "ORDER BY g.name, u.lastname;";
+
+        log.info request
+        def sql = new Sql(dataSource)
+
+        def groups = [];
+        def group;
+        def idGroup = -1;
+        def users = new JSONArray();
+        sql.eachRow(request) {
+            log.info it
+            if(idGroup != it.group_id) {
+                if(group != null) {
+                    group.put("users", users)
+                    groups << group
+                }
+
+                group = new JSONObject();
+                group.put("id", it.group_id)
+                group.put("name", it.group_name)
+                idGroup = it.group_id
+                users = new JSONArray();
+            }
+            def user = new JSONObject();
+            user.put("id", it.user_id)
+            user.put("username", it.user_name)
+            user.put("lastname", it.user_lastname)
+            user.put("firstname", it.user_firstname)
+
+            users.add(user)
+        }
+
+        if(group != null) {
+            group.put("users", users)
+            groups << group
+        }
+
+
+        return groups
     }
 
     def list(User user) {

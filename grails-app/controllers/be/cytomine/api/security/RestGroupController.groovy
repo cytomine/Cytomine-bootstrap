@@ -25,8 +25,15 @@ class RestGroupController extends RestController {
      * List all group
      */
     @RestApiMethod(description="List all group", listing=true)
+    @RestApiParams(params=[
+            @RestApiParam(name="withUser", type="boolean", paramType = RestApiParamType.QUERY, description = "(Optional) If set, each group will have the array of its users."),
+    ])
     def list() {
-        responseSuccess(groupService.list())
+        if (Boolean.parseBoolean(params.withUser) == true) {
+            responseSuccess(groupService.listWithUser())
+        } else {
+            responseSuccess(groupService.list())
+        }
     }
 
     /**
