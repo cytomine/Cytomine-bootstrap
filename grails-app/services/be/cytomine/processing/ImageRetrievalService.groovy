@@ -1,12 +1,15 @@
 package be.cytomine.processing
 
 import be.cytomine.AnnotationDomain
+import be.cytomine.Exception.ForbiddenException
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.ontology.UserAnnotationService
 import be.cytomine.project.Project
+import be.cytomine.security.AuthWithToken
+import be.cytomine.security.LoginController
 import be.cytomine.test.HttpClient
 import be.cytomine.utils.ValueComparator
 import grails.converters.JSON
@@ -227,44 +230,58 @@ class ImageRetrievalService {
     public void indexMissingAnnotation() {
         //Get indexed resources
         List<Long> resources = getIndexedResource()
+        Set<Long> ressourcesSet = new HashSet<Long>(resources)
         //Check if each annotation is well indexed
         def annotations = UserAnnotationService.extractAnnotationForRetrieval(dataSource)
         int i = 1
         def data = []
-//        annotations = annotations.subList(0,100)
-        annotations.each { annotation ->
-            log.debug "Annotation $i/" + annotations.size()
-            if (!resources.contains(annotation.id)) {
-                log.debug "Annotation $annotation.id IS NOT INDEXED"
-                try {
 
-                    def cropUrl = AnnotationDomain.getAnnotationDomain(annotation.id).urlImageServerCrop(abstractImageService)
-                    data << [id:annotation.id,storage:annotation.container,url:cropUrl]
+//        if(currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser)) {
+//                String tokenKey = UUID.randomUUID().toString()
+//                AuthWithToken token = new AuthWithToken(
+//                        user : cytomineService.currentUser.username,
+//                        expiryDate: new Date((long)new Date().getTime() + (48 * 60 * LoginController.ONE_MINUTE_IN_MILLIS)),
+//                        tokenKey: tokenKey
+//                ).save(flush : true)
 
-                } catch (Exception e) {log.error e}
-            } else {
-                log.debug "Annotation $annotation.id IS INDEXED"
+
+    //        annotations = annotations.subList(0,100)
+            annotations.each { annotation ->
+                log.info "Annotation $i/" + annotations.size()
+                if (!ressourcesSet.contains(annotation.id)) {
+                    log.debug "Annotation $annotation.id IS NOT INDEXED"
+                    try {
+
+                        def cropUrl = AnnotationDomain.getAnnotationDomain(annotation.id).urlImageServerCrop(abstractImageService)
+                        data << [id:annotation.id,storage:annotation.container,url:cropUrl]
+
+                    } catch (Exception e) {log.error e}
+                } else {
+                    log.debug "Annotation $annotation.id IS INDEXED"
+                }
+                i++
             }
-            i++
-        }
 
-        RetrievalServer server = RetrievalServer.findByDeletedIsNull()
-        String jsonData = (data as JSON).toString(true)
-        log.info jsonData.substring(0,Math.min(100,jsonData.length()-1))
-        if(server!=null) {
-            log.info "Server $server!"
-            log.info "jsonData $jsonData!"
-            String url = server.url + "/api/index/full"
-            HttpClient client = new HttpClient()
-            client.connect(url,"admin","admin")
-            client.post(jsonData)
-            String response = client.getResponseData()
-            int code = client.getResponseCode()
-            log.info "code $code!"
-            log.info "response $response!"
-        } else {
-            log.warn "No retrieval found!"
-        }
+            RetrievalServer server = RetrievalServer.findByDeletedIsNull()
+            String jsonData = (data as JSON).toString(true)
+            log.info jsonData.substring(0,Math.min(100,jsonData.length()-1))
+            if(server!=null) {
+                log.info "Server $server!"
+                log.info "jsonData $jsonData!"
+                String url = server.url + "/api/index/full"
+                HttpClient client = new HttpClient()
+                client.connect(url,"admin","admin")
+                client.post(jsonData)
+                String response = client.getResponseData()
+                int code = client.getResponseCode()
+                log.info "code $code!"
+                log.info "response $response!"
+            } else {
+                log.warn "No retrieval found!"
+            }
+//        } else {
+//            throw new ForbiddenException("YOU MUST BE ADMIN!!!!")
+//        }
 
     }
 
