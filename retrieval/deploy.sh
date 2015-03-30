@@ -20,9 +20,16 @@ cd CBIRest-0.2.0/
 cp -r /tmp/testsvectors testsvectors
 cp -r /tmp/config config
 
-redis-server&
 
-java -jar retrieval-0.2-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
+if [ "$ENGINE" == "memory" ] 
+then
+	java -jar retrieval-0.2-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=MEMORY --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
+else
+	redis-server&
+
+	java -jar retrieval-0.2-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
+fi
+
 
 touch test.out
 tail -F /tmp/test.out
