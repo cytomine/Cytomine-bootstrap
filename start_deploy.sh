@@ -209,10 +209,13 @@ cytomine/core
 nb_docker=$((nb_docker+1))
 
 # create retrieval docker
-docker run -m 8g -d -p 22 --name retrieval --link retrievaldb:db --volumes-from retrieval_data \
+RETRIEVAL_FOLDER=/data/thumb
+docker run -m 8g -d -p 22 --name retrieval --link retrievaldb:db \
+-v $RETRIEVAL_FOLDER:$RETRIEVAL_FOLDER --volumes-from retrieval_data \
 -e CORE_URL=$CORE_URL \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
+-e RETRIEVAL_FOLDER=$RETRIEVAL_FOLDER \
 cytomine/retrieval
 nb_docker=$((nb_docker+1))
 
@@ -249,3 +252,7 @@ then
 else
 	echo "A problem occurs. Please check into your docker logs."
 fi
+
+# delete the pwd from the files & variables
+docker exec core /bin/bash -c 'echo "ADMIN_PWD=" > /root/.bashrc'
+docker exec core /bin/bash -c "sed -i '/adminPassword/d' /usr/share/tomcat7/.grails/cytomineconfig.groovy"
