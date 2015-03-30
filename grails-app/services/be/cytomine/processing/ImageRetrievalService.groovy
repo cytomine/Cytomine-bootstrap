@@ -14,7 +14,6 @@ import be.cytomine.test.HttpClient
 import be.cytomine.utils.ValueComparator
 import grails.converters.JSON
 import groovy.sql.Sql
-import groovyx.gpars.Asynchronizer
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.ByteArrayBody
 import org.apache.log4j.Logger
