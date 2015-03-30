@@ -216,6 +216,7 @@ docker run -m 8g -d -p 22 --name retrieval --link retrievaldb:db \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
 -e RETRIEVAL_FOLDER=$RETRIEVAL_FOLDER \
+-e RETRIEVAL_JAR_URL=$RETRIEVAL_JAR_URL \
 cytomine/retrieval
 nb_docker=$((nb_docker+1))
 

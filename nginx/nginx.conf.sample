@@ -60,7 +60,7 @@ IMS_URLS_CONFIG
 
                 location / {
 			proxy_set_header Host $host;
-                        proxy_pass http://RETRIEVAL_ALIAS:8080;
+                        proxy_pass http://RETRIEVAL_ALIAS:9999;
 
                 }
     } 

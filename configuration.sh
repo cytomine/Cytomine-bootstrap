@@ -22,8 +22,8 @@ SENDER_EMAIL_PASS='passwd'
 SENDER_EMAIL_SMTP='smtp.gmail.com:587'
 RECEIVER_EMAIL='receiver@XXX.com'
 
-#possible values : memory, kyoto
-RETRIEVAL_ENGINE=kyoto
+#possible values : memory, redis
+RETRIEVAL_ENGINE=memory
 
 
 IMS_STORAGE_PATH=/data
@@ -36,6 +36,7 @@ BIOFORMAT_ENABLED="false"
 
 CORE_WAR_URL="http://cytomine.be/release/core/ROOT.war"
 IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
+RETRIEVAL_JAR_URL="http://cytomine.be/release/retrieval/CBIRest-0.2.0.zip"
 
 MEMCACHED_PASS="mypass"
 
