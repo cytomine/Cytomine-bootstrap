@@ -165,8 +165,9 @@ class ImageRetrievalService {
 //        }
         if(!RetrievalServer.list().isEmpty()) {
             RetrievalServer server = RetrievalServer.list().get(0)
-            def cropUrl = searchAnnotation.urlImageServerCrop(abstractImageService)
-            def responseJSON = doRetrievalSearch(server.url+"/api/search","admin","admin",ImageIO.read(new URL(cropUrl)),projectSearch.collect{it+""})
+            //def cropUrl = searchAnnotation.urlImageServerCrop(abstractImageService)
+            //def responseJSON = doRetrievalSearch(server.url+"/api/search","admin","admin",ImageIO.read(new URL(cropUrl)),projectSearch.collect{it+""})
+            def responseJSON = doRetrievalSearch(server.url+"/api/searchUrl","admin","admin",searchAnnotation.id,projectSearch.collect{it+""})
             def result =  readRetrievalResponse(searchAnnotation,responseJSON.data)
             log.info "result=$result"
             return result
@@ -194,6 +195,29 @@ class ImageRetrievalService {
         MultipartEntity entity = createEntityFromImage(image)
 
         client.post(entity)
+
+        String response = client.getResponseData()
+        int code = client.getResponseCode()
+        log.info "code=$code response=$response"
+        def json = JSON.parse(response)
+
+        return json
+    }
+
+    public def doRetrievalSearch(String url, String username, String password, Long id,List<String> storages) {
+
+        url = url+"?max=30&id=$id&storages=${storages.join(";")}"
+
+        HttpClient client = new HttpClient()
+
+        log.info "url=$url"
+        log.info "username=$username password=$password"
+
+        client.connect(url,username,password)
+
+//        MultipartEntity entity = createEntityFromImage(image)
+
+        client.post("")
 
         String response = client.getResponseData()
         int code = client.getResponseCode()
