@@ -254,6 +254,18 @@ else
 	echo "A problem occurs. Please check into your docker logs."
 fi
 
+
+# wait for the admin password is setted by the core
+OUTPUT_CORE_CYTOMINE=$(docker logs core)
+COUNTER_CYTOMINE=0
+while [ "${OUTPUT_CORE_CYTOMINE#*Server startup}" = "$OUTPUT_CORE_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 60 ]
+do
+   OUTPUT_CORE_CYTOMINE=$(docker logs core)
+   OUTPUT_CORE_CYTOMINE=$(echo "$OUTPUT_CORE_CYTOMINE" | tail -n 50)
+   COUNTER_CYTOMINE=$((COUNTER_CYTOMINE+1))
+   sleep 5
+done
+
 # delete the pwd from the files & variables
 docker exec core /bin/bash -c 'echo "ADMIN_PWD=" > /root/.bashrc'
 docker exec core /bin/bash -c "sed -i '/adminPassword/d' /usr/share/tomcat7/.grails/cytomineconfig.groovy"

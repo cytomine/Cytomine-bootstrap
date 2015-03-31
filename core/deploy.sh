@@ -6,9 +6,6 @@ echo Starting "$WAR_URL"
 #Copy the war file from mounted directory to tomcat webapps directory
 if [ ! -z "$WAR_URL" ]
 then
-	rm -r /var/lib/tomcat7/webapps/*
-	cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
-
 	mkdir -p /usr/share/tomcat7/.grails
 	cd /usr/share/tomcat7/.grails
 
@@ -43,6 +40,8 @@ then
 	echo "grails.ImageServerPrivateKey='$IMS_PRIV_KEY'" >> cytomineconfig.groovy
 	echo "grails.ImageServerPublicKey='$IMS_PUB_KEY'" >> cytomineconfig.groovy
 
+	rm -r /var/lib/tomcat7/webapps/*
+	cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
 fi
 
 if [ $IS_LOCAL = true ]; then
