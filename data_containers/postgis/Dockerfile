@@ -1,6 +1,6 @@
 FROM cytomine/postgis
 
-MAINTAINER Renaud Hoyoux "support@cytomine.be"
+MAINTAINER Cytomine Team "support@cytomine.be"
 
 RUN touch /tmp/x
 
