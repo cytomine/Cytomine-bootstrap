@@ -290,7 +290,7 @@ class ImageRetrievalService {
             log.info jsonData.substring(0,Math.min(100,jsonData.length()-1))
             if(server!=null) {
                 log.info "Server $server!"
-                log.info "jsonData $jsonData!"
+                //log.info "jsonData $jsonData!"
                 String url = server.url + "/api/index/full"
                 HttpClient client = new HttpClient()
                 client.connect(url,"admin","admin")
