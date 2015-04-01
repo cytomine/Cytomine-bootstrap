@@ -750,7 +750,7 @@ var UploadFormView = Backbone.View.extend({
             ],
             "aaSorting": [[ 1, "desc" ]],
             "sAjaxSource": uploadedFileCollectionUrl,
-            "fnInitComplete": function(oSettings, json) {
+            "fnDrawCallback": function(oSettings, json) {
                 new UploadedFileCollection().fetch({
                     success: function(model,response) {
 
@@ -773,37 +773,38 @@ var UploadFormView = Backbone.View.extend({
         $(document).on('click', ".deleteimage", function (e) {
             var id = e.currentTarget.id;
             id = id.replace("deleteimage", "");
-            var uploadFile = new UploadedFileModel({image: id});
 
-            uploadFile.fetch({
-                success: function (model, response) {
+             DialogModal.initDialogModal(null, id, 'AbstractImage', 'Do you want to delete this image ?', 'CONFIRMATIONWARNING', function(){
+                 var uploadFile = new UploadedFileModel({image: id});
 
-                    var up = response.id;
+                 uploadFile.fetch({
+                     success: function (model, response) {
 
-                    new ImageModel({id: id}).destroy({
-                        success: function(model, response){
+                         var up = response.id;
 
-                            new UploadedFileModel({id: up}).destroy({
-                                success: function (model, response) {
-                                    window.app.view.message("Uploaded file", "deleted", "success");
-                                    self.uploadDataTables.fnReloadAjax();
-                                },
-                                error: function (model, response) {
-                                    var json = $.parseJSON(response.responseText);
-                                    window.app.view.message("Delete failed", json.errors, "error");
-                                }
-                            });
+                         new ImageModel({id: id}).destroy({
+                             success: function(model, response){
 
-                        },
-                        error: function(model, response){
-                            var json = $.parseJSON(response.responseText);
-                            window.app.view.message("Delete failed", json.errors, "error");
-                        }
-                    });
-                }
-            });
+                                 new UploadedFileModel({id: up}).destroy({
+                                     success: function (model, response) {
+                                         window.app.view.message("Uploaded file", "deleted", "success");
+                                         self.uploadDataTables.fnReloadAjax();
+                                     },
+                                     error: function (model, response) {
+                                         var json = $.parseJSON(response.responseText);
+                                         window.app.view.message("Delete failed", json.errors, "error");
+                                     }
+                                 });
 
-
+                             },
+                             error: function(model, response){
+                                 var json = $.parseJSON(response.responseText);
+                                 window.app.view.message("Delete failed", json.errors, "error");
+                             }
+                         });
+                     }
+                 });
+             });
         });
     },
     refreshProjectAndStorage : function() {
