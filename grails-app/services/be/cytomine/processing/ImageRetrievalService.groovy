@@ -154,20 +154,10 @@ class ImageRetrievalService {
 
     private def loadAnnotationSimilarities(AnnotationDomain searchAnnotation,List<Long> projectSearch) {
         log.info "get similarities for userAnnotation " + searchAnnotation.id + " on " + projectSearch
-//        RetrievalServer server = RetrievalServer.findByDeletedIsNull()
-//        def response = RetrievalHttpUtils.getPostSearchResponse(server.getFullURL(),'/retrieval-web/api/retrieval/search.json', searchAnnotation, searchAnnotation.getCropUrl(),projectSearch)
-//        try {
-//            def json = JSON.parse(response)
-//            def result =  readRetrievalResponse(searchAnnotation,json)
-//            return result
-//        } catch (org.codehaus.groovy.grails.web.json.JSONException exception) { //server did not respond => 404
-//            throw new ObjectNotFoundException("Retrieval : object not found")
-//        }
         if(!RetrievalServer.list().isEmpty()) {
             RetrievalServer server = RetrievalServer.list().get(0)
-            //def cropUrl = searchAnnotation.urlImageServerCrop(abstractImageService)
-            //def responseJSON = doRetrievalSearch(server.url+"/api/search","admin","admin",ImageIO.read(new URL(cropUrl)),projectSearch.collect{it+""})
-            def responseJSON = doRetrievalSearch(server.url+"/api/searchUrl","admin","admin",searchAnnotation.id,projectSearch.collect{it+""})
+            def cropUrl = searchAnnotation.urlImageServerCrop(abstractImageService)
+            def responseJSON = doRetrievalSearch(server.url+"/api/searchUrl","admin","admin",searchAnnotation.id,cropUrl,projectSearch.collect{it+""})
             def result =  readRetrievalResponse(searchAnnotation,responseJSON.data)
             log.info "result=$result"
             return result
@@ -204,9 +194,9 @@ class ImageRetrievalService {
         return json
     }
 
-    public def doRetrievalSearch(String url, String username, String password, Long id,List<String> storages) {
+    public def doRetrievalSearch(String url, String username, String password, Long id,String imageURL,List<String> storages) {
 
-        url = url+"?max=30&id=$id&storages=${storages.join(";")}"
+        url = url+"?max=30&id=$id&url=$imageURL&storages=${storages.join(";")}"
 
         HttpClient client = new HttpClient()
 
@@ -214,8 +204,6 @@ class ImageRetrievalService {
         log.info "username=$username password=$password"
 
         client.connect(url,username,password)
-
-//        MultipartEntity entity = createEntityFromImage(image)
 
         client.post("")
 
@@ -259,16 +247,6 @@ class ImageRetrievalService {
         int i = 1
         def data = []
 
-//        if(currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser)) {
-//                String tokenKey = UUID.randomUUID().toString()
-//                AuthWithToken token = new AuthWithToken(
-//                        user : cytomineService.currentUser.username,
-//                        expiryDate: new Date((long)new Date().getTime() + (48 * 60 * LoginController.ONE_MINUTE_IN_MILLIS)),
-//                        tokenKey: tokenKey
-//                ).save(flush : true)
-
-
-    //        annotations = annotations.subList(0,100)
             annotations.each { annotation ->
                 log.info "Annotation $i/" + annotations.size()
                 if (!ressourcesSet.contains(annotation.id)) {
