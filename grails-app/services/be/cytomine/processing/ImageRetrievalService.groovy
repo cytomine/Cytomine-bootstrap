@@ -196,7 +196,7 @@ class ImageRetrievalService {
 
     public def doRetrievalSearch(String url, String username, String password, Long id,String imageURL,List<String> storages) {
 
-        url = url+"?max=30&id=$id&url=$imageURL&storages=${storages.join(";")}"
+        url = url+"?max=30&id=$id&url=${URLEncoder.encode(imageURL)}&storages=${storages.join(";")}"
 
         HttpClient client = new HttpClient()
 
