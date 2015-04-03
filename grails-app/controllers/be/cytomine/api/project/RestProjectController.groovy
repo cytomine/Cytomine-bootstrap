@@ -253,9 +253,9 @@ class RestProjectController extends RestController {
     @RestApiMethod(description="Get the last action for a user in a project or in all projects available for the current user", listing = true)
     @RestApiResponseObject(objectIdentifier="commandHistory")
     @RestApiParams(params=[
-        @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The project id (if null: all projects)"),
-        @RestApiParam(name="user", type="long", paramType = RestApiParamType.QUERY,description = "The user id"),
-        @RestApiParam(name="fullData", type="boolean", paramType = RestApiParamType.QUERY,description = "Flag to include the full JSON of the data field on each command history. Not recommended for long listing.")
+            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The project id (if null: all projects)"),
+            @RestApiParam(name="user", type="long", paramType = RestApiParamType.QUERY,description = "The user id"),
+            @RestApiParam(name="fullData", type="boolean", paramType = RestApiParamType.QUERY,description = "Flag to include the full JSON of the data field on each command history. Not recommended for long listing.")
     ])
     def listCommandHistory() {
         Project project = projectService.read(params.long('id'))
@@ -269,6 +269,23 @@ class RestProjectController extends RestController {
             //no project defined, get all user projects
             List<Project> projects = projectService.list(cytomineService.currentUser);
             response(findCommandHistory(projects,user,max,offset,fullData))
+        }
+    }
+
+    @RestApiMethod(description="Invite a not yer existing user to the project")
+    @RestApiParams(params=[
+            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The project id"),
+            @RestApiParam(name="json", type="string", paramType = RestApiParamType.QUERY,description = "The user name and email of the invited user"),
+    ])
+    def inviteNewUser() {
+        Project project = projectService.read(params.long('id'))
+
+        try {
+            def result = projectService.inviteUser(project, request.JSON);
+            responseSuccess(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
         }
     }
 

@@ -315,16 +315,47 @@ var UsersConfigPanel = Backbone.View.extend({
         self.createUserList();
         self.createMultiSelectUser();
 
-        $(self.el).find("input#addUsersByName-radio-config,input#addUsersByGroup-radio-config").change(function (test) {
+        $(self.el).find("input#addUsersByName-radio-config,input#addUsersByGroup-radio-config,input#addUsersByMail-radio-config").change(function (test) {
             if ($(self.el).find("input#addUsersByName-radio-config").is(':checked')) {
                 $(self.el).find("div#projectedituser").show();
                 $(self.el).find(".uix-multiselect").hide();
+                $(self.el).find("#invite_new_user").hide();
+            } else if ($(self.el).find("input#addUsersByMail-radio-config").is(':checked')){
+                $(self.el).find("div#projectedituser").hide();
+                $(self.el).find("#invite_new_user").show();
+                $(self.el).find(".uix-multiselect").hide();
             } else {
                 $(self.el).find("div#projectedituser").hide();
+                $(self.el).find("#invite_new_user").hide();
                 $(self.el).find(".uix-multiselect").show();
             }
         });
         $(self.el).find("input#addUsersByName-radio-config,input#addUsersByGroup-radio-config").trigger('change');
+
+        $(self.el).find("#invitenewuserbutton").click(function (event) {
+            var username = $(self.el).find("#new_username").val()
+            var mail = $(self.el).find("#new_mail").val()
+
+            $.ajax({
+                type: "POST",
+                url: "api/project/"+self.model.id+"/invitation.json",
+                data: " {name : "+username+", mail:"+mail+"}",
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: function() {
+                    window.app.view.message("Project", username+" invited!", "success");
+                    self.refreshUserList(true);
+                    self.loadMultiSelectUser()
+                    $(self.el).find("#new_username").val("")
+                    $(self.el).find("#new_mail").val("")
+                },
+                error: function(x) {
+                    window.app.view.message("Project", x.responseJSON.errors, "error");
+                }
+            });
+
+
+        });
 
         return this;
     },
@@ -495,15 +526,20 @@ var UsersConfigPanel = Backbone.View.extend({
             }});
 
     },
-    refreshUserList: function () {
-        // try to not reload the user list but pass it as an argument
+    refreshUserList: function (reloadAllUsers) {
         var self = this;
-        var projectUser = null;
+        var projectUsers = null;
+        var allUsers = null;
+        var reloadDone = false;
 
         var loadUser = function() {
 
+            if(!reloadDone || projectUsers == null) {
+                return
+            }
+
             var projectUserArray=[]
-            projectUser.each(function(user) {
+            projectUsers.each(function(user) {
                 projectUserArray.push(user.id);
             });
 
@@ -522,10 +558,30 @@ var UsersConfigPanel = Backbone.View.extend({
 
         new UserCollection({project: self.model.id}).fetch({
             success: function (projectUserCollection, response) {
-                projectUser = projectUserCollection;
+                projectUsers = projectUserCollection;
                 window.app.models.projectUser = projectUserCollection;
                 loadUser();
             }});
+
+
+        if(reloadAllUsers) {
+            new UserCollection({}).fetch({
+                success: function (allUserCollection, response) {
+                    var allUserArray = [];
+                    allUserCollection.each(function(user) {
+                        allUserArray.push({id:user.id,label:user.prettyName()});
+                    });
+
+                    self.userMaggicSuggest.setData(allUserArray)
+                    self.adminMaggicSuggest.setData(allUserArray)
+                    reloadDone = true
+                    loadUser();
+                }});
+
+        }
+
+
+
 
 
     },

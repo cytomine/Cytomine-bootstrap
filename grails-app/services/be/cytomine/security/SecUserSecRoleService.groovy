@@ -45,7 +45,11 @@ class SecUserSecRoleService extends ModelService {
      */
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        securityACLService.checkAdmin(currentUser)
+        SecRole role = SecRole.read(json.role)
+        if(role.authority == "ROLE_ADMIN" || role.authority == "ROLE_SUPER_ADMIN") {
+            securityACLService.checkAdmin(currentUser)
+        }
+        securityACLService.checkUser(currentUser)
         def command = executeCommand(new AddCommand(user: currentUser),null,json)
         return command
     }

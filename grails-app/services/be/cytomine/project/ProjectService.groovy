@@ -7,6 +7,8 @@ import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
 import be.cytomine.processing.Software
+import be.cytomine.security.ForgotPasswordToken
+import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.social.PersistentConnection
@@ -27,23 +29,22 @@ class ProjectService extends ModelService {
     def springSecurityService
     def aclUtilService
     def dataSource
-    def imageFilterProjectService
     def jobService
-    def softwareProjectService
     def transactionService
     def algoAnnotationService
     def algoAnnotationTermService
-    def annotationFilterService
     def imageInstanceService
     def reviewedAnnotationService
     def userAnnotationService
-    def imageSequenceService
     def propertyService
     def secUserService
     def permissionService
     def securityACLService
     def mongo
     def noSQLCollectionService
+    def secUserSecRoleService
+    def secRoleService
+    def notificationService
 
     def currentDomain() {
         Project
@@ -357,6 +358,43 @@ class ProjectService extends ModelService {
         c.delete = true
         return executeCommand(c,domain,jsonNewData)
     }
+
+    /**
+     * Invite an user (not yet existing) in project user
+     * @param sender User who send the invitation
+     * @param project Project that will be accessed by user
+     * @param json the name and the mail of the User to add in project
+     * @return Response structure
+     */
+    def inviteUser(Project project, def json) {
+
+        def guestUser = [username : json.name, firstname : 'firstname',
+                         lastname : 'lastname', email : json.mail,
+                         password : 'passwordExpired', color : "#FF0000"]
+
+        secUserService.add(JSON.parse(JSONUtils.toJSONString(guestUser)))
+        User user = (User) secUserService.findByUsername(guestUser.username)
+        SecRole secRole = secRoleService.findByAuthority("ROLE_GUEST")
+        secUserSecRoleService.add(JSON.parse(JSONUtils.toJSONString([ user : user.id, role : secRole.id])))
+        secUserService.addUserToProject(user, project, false)
+
+        if (user) {
+            user.passwordExpired = true
+            user.save()
+            ForgotPasswordToken forgotPasswordToken = new ForgotPasswordToken(
+                    user : user,
+                    tokenKey: UUID.randomUUID().toString(),
+                    expiryDate: new Date() + 1
+            ).save()
+            def sender = cytomineService.currentUser
+            notificationService.notifyWelcome(sender, user, forgotPasswordToken)
+        } else { //error
+        }
+        return user
+
+    }
+
+
 
     def afterAdd(Project domain, def response) {
         log.info("Add permission on " + domain + " to " + springSecurityService.authentication.name)

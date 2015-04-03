@@ -22,6 +22,15 @@
                 <div class="ui-helper-clearfix">
                     <select multiple="multiple" id="usersByGroup" style="width:600px;height: 250px;display:none;"></select><br>
                 </div>
+                <input type="radio" id="addUsersByMail-radio-config" name="AddUserGroup" value="mail">
+                Invite a new user<br>
+                <div id="invite_new_user" class="col-md-offset-1">
+                    <label class="control-label" for="new_username">Username</label><br/>
+                    <input type="text" id="new_username"><br/>
+                    <label class="control-label" for="new_mail">Email</label><br/>
+                    <input type="email" id="new_mail"><br/><br/>
+                    <a id="invitenewuserbutton" href="javascript:void(0);" class="btn btn-info">Invite</a>
+                </div>
             </div>
         </div>
 
