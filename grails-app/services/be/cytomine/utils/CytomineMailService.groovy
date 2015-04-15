@@ -1,5 +1,6 @@
 package be.cytomine.utils
 
+import grails.util.Holders
 import org.springframework.core.io.FileSystemResource
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.mail.javamail.MimeMessageHelper
@@ -10,7 +11,7 @@ import javax.mail.internet.MimeMessage
 
 class CytomineMailService {
 
-    static final String DEFAULT_EMAIL = "cytomine.ulg@gmail.com"
+    static final String DEFAULT_EMAIL = Holders.getGrailsApplication().config.grails.notification.email
     static final String NO_REPLY_EMAIL = "no-reply@gmail.com"
 
     static transactional = false
@@ -22,15 +23,15 @@ class CytomineMailService {
         Properties props = new Properties();
         props.put("mail.smtp.starttls.enable","true");
         props.put("mail.smtp.starttls.required","true");
-        props.put("mail.smtp.host","smtp.gmail.com");
+        props.put("mail.smtp.host",Holders.getGrailsApplication().config.grails.notification.smtp.host);
         props.put("mail.smtp.auth", "true" );
-        props.put("mail.smtp.port","587");
+        props.put("mail.smtp.port",Holders.getGrailsApplication().config.grails.notification.smtp.port);
 
         //Create Mail Sender
         def sender = new JavaMailSenderImpl()
         sender.setJavaMailProperties(props)
         sender.setUsername(DEFAULT_EMAIL)
-        sender.setPassword("C3=8wj9R")
+        sender.setPassword(Holders.getGrailsApplication().config.grails.notification.password)
         sender.setDefaultEncoding("UTF-8")
         MimeMessage mail = sender.createMimeMessage()
         MimeMessageHelper helper = new MimeMessageHelper(mail, true)

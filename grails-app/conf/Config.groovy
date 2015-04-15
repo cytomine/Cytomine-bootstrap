@@ -596,7 +596,15 @@ environments {
 
     }
 }
+
+
 grails.admin.email = "info@cytomine.be"
+
+grails.notification.email = ""
+grails.notification.password = ""
+grails.notification.smtp.host = "smtp.gmail.com"
+grails.notification.smtp.port = "587"
+
 
 grails.client = "NO"//"AURORA"
 
