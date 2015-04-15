@@ -19,7 +19,8 @@ BACKUP_BOOL=false
 # RECEIVER_EMAIL : email adress of the receiver
 SENDER_EMAIL='your.email@gmail.com'
 SENDER_EMAIL_PASS='passwd'
-SENDER_EMAIL_SMTP='smtp.gmail.com:587'
+SENDER_EMAIL_SMTP_HOST='smtp.gmail.com'
+SENDER_EMAIL_SMTP_PORT='587'
 RECEIVER_EMAIL='receiver@XXX.com'
 
 #possible values : memory, redis

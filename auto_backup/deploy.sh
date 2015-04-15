@@ -19,7 +19,7 @@ then
 fi
 chmod +x /var/cytomine/script_backup.sh
 
-echo "mailhub=$SENDER_EMAIL_SMTP" >> /etc/ssmtp/ssmtp.conf
+echo "mailhub=$SENDER_EMAIL_SMTP_HOST:$SENDER_EMAIL_SMTP_PORT" >> /etc/ssmtp/ssmtp.conf
 echo "AuthUser=$SENDER_EMAIL" >> /etc/ssmtp/ssmtp.conf
 echo "AuthPass=$SENDER_EMAIL_PASS" >> /etc/ssmtp/ssmtp.conf
 

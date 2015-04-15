@@ -40,6 +40,12 @@ then
 	echo "grails.ImageServerPrivateKey='$IMS_PRIV_KEY'" >> cytomineconfig.groovy
 	echo "grails.ImageServerPublicKey='$IMS_PUB_KEY'" >> cytomineconfig.groovy
 
+	echo "grails.notification.email='$SENDER_EMAIL'" >> cytomineconfig.groovy
+	echo "grails.notification.password='$SENDER_EMAIL_PASS'" >> cytomineconfig.groovy
+	echo "grails.notification.smtp.host='$SENDER_EMAIL_SMTP_HOST'" >> cytomineconfig.groovy
+	echo "grails.notification.smtp.port='$SENDER_EMAIL_SMTP_PORT'" >> cytomineconfig.groovy
+
+
 	rm -r /var/lib/tomcat7/webapps/*
 	cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
 fi
