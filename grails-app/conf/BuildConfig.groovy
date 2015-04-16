@@ -44,7 +44,6 @@ println grailsApplication
 //if(grails.client=="be.cytomine.integration") {
 //    grails.plugin.location.integration = "../Core-plugins/be.cytomine.integration"
 //}
-//grails.plugin.location."cookie-session" = "../grails-cookie-session-v2"
 
 //grails.plugin.location."database-session" = "../grails-database-session"
 
@@ -197,7 +196,6 @@ grails.project.dependency.resolution = {
         }
         test ":geb:0.9.0"
 
-        //compile ":cookie-session:2.0.15"
 
 
         compile ':webxml:1.4.1'
@@ -205,8 +203,6 @@ grails.project.dependency.resolution = {
         // compile ":database-session:1.2.1"
 
         //CHANGE MADE FOR 2.4.2
-
-        //cookie-session:2.0.15
 
         //export1.6
 
