@@ -34,6 +34,8 @@ docker stop ims
 docker rm -v ims
 docker stop core
 docker rm -v core
+docker stop data_test
+docker rm -v data_test
 docker stop retrieval
 docker rm -v retrieval
 docker stop nginx

@@ -17,6 +17,7 @@ cd ../iipOfficiel && docker build -t="cytomine/iipofficiel" .
 cd ../iipVentana && docker build -t="cytomine/iipventana" .
 cd ../bioformat && docker build -t="cytomine/bioformat" .
 cd ../ims && docker build -t="cytomine/ims" .
+cd ../data_for_test && docker build -t="cytomine/data_test" .
 cd ../nginx && docker build -t="cytomine/nginx" .
 cd ../mongodb && docker build -t="cytomine/mongodb" .
 cd ../auto_backup && docker build -t="cytomine/backup" .

@@ -37,6 +37,8 @@ then
 	echo "grails.uploadURL='http://$UPLOAD_URL'" >> cytomineconfig.groovy
 
 	echo "grails.adminPassword='$ADMIN_PWD'" >> cytomineconfig.groovy
+	echo "grails.adminPrivateKey='$ADMIN_PRIV_KEY'" >> cytomineconfig.groovy
+	echo "grails.adminPublicKey='$ADMIN_PUB_KEY'" >> cytomineconfig.groovy
 	echo "grails.ImageServerPrivateKey='$IMS_PRIV_KEY'" >> cytomineconfig.groovy
 	echo "grails.ImageServerPublicKey='$IMS_PUB_KEY'" >> cytomineconfig.groovy
 

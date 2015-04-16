@@ -38,6 +38,7 @@ BIOFORMAT_ENABLED="false"
 CORE_WAR_URL="http://cytomine.be/release/core/ROOT.war"
 IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 RETRIEVAL_JAR_URL="http://cytomine.be/release/retrieval/CBIRest-0.2.0.zip"
+JAVA_CLIENT_JAR="http://cytomine.be/release/java/cytomine-java-client.jar"
 
 MEMCACHED_PASS="mypass"
 
