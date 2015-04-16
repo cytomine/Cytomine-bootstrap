@@ -65,9 +65,9 @@ class BootstrapTestDataService {
         bootstrapUtilsService.createUsers(usersSamples)
         bootstrapUtilsService.createRelation()
 
-        SecUser admin = SecUser.findByUsername("ImageServer1")
-        admin.setPrivateKey(grailsApplication.config.grails.adminPrivateKey)
-        admin.setPublicKey(grailsApplication.config.grails.adminPublicKey)
+        SecUser admin = SecUser.findByUsername("admin")
+        admin.setPrivateKey((String) grailsApplication.config.grails.adminPrivateKey)
+        admin.setPublicKey((String) grailsApplication.config.grails.adminPublicKey)
         admin.save(flush : true)
 
     }
