@@ -282,6 +282,16 @@ done
 docker exec core /bin/bash -c 'echo "ADMIN_PWD=" > /root/.bashrc'
 docker exec core /bin/bash -c "sed -i '/adminPassword/d' /usr/share/tomcat7/.grails/cytomineconfig.groovy"
 
+echo 
+while true; do
+    read -p "Do you wish to install some data test? " yn
+    case $yn in
+        [Yy]* ) make install; break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 # create test docker
 docker run -d -p 22 \
 --name data_test \
