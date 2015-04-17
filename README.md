@@ -4,4 +4,4 @@ This repository contains Dockerfile's in order to bootstrap the Cytomine Platfor
 
 Documentation : http://docker.io
 
-Cytomine website : cytomine.be
+Cytomine website : http://cytomine.be
