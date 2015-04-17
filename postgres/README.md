@@ -1,4 +1,4 @@
-# Dockerfile postgis
+# Dockerfile postgres
 
 ## Info
 
