@@ -6,7 +6,7 @@ var ProjectDashboardConfig = Backbone.View.extend({
 
         var self = this;
         require(["text!application/templates/dashboard/config/DefaultProjectLayersConfig.tpl.html", "text!application/templates/dashboard/config/CustomUIConfig.tpl.html",
-            "text!application/templates/dashboard/config/MagicWandConfig.tpl.html", "text!application/templates/dashboard/config/ImageFiltersConfig.tpl.html",
+            "text!application/templates/dashboard/config/AnnotationToolsConfig.tpl.html", "text!application/templates/dashboard/config/ImageFiltersConfig.tpl.html",
                 "text!application/templates/dashboard/config/SoftwareConfig.tpl.html", "text!application/templates/dashboard/config/GeneralConfig.tpl.html",
                 "text!application/templates/dashboard/config/UsersConfig.tpl.html"
             ],
@@ -16,7 +16,7 @@ var ProjectDashboardConfig = Backbone.View.extend({
         });
         return this;
     },
-    doLayout: function (defaultLayersTemplate,customUIConfigTemplate, magicWandTemplate, imageFiltersTemplate,softwareTemplate, generalConfigTemplate, usersConfigTemplate) {
+    doLayout: function (defaultLayersTemplate,customUIConfigTemplate, AnnotToolsTemplate, imageFiltersTemplate,softwareTemplate, generalConfigTemplate, usersConfigTemplate) {
 
         // generate the menu skeleton
 
@@ -85,16 +85,6 @@ var ProjectDashboardConfig = Backbone.View.extend({
         configList.append(uiPanel.el);
 
 
-        // Magic Wand
-        idPanel = "magicWand";
-        titlePanel = "Magic Wand Configuration";
-        configs.push({id: idPanel, title : titlePanel});
-        var magicWand = new MagicWandConfig({
-            el: _.template(magicWandTemplate, {titre : titlePanel, id : idPanel})
-        }).render();
-        configList.append(magicWand.el);
-
-
         // Image Filters
         idPanel = "imageFilters";
         titlePanel = "Image filters";
@@ -115,6 +105,16 @@ var ProjectDashboardConfig = Backbone.View.extend({
             model: this.model
         }).render();
         configList.append(softwares.el);
+
+        // Annotation tools Config
+        idPanel = "annotTools";
+        titlePanel = "Private Annotation Tools Configuration";
+        configs.push({id: idPanel, title : titlePanel});
+        var magicWand = new AnnotationToolsConfig({
+            el: _.template(AnnotToolsTemplate, {titre : titlePanel, id : idPanel})
+        }).render();
+        configList.append(magicWand.el);
+
 
         var callBack = function(users) {
             new ProjectDefaultLayerCollection({project: this.model.id}).fetch({
@@ -621,7 +621,8 @@ var UsersConfigPanel = Backbone.View.extend({
     }
 });
 
-var MagicWandConfig = Backbone.View.extend({
+var AnnotationToolsConfig = Backbone.View.extend({
+    defaultRadiusValue: 8,
     thresholdKey: null,
     toleranceKey: null,
     initialize: function () {
@@ -632,6 +633,10 @@ var MagicWandConfig = Backbone.View.extend({
         this.thresholdKey = "th_threshold" + window.app.status.currentProject;
         if (window.localStorage.getItem(this.thresholdKey) == null) {
             window.localStorage.setItem(this.thresholdKey, Processing.Threshold.defaultTheshold);
+        }
+        this.radiusKey = "point_radius" + window.app.status.currentProject;
+        if (window.localStorage.getItem(this.radiusKey) == null) {
+            window.localStorage.setItem(this.radiusKey, this.defaultRadiusValue);
         }
         return this;
     },
@@ -646,6 +651,7 @@ var MagicWandConfig = Backbone.View.extend({
         var self = this;
         var form = $(self.el).find("#mwToleranceForm")
         var max_euclidian_distance = Math.ceil(Math.sqrt(255 * 255 + 255 * 255 + 255 * 255)) //between pixels
+        // Magic Wand Form
         form.on("submit", function (e) {
             e.preventDefault();
             //tolerance
@@ -673,12 +679,30 @@ var MagicWandConfig = Backbone.View.extend({
                 window.app.view.message("Error", "Threshold must be an integer between 0 and 255", "error");
             }
         });
+
+        // Point Form
+        var form = $(self.el).find("#pointConfigForm")
+        form.on("submit", function (e) {
+            e.preventDefault();
+            var radiusValue = parseInt($(self.el).find("#input_radius").val());
+            if (_.isNumber(radiusValue) && radiusValue >= 0) {
+                window.localStorage.setItem(self.radiusKey, Math.round(radiusValue));
+                var successMessage = _.template("Radius value for project <%= name %> is now <%= radius %>", {
+                    name: window.app.status.currentProjectModel.get('name'),
+                    radius: radiusValue
+                });
+                window.app.view.message("Success", successMessage, "success");
+            } else {
+                window.app.view.message("Error", "Radius must be an integer greater than 0 ", "error");
+            }
+        });
     },
 
     fillForm: function () {
         var self = this;
         $(self.el).find("#input_tolerance").val(window.localStorage.getItem(this.toleranceKey));
         $(self.el).find("#input_threshold").val(window.localStorage.getItem(this.thresholdKey));
+        $(self.el).find("#input_radius").val(window.localStorage.getItem(this.radiusKey));
     }
 });
 
