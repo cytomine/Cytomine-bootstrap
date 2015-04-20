@@ -66,6 +66,11 @@ then
 
 	rm -r /var/lib/tomcat7/webapps/*
 	cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
+
+	if [ ! -z "$DOC_URL" ]
+	then
+		cd /var/lib/tomcat7/  && wget -q $DOC_URL -O restapidoc.json
+	fi
 fi
 
 if [ $IS_LOCAL = true ]; then

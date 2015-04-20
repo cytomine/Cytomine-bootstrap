@@ -223,6 +223,7 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
 -e WAR_URL=$CORE_WAR_URL \
+-e DOC_URL=$CORE_DOC_URL \
 -e IS_LOCAL=$IS_LOCAL \
 -e ADMIN_PWD=$admin_pwd \
 -e ADMIN_PUB_KEY=$ADMIN_PUB_KEY \
@@ -297,6 +298,7 @@ done
 # delete the pwd from the files & variables
 docker exec core /bin/bash -c 'echo "ADMIN_PWD=" > /root/.bashrc'
 docker exec core /bin/bash -c "sed -i '/adminPassword/d' /usr/share/tomcat7/.grails/cytomineconfig.groovy"
+docker exec core /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.grails/cytomineconfig.groovy"
 
 echo 
 while true; do
