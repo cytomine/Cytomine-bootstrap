@@ -11,14 +11,16 @@ import javax.mail.internet.MimeMessage
 
 class CytomineMailService {
 
-    static final String DEFAULT_EMAIL = Holders.getGrailsApplication().config.grails.notification.email
     static final String NO_REPLY_EMAIL = "no-reply@gmail.com"
 
     static transactional = false
 
 
     def send(String from, String[] to, String cc, String subject, String message, def attachment = null) {
-        if (!from) from = DEFAULT_EMAIL
+
+        String defaultEmail = Holders.getGrailsApplication().config.grails.notification.email
+
+        if (!from) from = defaultEmail
 
         Properties props = new Properties();
         props.put("mail.smtp.starttls.enable","true");
@@ -30,7 +32,7 @@ class CytomineMailService {
         //Create Mail Sender
         def sender = new JavaMailSenderImpl()
         sender.setJavaMailProperties(props)
-        sender.setUsername(DEFAULT_EMAIL)
+        sender.setUsername(defaultEmail)
         sender.setPassword(Holders.getGrailsApplication().config.grails.notification.password)
         sender.setDefaultEncoding("UTF-8")
         MimeMessage mail = sender.createMimeMessage()

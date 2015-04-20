@@ -65,6 +65,11 @@ class BootstrapTestDataService {
         bootstrapUtilsService.createUsers(usersSamples)
         bootstrapUtilsService.createRelation()
 
+        SecUser admin = SecUser.findByUsername("admin")
+        admin.setPrivateKey((String) grailsApplication.config.grails.adminPrivateKey)
+        admin.setPublicKey((String) grailsApplication.config.grails.adminPublicKey)
+        admin.save(flush : true)
+
     }
 
     public void recreateTableFromNotDomainClass() {

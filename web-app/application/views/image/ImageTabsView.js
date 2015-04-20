@@ -53,7 +53,8 @@ var ImageTabsView = Backbone.View.extend({
             { "mDataProp": "originalFilename", sDefaultContent: "", "bSearchable": true,"bSortable": true, "fnRender" : function (o) {
                 var imageInstanceModel = new ImageInstanceModel({});
                 imageInstanceModel.set(o.aData);
-                return imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'),isAdmin);
+                var names = imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'),isAdmin);
+                return names[1]+"<br/><i>"+names[0]+"</i>";
                 return o.aData["originalFilename"];
             }}
             ,

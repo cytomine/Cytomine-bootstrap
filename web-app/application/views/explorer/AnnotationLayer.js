@@ -89,7 +89,8 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
     var self = this;
     this.user = user;
     this.ontologyTreeView = ontologyTreeView;
-    this.pointRadius = window.app.view.isMobile ? 12 : 8;
+    this.pointRadius = window.localStorage.getItem("point_radius" + window.app.status.currentProject) || 8;
+    if(window.app.view.isMobile) this.pointRadius +=4;
     this.name = name;
     this.map = map;
     this.imageID = imageID;
@@ -489,7 +490,19 @@ AnnotationLayer.prototype = {
                     holeModifier: "altKey"
                 }
             }),
-            'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point),
+            'point': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Point, {
+                handlerOptions: {
+                    freehand: true,
+                    style: {
+                        fillColor: "#66cccc",
+                        fillOpacity: 0.4,
+                        strokeColor: "#66cccc",
+                        strokeOpacity: 1,
+                        strokeWidth: 2,
+                        pointRadius: this.pointRadius
+                    }
+                }
+            }),
             'line': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Path),
             'polygon': new OpenLayers.Control.DrawFeature(this.vectorsLayer, OpenLayers.Handler.Polygon, {
                 handlerOptions: {
