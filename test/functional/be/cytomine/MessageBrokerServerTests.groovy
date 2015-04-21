@@ -78,7 +78,7 @@ class MessageBrokerServerTests {
     void testUpdateMessageBrokerServerCorrect() {
 
         MessageBrokerServer messageBrokerServer = BasicInstanceBuilder.getMessageBrokerServer()
-        def data = UpdateData.createUpdateSet(messageBrokerServer, [name: ["OLDNAME","NEWNAME"], user: [BasicInstanceBuilder.user1, BasicInstanceBuilder.user2]])
+        def data = UpdateData.createUpdateSet(messageBrokerServer, [name: ["OLDNAME","NEWNAME"]])
         def result = MessageBrokerServerAPI.update(messageBrokerServer.id, data.postData, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)

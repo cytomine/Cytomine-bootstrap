@@ -6,6 +6,9 @@ import be.cytomine.image.server.ImageServer
 import be.cytomine.image.server.MimeImageServer
 import be.cytomine.integration.NotifyAuroraUploadJob
 import be.cytomine.image.Mime
+import be.cytomine.middleware.AmqpQueue
+import be.cytomine.middleware.AmqpQueueConfig
+import be.cytomine.middleware.AmqpQueueConfigInstance
 import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
@@ -13,6 +16,8 @@ import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
+import be.cytomine.security.User
+import be.cytomine.test.Infos
 import be.cytomine.utils.Version
 import grails.util.Environment
 import grails.util.Holders
@@ -49,6 +54,12 @@ class BootStrap {
     def javascriptService
     def dataSource
     def sessionFactory
+
+    def amqpQueueService
+    def amqpQueueConfigService
+    def rabbitConnectionService
+    def messageBrokerServerService
+
 
     def init = { servletContext ->
 
@@ -91,6 +102,7 @@ class BootStrap {
         grantService.initGrant()
         tableService.initTable()
         termService.initialize()
+        amqpQueueService.initialize()
         retrieveErrorsService.initMethods()
 
         /* Print JVM infos like XMX/XMS */
@@ -112,10 +124,38 @@ class BootStrap {
             bootstrapTestDataService.initData()
         }
 
+
+        // Initialize RabbitMQ server
+        MessageBrokerServer mbs = bootstrapUtilsService.createMessageBrokerServer()
+
+        // Initialize default configurations for amqp queues
+        amqpQueueConfigService.initAmqpQueueConfigDefaultValues()
+
+        // Initialize RabbitMQ queue to communicate software added
+        if(!AmqpQueue.findByName("queueCommunication")) {
+            AmqpQueue queueCommunication = new AmqpQueue(name: "queueCommunication", host: mbs.host, exchange: "exchangeCommunication")
+            queueCommunication.save(failOnError: true, flush: true)
+        }
+
         //Inserting a MessageBrokerServer for testing purpose
         if (Environment.getCurrent() == Environment.DEVELOPMENT) {
-            MessageBrokerServer messageBrokerServer = new MessageBrokerServer(host: "localhost", port: 5000, name: "BrokerTest", user: User.findByUsername(Infos.SUPERADMINLOGIN))
-            messageBrokerServer.save()
+            rabbitConnectionService.getRabbitConnection(mbs)
+
+            /*AmqpQueue aq = new AmqpQueue(name: "queueCytomine", host: "localhost", exchange: "exchangeCytomine")
+            aq.save()
+
+            AmqpQueueConfigInstance aqciExclusive = new AmqpQueueConfigInstance(queue: aq, config: amqpQueueConfigService.read("exclusive"), value: null)
+            AmqpQueueConfigInstance aqciAutoDelete = new AmqpQueueConfigInstance(queue: aq, config: amqpQueueConfigService.read("autoDelete"), value: null)
+            AmqpQueueConfigInstance aqciDurable = new AmqpQueueConfigInstance(queue: aq, config: amqpQueueConfigService.read("durable"), value: null)
+            AmqpQueueConfigInstance aqciMap = new AmqpQueueConfigInstance(queue: aq, config: amqpQueueConfigService.read("parametersMap"), value: null)
+
+            aqciExclusive.save(failOnError: true)
+            aqciAutoDelete.save(failOnError: true)
+            aqciDurable.save(failOnError: true)
+            aqciMap.save(failOnError: true)
+
+            amqpQueueService.createAmqpQueue(aq)*/
+
         }
 
         //ventana

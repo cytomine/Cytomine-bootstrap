@@ -1,12 +1,15 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineException
-
+import be.cytomine.Exception.MiddlewareException
 import be.cytomine.command.*
+import be.cytomine.middleware.AmqpQueue
+import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import groovy.json.JsonBuilder
 import org.springframework.security.acls.domain.BasePermission
 
 import static org.springframework.security.acls.domain.BasePermission.*
@@ -22,6 +25,7 @@ class SoftwareService extends ModelService {
     def jobService
     def softwareProjectService
     def securityACLService
+    def amqpQueueService
 
     def currentDomain() {
         Software
@@ -89,7 +93,27 @@ class SoftwareService extends ModelService {
 
     def afterAdd(def domain, def response) {
         aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
+
+        // add an AMQP queue with the name of the software (default parameters)
+        String queueName = amqpQueueService.queuePrefixSoftware + ((domain as Software).name).capitalize()
+        if(!amqpQueueService.checkAmqpQueueDomainExists(queueName)) {
+            String exchangeName = amqpQueueService.exchangePrefixSoftware + ((domain as Software).name).capitalize()
+            String brokerServerURL = (MessageBrokerServer.findByName("MessageBrokerServer")).host
+            AmqpQueue aq = new AmqpQueue(name: queueName, host: brokerServerURL, exchange: exchangeName)
+            aq.save(failOnError: true)
+
+            // Creates the queue on the rabbit server
+            amqpQueueService.createAmqpQueueDefault(aq)
+
+            // Notify the queueCommunication that a software has been added
+            def mapInfosQueue = [name: aq.name, host: aq.host, exchange: aq.exchange]
+            JsonBuilder builder = new JsonBuilder()
+            builder(mapInfosQueue)
+            amqpQueueService.publishMessage(AmqpQueue.findByName("queueCommunication"), builder.toString())
+
+        }
     }
+
 
     def getStringParamsI18n(def domain) {
         return [domain.id, domain.name]

@@ -82,6 +82,10 @@ abstract class AbstractJobService {
      */
     void launchSoftware(String[] args, Job job) {
         Runtime runtime = Runtime.getRuntime();
+
+        println "local dir="+new File("test").absolutePath
+        println "args="+args.join(" ")
+
         final Process process = runtime.exec(args);
 
         // See algo log in Cytomine log (for debug!)
@@ -201,6 +205,7 @@ abstract class AbstractJobService {
     }
 
     protected def createArgsArray(Job job) {
+        println "TEST 2 : " + job.software.executeCommand
         String[] args = job.software.executeCommand.split(" ")
         return args
     }

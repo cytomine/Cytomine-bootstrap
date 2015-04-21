@@ -8,6 +8,9 @@ import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.image.server.*
 import be.cytomine.laboratory.Sample
+import be.cytomine.middleware.AmqpQueue
+import be.cytomine.middleware.AmqpQueueConfig
+import be.cytomine.middleware.AmqpQueueConfigInstance
 import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.ontology.*
 import be.cytomine.processing.*
@@ -17,6 +20,7 @@ import be.cytomine.project.ProjectDefaultLayer
 import be.cytomine.search.SearchEngineFilter
 import be.cytomine.security.*
 import be.cytomine.ontology.SharedAnnotation
+import be.cytomine.test.http.AmqpQueueAPI
 import be.cytomine.utils.AttachedFile
 import be.cytomine.utils.Description
 import com.vividsolutions.jts.io.WKTReader
@@ -188,8 +192,11 @@ class BasicInstanceBuilder {
     }
 
     static UserJob getUserJobNotExist(boolean save = false) {
+        getUserJobNotExist(getJobNotExist(true), save)
+    }
+
+    static UserJob getUserJobNotExist(Job job, boolean save = false) {
         def user = User.findByUsername(Infos.SUPERADMINLOGIN)
-        def job = getJobNotExist(true)
 
         UserJob userJob = new UserJob(username:getRandomString(),password: "PasswordUserJob",enabled: true,user : user,job: job)
         userJob.generateKeys()
@@ -825,7 +832,11 @@ class BasicInstanceBuilder {
     }
 
     static Job getJobNotExist(boolean save = false) {
-        Job job =  new Job(software:saveDomain(getSoftwareNotExist()), project : saveDomain(getProjectNotExist()))
+        getJobNotExist(save, saveDomain(getSoftwareNotExist()))
+    }
+
+    static Job getJobNotExist(boolean save = false, Software software) {
+        Job job =  new Job(software:software, project : saveDomain(getProjectNotExist()))
         save ? saveDomain(job) : checkDomain(job)
     }
 
@@ -1570,15 +1581,66 @@ class BasicInstanceBuilder {
     static MessageBrokerServer getMessageBrokerServer() {
         MessageBrokerServer msb = MessageBrokerServer.findByName("BasicMessageBrokerServer")
         if (!msb) {
-            msb = new MessageBrokerServer(host: "localhost", port: getRandomInteger(1024, 65535), name: "BasicMessageBrokerServer", user: User.findByUsername(Infos.SUPERADMINLOGIN))
+            msb = new MessageBrokerServer(host: "localhost", port: getRandomInteger(1024, 65535), name: "BasicMessageBrokerServer")
             saveDomain(msb)
         }
         msb
     }
 
     static MessageBrokerServer getMessageBrokerServerNotExist(boolean save = false) {
-        MessageBrokerServer messageBrokerServers = new MessageBrokerServer(host: "localhost", port: getRandomInteger(1024, 65535), name: getRandomString(), user: User.findByUsername(Infos.SUPERADMINLOGIN))
+        MessageBrokerServer messageBrokerServers = new MessageBrokerServer(host: "localhost", port: getRandomInteger(1024, 65535), name: getRandomString())
         save ? saveDomain(messageBrokerServers) : checkDomain(messageBrokerServers)
         messageBrokerServers
+    }
+
+    static AmqpQueue getAmqpQueue() {
+        AmqpQueue amqpQueue = AmqpQueue.findByName("BasicAmqpQueue")
+        if(!amqpQueue) {
+            amqpQueue = new AmqpQueue(name: "BasicAmqpQueue", host: "localhost", exchange: "exchange"+getRandomString())
+            saveDomain(amqpQueue)
+        }
+        amqpQueue
+    }
+
+    static AmqpQueue getAmqpQueueNotExist(boolean save = false)
+    {
+        AmqpQueue amqpQueue = new AmqpQueue(name: getRandomString(), host: "localhost", exchange: "exchange"+getRandomString())
+        save ? saveDomain(amqpQueue) : checkDomain(amqpQueue)
+        amqpQueue
+    }
+
+    static AmqpQueueConfig getAmqpQueueConfig() {
+        AmqpQueueConfig amqpQueueConfig = AmqpQueueConfig.findByName("BasicAmqpQueueConfig")
+        if(!amqpQueueConfig) {
+            amqpQueueConfig = new AmqpQueueConfig(name: "BasicAmqpQueueConfig", defaultValue: "false", index: 100, isInMap: false, type: "Boolean")
+            saveDomain(amqpQueueConfig)
+        }
+        amqpQueueConfig
+    }
+
+    static AmqpQueueConfig getAmqpQueueConfigNotExist(boolean save = false) {
+        AmqpQueueConfig amqpQueueConfig = new AmqpQueueConfig(name: getRandomString(), defaultValue: "false", index: 200, isInMap: false, type: "Boolean")
+        save ? saveDomain(amqpQueueConfig) : checkDomain(amqpQueueConfig)
+        amqpQueueConfig
+    }
+
+    static AmqpQueueConfigInstance getAmqpQueueConfigInstance() {
+
+        AmqpQueue amqpQueue = getAmqpQueue()
+        AmqpQueueConfig amqpQueueConfig= getAmqpQueueConfig()
+
+        AmqpQueueConfigInstance amqpQueueConfigInstance = AmqpQueueConfigInstance.findByQueueAndConfig(amqpQueue, amqpQueueConfig)
+        if(!amqpQueueConfigInstance) {
+            amqpQueueConfigInstance = new AmqpQueueConfigInstance(queue: amqpQueue, config: amqpQueueConfig, value: "dummyValue")
+            saveDomain(amqpQueueConfigInstance)
+        }
+        amqpQueueConfigInstance
+    }
+
+    static AmqpQueueConfigInstance  getAmqpQueueConfigInstanceNotExist(AmqpQueue amqpQueue = getAmqpQueueNotExist(true), AmqpQueueConfig amqpQueueConfig =  getAmqpQueueConfigNotExist(true), boolean save = false) {
+        AmqpQueueConfigInstance amqpQueueConfigInstance = new AmqpQueueConfigInstance(queue: amqpQueue, config: amqpQueueConfig, value: "dummyValueNotExist")
+        save ? saveDomain(amqpQueueConfigInstance) : checkDomain(amqpQueueConfigInstance)
+        amqpQueueConfigInstance
+
     }
 }

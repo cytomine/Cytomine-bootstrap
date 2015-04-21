@@ -45,9 +45,9 @@ cytomine.maxRequestSize = 10485760
 storage_path="/Users/stevben/cytomine_storage" //default path for image locations
 
 
-rabbitmq.username = 'admin'
-rabbitmq.password = 'mypass'
-rabbitmq.hostname = 'rabbitmq'
+//rabbitmq.username = 'admin'
+//rabbitmq.password = 'mypass'
+//rabbitmq.hostname = 'rabbitmq'
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
 
@@ -86,6 +86,10 @@ cytomine.jobdata.filesystemPath = "algo/data/"
 
 //mail.error.port = 587
 //mail.error.starttls = true
+
+// RabbitMQ server
+grails.messageBrokerServerURL = "localhost:5672"
+
 
 // set per-environment serverURL stem for creating absolute links
 environments {
@@ -473,22 +477,34 @@ grails.plugins.dynamicController.mixins = [
 
 
 
-/** RABBITMQ */
-rabbitmq {
-    connectionfactory {
-        username = rabbitmq.username
-        password = rabbitmq.password
-        hostname = rabbitmq.hostname
-        consumers = 5
-    }
-    queues = {
-        cytomineQueue()
-        helloWorldQueue()
-        jobQueue()
-        detectSampleQueue()
-        //myOtherQueueName autoDelete: false, durable: true, exclusive: false, arguments: [arg1: 'val1', arg2: 'val2']
-    }
-}
+/** RABBITMQ OLD */
+//rabbitmq {
+//    connectionfactory {
+//        username = rabbitmq.username
+//        password = rabbitmq.password
+//        hostname = rabbitmq.hostname
+//        consumers = 5
+//    }
+//    queues = {
+//        cytomineQueue()
+//        helloWorldQueue()
+//        jobQueue()
+//        detectSampleQueue()
+//        //myOtherQueueName autoDelete: false, durable: true, exclusive: false, arguments: [arg1: 'val1', arg2: 'val2']
+//    }
+//}
+
+/** RABBITMQ NEW */
+//rabbitmq {
+//    connection = {
+//        connection host: "localhost", username: "cytomine", password: "cytomine"
+//    }
+//    queues = {
+//        exchange name: "example.direct", type: "direct", {
+//            queue name: "grailsQueue", binding: "example.routingKey", durable: true
+//        }
+//    }
+//}
 
 // Uncomment and edit the following lines to start using Grails encoding & escaping improvements
 
@@ -619,3 +635,6 @@ grails.plugin.cookiesession.cookiecount = 10
 
 grails.plugin.springsecurity.password.algorithm = 'SHA-256'
 grails.plugin.springsecurity.password.hash.iterations = 1
+
+cytomine.middleware.rabbitmq.user = "cytomine"
+cytomine.middleware.rabbitmq.password = "cytomine"

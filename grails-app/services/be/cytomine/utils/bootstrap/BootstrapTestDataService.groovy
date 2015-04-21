@@ -1,6 +1,7 @@
 package be.cytomine.utils.bootstrap
 
 import be.cytomine.image.server.ImageServer
+import be.cytomine.middleware.AmqpQueueConfig
 import be.cytomine.processing.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -17,6 +18,7 @@ class BootstrapTestDataService {
     def grailsApplication
     def bootstrapUtilsService
     def dataSource
+    def amqpQueueConfigService
 
     def initVentana() {
         def mimeSamples = [
@@ -29,6 +31,7 @@ class BootstrapTestDataService {
     def initData() {
 
         recreateTableFromNotDomainClass()
+        amqpQueueConfigService.initAmqpQueueConfigDefaultValues()
 
 //        new Sql(dataSource).executeUpdate("DROP TABLE keywords")
 //        new Sql(dataSource).executeUpdate("CREATE TABLE keywords (key character varying(255))")

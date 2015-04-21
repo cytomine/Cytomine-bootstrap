@@ -1,45 +1,47 @@
 package be.cytomine.middleware
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.command.*
+import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
+import be.cytomine.command.DeleteCommand
+import be.cytomine.command.EditCommand
+import be.cytomine.command.Transaction
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 
-
-import static org.springframework.security.acls.domain.BasePermission.READ
-
 /**
- * Created by jconfetti on 04/02/15.
+ * Created by julien 
+ * Date : 03/03/15
+ * Time : 11:25
  */
-class MessageBrokerServerService extends ModelService{
+class AmqpQueueConfigInstanceService extends ModelService {
 
     static transactionService = true
     boolean saveOnUndoRedoStack = true
 
     def securityACLService
 
-    def permissionService
-
     def currentDomain() {
-        return MessageBrokerServer
+        return AmqpQueueConfigInstance
     }
 
-    MessageBrokerServer get(def id) {
-        MessageBrokerServer.get(id)
+    AmqpQueueConfigInstance get(def id) {
+        AmqpQueueConfigInstance.get(id)
     }
 
-    MessageBrokerServer read(def id) {
-        MessageBrokerServer messageBrokerServer = MessageBrokerServer.read(id)
+    AmqpQueueConfigInstance read(def id) {
+        AmqpQueueConfigInstance amqpQueueConfigInstance = AmqpQueueConfigInstance.read(id)
 
-        messageBrokerServer
+        amqpQueueConfigInstance
     }
 
     def list() {
-        MessageBrokerServer.list()
+        AmqpQueueConfigInstance.list()
     }
-    def list(String name) {
-        MessageBrokerServer.findAllByNameIlike("%$name%")
+
+    def list(AmqpQueue amqpQueue) {
+        AmqpQueueConfigInstance.findAllByQueue(amqpQueue)
     }
 
     /**
@@ -59,7 +61,7 @@ class MessageBrokerServerService extends ModelService{
      * @param jsonNewData New domain data
      * @return Response structure (new domain data, old domain data..)
      */
-    def update(MessageBrokerServer domain, def json) throws CytomineException {
+    def update(AmqpQueueConfigInstance domain, def json) throws CytomineException {
         SecUser currentUser = cytomineService.getCurrentUser()
         securityACLService.checkAdmin(currentUser)
         return executeCommand(new EditCommand(user: currentUser), domain, json)
@@ -73,7 +75,7 @@ class MessageBrokerServerService extends ModelService{
      * @param printMessage Flag if client will print or not confirm message
      * @return Response structure (code, old domain,..)
      */
-    def delete(MessageBrokerServer domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
+    def delete(AmqpQueueConfigInstance domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
         SecUser currentUser = cytomineService.getCurrentUser()
         securityACLService.checkAdmin(currentUser)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
@@ -81,11 +83,7 @@ class MessageBrokerServerService extends ModelService{
     }
 
     def getStringParamsI18n(def domain) {
-        return [domain.id, domain.host, domain.port]
-    }
-
-    def getMessageBrokerServerByHost(String host) {
-        MessageBrokerServer.findByHost(host)
+        return [domain.queue, domain.config, domain.value]
     }
 
 }

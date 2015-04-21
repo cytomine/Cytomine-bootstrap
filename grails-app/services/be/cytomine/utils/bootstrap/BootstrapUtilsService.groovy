@@ -14,6 +14,7 @@ import be.cytomine.image.server.MimeImageServer
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
@@ -291,6 +292,31 @@ class BootstrapUtilsService {
             }
 
         }
+    }
+
+    def createMessageBrokerServer() {
+        MessageBrokerServer.list().each { messageBroker ->
+            if(!grailsApplication.config.grails.messageBrokerServerURL.contains(messageBroker.host)) {
+                log.info messageBroker.host + "is not in config, drop it"
+                log.info "delete Message Broker Server " + messageBroker
+                messageBroker.delete()
+            }
+        }
+
+        String messageBrokerURL = grailsApplication.config.grails.messageBrokerServerURL
+        def splittedURL = messageBrokerURL.split(':')
+
+        if(!MessageBrokerServer.findByHost(splittedURL[0])) {
+            MessageBrokerServer mbs = new MessageBrokerServer(name: "MessageBrokerServer", host: splittedURL[0], port: splittedURL[1].toInteger())
+            if (mbs.validate()) {
+                mbs.save()
+            } else {
+                mbs.errors?.each {
+                    println it
+                }
+            }
+        }
+        MessageBrokerServer.findByHost(splittedURL[0])
     }
 
     def createMultipleIS() {
