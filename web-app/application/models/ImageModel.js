@@ -139,7 +139,15 @@ var ImageInstanceModel = Backbone.Model.extend({
         this.next = options.next;
         this.previous = options.previous;
     },
-    getVisibleName : function(hideName) {
+    getVisibleName : function(hideName, isAdmin) {
+        if (isAdmin) {
+            var result = [this.get('instanceFilename')];
+            if(hideName) {
+                result.push("[BLIND]" + this.get('id'));
+            }
+            return result;
+
+        }
         if(!hideName) {
             return this.get('instanceFilename');
         } else {

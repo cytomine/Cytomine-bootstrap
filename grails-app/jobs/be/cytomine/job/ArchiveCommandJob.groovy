@@ -2,7 +2,6 @@ package be.cytomine.job
 
 class ArchiveCommandJob {
 
-    def retrievalService
     def archiveCommandService
     def grailsApplication
 

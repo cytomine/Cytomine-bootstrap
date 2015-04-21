@@ -37,6 +37,7 @@ var ImageTabsView = Backbone.View.extend({
     doLayout: function (actionMenuTpl) {
         var self = this;
         self.images = [];
+        var isAdmin = window.app.status.currentProjectModel.isAdmin(window.app.models.projectAdmin);
         var table = $("#imageProjectTable" + self.idProject);
         var body = $("#imageProjectArray" + self.idProject);
         var columns = [
@@ -52,7 +53,8 @@ var ImageTabsView = Backbone.View.extend({
             { "mDataProp": "originalFilename", sDefaultContent: "", "bSearchable": true,"bSortable": true, "fnRender" : function (o) {
                 var imageInstanceModel = new ImageInstanceModel({});
                 imageInstanceModel.set(o.aData);
-                return imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
+                var names = imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'),isAdmin);
+                return names[1]+"<br/><i>"+names[0]+"</i>";
                 return o.aData["originalFilename"];
             }}
             ,

@@ -241,7 +241,6 @@ var AddProjectDialog = Backbone.View.extend({
         });
         retrievalProjectEl.append('<option value="-1" selected="selected">' + projectName + '</option>');
 
-        retrievalProjectEl.multiselectNext('destroy');
         retrievalProjectEl.multiselectNext({
             selected: function (event, ui) {
                 //alert($(ui.option).val() + " has been selected");

@@ -45,8 +45,17 @@ angular.module("cytomineUserArea")
                 } else {
                     $scope.setSelectedGroup($scope.group.groups[0].id);
                 }
-
             });
+        };
+
+        $scope.getLDAPConfig = function () {
+            $http.get("/ldap.json")
+                .success(function (response) {
+                    $scope.canLdap = response.enabled;
+                })
+                .error(function (data, status, headers, config) {
+                    console.log("error LDAP")
+                })
         };
 
         $scope.createGroup = function (group,form) {
@@ -66,6 +75,19 @@ angular.module("cytomineUserArea")
             }
         };
 
+        $scope.importFromLDAP = function (group) {
+            $http.post("/api/ldap/group.json", group)
+                .success(function (response) {
+                    $scope.idSelected = response.data.group.id;
+                    //$scope.selected = $scope.getGroup(response.group.id);
+                    $scope.newGroup = null;
+                    $scope.group.groups.push(new $scope.groupsResource(response.data.group));
+                })
+                .error(function (data, status, headers, config) {
+                    console.log("error LDAP")
+                })
+        };
+
         $scope.updateGroup = function (group,form) {
             if(form.$valid) {
                 new $scope.groupsResource(group).$save(function (response) {
@@ -80,6 +102,19 @@ angular.module("cytomineUserArea")
             } else {
                 $scope.showValidationEditGroupForm = true;
             }
+        };
+
+        $scope.resetFromLDAP = function (group) {
+            $http.put("/api/ldap/{id}/group.json".replace("{id}", group.id), "")
+                .success(function (response) {
+                    $scope.idSelected = response.id;
+                    $scope.newGroup = null;
+                    $scope.group.groups[$scope.group.groups.indexOf($scope.getGroup(response.id))] = response;
+                    $scope.getUserFromGroup(response.id);
+                })
+                .error(function (data, status, headers, config) {
+                    console.log("reset : error LDAP")
+                })
         };
 
         $scope.deleteGroup = function (group) {
@@ -165,6 +200,9 @@ angular.module("cytomineUserArea")
 
 
         $scope.listGroups();
+        $scope.getLDAPConfig();
+
+
         userService.getAllUsers(
             function(data) {
                 $scope.group.users = data;

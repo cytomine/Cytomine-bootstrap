@@ -3,6 +3,8 @@ package be.cytomine
 import be.cytomine.api.RestController
 import grails.plugin.springsecurity.annotation.Secured
 
+import javax.imageio.ImageIO
+
 @Secured(['ROLE_ADMIN','ROLE_SUPER_ADMIN'])
 class AdminController extends RestController {
 
@@ -22,11 +24,7 @@ class AdminController extends RestController {
         archiveCommandService.archiveOldCommand()
         responseSuccess([])
 
-
-
-
     }
-
 
 
 }

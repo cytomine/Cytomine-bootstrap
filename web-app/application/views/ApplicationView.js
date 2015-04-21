@@ -167,17 +167,17 @@ var ApplicationView = Backbone.View.extend({
                     "text!application/templates/about/About.tpl.html"
                 ],
                 function (tpl) {
-                    body = _.template(tpl, {version : window.app.status.version});
+                    body = _.template(tpl, {version : window.app.status.version, mail : "info@cytomine.be"});
 
                     var modal = new CustomModal({
-                        idModal: "about" + "DialogModal" + "lala",
+                        idModal: "about" + "DialogModal",
                         header: null,
                         body: body,
                         wide: true
                     });
 
                     modal.render();
-                    $('#' + "about" + 'DialogModal' + "lala").modal();// display the dialog box
+                    $('#' + "about" + 'DialogModal').modal();// display the dialog box
 
                     //$(".modal-header").hide();
                     $(".modal-footer").hide();

@@ -173,6 +173,19 @@ class AbstractImageService extends ModelService {
     }
 
     /**
+     * Returns the list of all the unused abstract images
+     */
+    def listUnused(User user) {
+        def result = []
+        def abstractList = list(user);
+        abstractList.each {
+            image ->
+                if(!isUsed(image.id)) result << image;
+        }
+        return result;
+    }
+
+    /**
      * Delete this domain
      * @param domain Domain to delete
      * @param transaction Transaction link with this command

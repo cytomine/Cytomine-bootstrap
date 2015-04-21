@@ -21,6 +21,7 @@ import be.cytomine.test.Infos
 import be.cytomine.utils.Version
 import grails.util.Environment
 import grails.util.Holders
+import org.apache.commons.lang.RandomStringUtils
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils
@@ -165,15 +166,24 @@ class BootStrap {
 //        }
 
         if(!SecUser.findByUsername("admin")) {
-            bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]])
+            bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]])
         }
         if(!SecUser.findByUsername("superadmin")) {
-            bootstrapUtilsService.createUsers([[username : 'superadmin', firstname : 'Super', lastname : 'Admin', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]]])
+            bootstrapUtilsService.createUsers([[username: 'superadmin', firstname: 'Super', lastname: 'Admin', email: 'lrollus@ulg.ac.be', group: [[name: "GIGA"]], password: grailsApplication.config.grails.adminPassword, color: "#FF0000", roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN"]]])
         }
 
         if(!SecUser.findByUsername("monitoring")) {
-            bootstrapUtilsService.createUsers([[username : 'monitoring', firstname : 'Monitoring', lastname : 'Monitoring', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : '123admin456', color : "#FF0000", roles : ["ROLE_USER","ROLE_SUPER_ADMIN"]]])
+            bootstrapUtilsService.createUsers([[username : 'monitoring', firstname : 'Monitoring', lastname : 'Monitoring', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : RandomStringUtils.random(32,  (('A'..'Z') + ('0'..'0')).join().toCharArray()), color : "#FF0000", roles : ["ROLE_USER","ROLE_SUPER_ADMIN"]]])
         }
+
+        //set public/private keys for special image server user
+        //keys regenerated at each deployment
+        SecUser imageServerUser = SecUser.findByUsername("ImageServer1")
+        imageServerUser.setPrivateKey(grailsApplication.config.grails.ImageServerPrivateKey)
+        imageServerUser.setPublicKey(grailsApplication.config.grails.ImageServerPublicKey)
+        imageServerUser.save(flush : true)
+
+
 
 
         if(!Relation.findByName(RelationTerm.names.PARENT)) {

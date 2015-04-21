@@ -12,7 +12,11 @@ import grails.plugin.springsecurity.annotation.Secured
 //import grails.plugin.springsecurity.annotation.Secured
 import groovy.sql.Sql
 
+import javax.imageio.ImageIO
+
 class ServerController {
+
+    def imageRetrievalService
 
     def springSecurityService
     def grailsApplication
@@ -65,4 +69,24 @@ class ServerController {
         connectionPersist.date = new Date()
         connectionPersist.insert(flush:true) //don't use save (stateless collection)
     }
+
+
+
+    @Secured(['ROLE_USER','ROLE_ADMIN','ROLE_SUPER_ADMIN'])
+    def retrieval() {
+        def response = imageRetrievalService.indexImageAsync(
+                ImageIO.read(new File("/home/lrollus/git/CBIRestAPI/testdata/images/crop5.jpg")),
+                new Date().getTime()+"",
+                "toto",
+                new HashMap<>()
+        )
+        println response
+        render response
+    }
+
+    @Secured(['ROLE_USER','ROLE_ADMIN','ROLE_SUPER_ADMIN'])
+    def missing() {
+        return imageRetrievalService.indexMissingAnnotation()
+    }
+
 }

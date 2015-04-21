@@ -215,7 +215,11 @@ var DescriptionModal = {
                     self.initDescriptionModal(container, description.id, domainIdent, domainClassName, description.get('data'), callbackUpdate);
                 }, error: function (model, response) {
                     container.empty();
-                    container.append(' <a href="#descriptionModal' + domainIdent + '" role="button" class="description" data-toggle="modal">Add description</a>');
+                    var html = "No description yet";
+                    if(self.editable) {
+                        html = ' <a href="#descriptionModal' + domainIdent + '" role="button" class="description" data-toggle="modal">Add description</a>';
+                    }
+                    container.append(html);
                     self.initDescriptionModal(container, null, domainIdent, domainClassName, "", callbackUpdate);
 
                 }});

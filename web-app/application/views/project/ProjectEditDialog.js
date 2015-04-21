@@ -2,7 +2,6 @@ var EditProjectDialog = Backbone.View.extend({
     projectsPanel: null,
     editProjectDialog: null,
     projectMultiSelectAlreadyLoad: false,
-    userMaggicSuggest : null,
     initialize: function (options) {
         this.container = options.container;
         this.projectPanel = options.projectPanel;
@@ -39,10 +38,7 @@ var EditProjectDialog = Backbone.View.extend({
 
         self.initStepy();
         self.createProjectInfo();
-        self.createUserList();
         $("#project-edit-name").val(self.model.get('name'));
-        self.createRetrievalProject();
-//        self.createUserList(usersChoicesTpl);
 
         //Build dialog
         self.editProjectDialog = $("#editproject").modal({
@@ -55,6 +51,7 @@ var EditProjectDialog = Backbone.View.extend({
 
     },
     initStepy: function () {
+        // When we need only one tab, replace this
         $('#login-form-edit-project').stepy({next: function (index) {
             //check validate name
             if (index == 2) {
@@ -73,6 +70,10 @@ var EditProjectDialog = Backbone.View.extend({
                 $("#editProjectButton").hide();
             }
         }});
+        // by this
+        //$("#editProjectButton").show();
+
+
         $('#login-form-edit-project').find("fieldset").find("a.button-next").css("float", "right");
         $('#login-form-edit-project').find("fieldset").find("a.button-back").css("float", "left");
         $('#login-form-edit-project').find("fieldset").find("a").removeClass("button-next");
@@ -92,144 +93,7 @@ var EditProjectDialog = Backbone.View.extend({
             }
         });
 
-        $("input#blindMode").attr('checked', self.model.get('blindMode'));
-        $("input#hideUsersLayers").attr('checked', self.model.get('hideUsersLayers'));
-        $("input#hideAdminsLayers").attr('checked', self.model.get('hideAdminsLayers'));
-        $("input#isReadOnly").attr('checked', self.model.get('isReadOnly'));
 
-    },
-    createUserList: function () {
-        var self = this;
-        var allUser = null;
-        var projectUser = null;
-        var projectAdmin = null;
-
-
-        var loadUser = function() {
-            if(allUser == null || projectUser == null/* || defaultLayers == null*/) {
-                return;
-            }
-            var allUserArray = [];
-
-            allUser.each(function(user) {
-                allUserArray.push({id:user.id,label:user.prettyName()});
-            });
-
-            var projectUserArray=[]
-            projectUser.each(function(user) {
-                projectUserArray.push(user.id);
-            });
-
-            var projectAdminArray=[]
-            projectAdmin.each(function(user) {
-                projectAdminArray.push(user.id);
-            });
-
-            self.userMaggicSuggest = $('#projectedituser').magicSuggest({
-                data: allUserArray,
-                displayField: 'label',
-                value: projectUserArray,
-                width: 590,
-                maxSelection:null
-            });
-
-            self.adminMaggicSuggest = $('#projecteditadmin').magicSuggest({
-                data: allUserArray,
-                displayField: 'label',
-                value: projectAdminArray,
-                width: 590,
-                maxSelection:null
-            });
-        }
-
-        new UserCollection({}).fetch({
-            success: function (allUserCollection, response) {
-                allUser = allUserCollection;
-                loadUser();
-            }});
-
-        new UserCollection({project: self.model.id}).fetch({
-            success: function (projectUserCollection, response) {
-                projectUser = projectUserCollection;
-                window.app.models.projectUser = projectUserCollection;
-                loadUser();
-            }});
-
-        new UserCollection({project: self.model.id, admin:true}).fetch({
-            success: function (projectUserCollection, response) {
-                projectAdmin = projectUserCollection;
-                window.app.models.projectAddmin = projectUserCollection;
-                loadUser();
-            }});
-
-    },
-    createRetrievalProject: function () {
-        var self = this;
-        $('#login-form-edit-project').find("input#retrievalProjectSome,input#retrievalProjectAll,input#retrievalProjectNone").change(function () {
-            console.log("change1");
-            if ($('#login-form-edit-project').find("input#retrievalProjectSome").is(':checked')) {
-                console.log("createRetrievalProject=" + self.projectMultiSelectAlreadyLoad);
-                if (!self.projectMultiSelectAlreadyLoad) {
-                    self.createRetrievalProjectSelect();
-                    self.projectMultiSelectAlreadyLoad = true
-                } else {
-                    console.log("Show");
-                    $('#login-form-edit-project').find("div#retrievalGroup").find(".ui-multiselect").show();
-                }
-            } else {
-                console.log("Hide");
-                $('#login-form-edit-project').find("div#retrievalGroup").find(".ui-multiselect").hide();
-            }
-        });
-
-        $('#login-form-edit-project').find("input#project-name").change(function () {
-            console.log("change");
-            if (self.projectMultiSelectAlreadyLoad) {
-                self.createRetrievalProjectSelect();
-            }
-        });
-
-        if (self.model.get('retrievalDisable')) {
-            $('#login-form-edit-project').find("input#retrievalProjectNone").attr("checked", "checked");
-            $('#login-form-edit-project').find("input#retrievalProjectNone").change();
-        } else if (self.model.get('retrievalAllOntology')) {
-            $('#login-form-edit-project').find("input#retrievalProjectAll").attr("checked", "checked");
-            $('#login-form-edit-project').find("input#retrievalProjectAll").change();
-        } else {
-            $('#login-form-edit-project').find("input#retrievalProjectSome").attr("checked", "checked");
-            $('#login-form-edit-project').find("input#retrievalProjectSome").change();
-            //retrievalProjectAll
-
-        }
-    },
-    createRetrievalProjectSelect: function () {
-        var self = this;
-        /* Create Users List */
-        $('#login-form-edit-project').find("#retrievalproject").empty();
-
-        window.app.models.projects.each(function (project) {
-            if (project.get('ontology') == self.model.get('ontology') && project.id != self.model.id) {
-                if (_.indexOf(self.model.get('retrievalProjects'), project.id) == -1) {
-                    $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + project.id + '">' + project.get('name') + '</option>');
-                }
-                else {
-                    $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + project.id + '" selected="selected">' + project.get('name') + '</option>');
-                }
-            }
-        });
-        $('#login-form-edit-project').find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + $('#login-form-edit-project').find("#project-edit-name").val() + '</option>');
-
-        $('#login-form-edit-project').find("#retrievalproject").multiselectNext('destroy');
-        $('#login-form-edit-project').find("#retrievalproject").multiselectNext({
-            selected: function (event, ui) {
-                //alert($(ui.option).val() + " has been selected");
-            }});
-
-        $("div.ui-multiselect").find("ul.available").css("height", "150px");
-        $("div.ui-multiselect").find("ul.selected").css("height", "150px");
-        $("div.ui-multiselect").find("input.search").css("width", "75px");
-
-        $("div.ui-multiselect").find("div.actions").css("background-color", "#DDDDDD");
     },
     fillForm: function () {
 
@@ -273,25 +137,6 @@ var EditProjectDialog = Backbone.View.extend({
         }
         return diff;
     },
-    editProjectDefaultLayers : function(projectId, users) {
-        console.log("editProjectDefaultLayers");
-        console.log(projectId);
-        console.log(users);
-        for(var i = 0; i< users.length ; i++) {
-            console.log(users[i]);
-        }
-        new ProjectDefaultLayerCollection({project: projectId}).fetch({
-            success: function (collection) {
-                collection.each(function(layer) {
-                    if(users.indexOf(layer.attributes.user) == -1) {
-                        console.log("deletion de ");
-                        console.log(layer.id);
-                        layer.destroy();
-                    }
-                });
-            }
-        });
-    },
     editProject: function () {
 
         var self = this;
@@ -300,25 +145,6 @@ var EditProjectDialog = Backbone.View.extend({
         $("#projectediterrorlabel").hide();
 
         var name = $("#project-edit-name").val().toUpperCase();
-        var users = self.userMaggicSuggest.getValue();
-        var admins = self.adminMaggicSuggest.getValue();
-        var retrievalDisable = $('#login-form-edit-project').find("input#retrievalProjectNone").is(':checked');
-        var retrievalProjectAll = $('#login-form-edit-project').find("input#retrievalProjectAll").is(':checked');
-        var retrievalProjectSome = $('#login-form-edit-project').find("input#retrievalProjectSome").is(':checked');
-        var projectRetrieval = [];
-        if (retrievalProjectSome) {
-            projectRetrieval = $('#login-form-edit-project').find("#retrievalproject").multiselectNext('selectedValues');
-        }
-        var blindMode = $("input#blindMode").is(':checked');
-        var isReadOnly = $("input#isReadOnly").is(':checked');
-        var hideUsersLayers = $("input#hideUsersLayers").is(':checked');
-        var hideAdminsLayers = $("input#hideAdminsLayers").is(':checked');
-
-        console.log("blindMode=" + blindMode);
-        console.log("isReadOnly=" + isReadOnly);
-        console.log("hideUsersLayers=" + hideUsersLayers);
-        console.log("hideAdminsLayers=" + hideAdminsLayers);
-
         var divToFill = $("#login-form-edit-project");
         divToFill.hide();
 //        $("#login-form-add-project-titles").empty();
@@ -337,14 +163,13 @@ var EditProjectDialog = Backbone.View.extend({
                 var taskId = response.task.id;
                 //create project
                 project.task = taskId
-                project.set({users: users, admins:admins,name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers});
-                project.save({users:users, admins:admins, name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: projectRetrieval,blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
+                project.set({name: name});
+                project.save({name: name}, {
                     success: function (model, response) {
                         console.log("1. Project edited!");
                         clearInterval(timer);
                         window.app.view.message("Project", response.message, "success");
                         var id = response.project.id;
-                        self.editProjectDefaultLayers(id, users.concat(admins));
                         $("#editproject").modal("hide");
                         window.app.controllers.dashboard.destroyView()
                         window.app.controllers.browse.closeAll();

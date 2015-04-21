@@ -27,10 +27,22 @@
                 <div class="navbar-header  navbar-right">
                     <ul class="nav navbar-nav navbar-left">
                         <li class="divider-vertical"></li>
-                        <li class="custom-ui-help" style="display:none;"><a id="hotkeysModalButton" href="#hotkeysModal"  data-toggle="modal"><i class="glyphicon glyphicon-question-sign" /> Help</a> <li>
-                        <li class="custom-ui-feedback" style="display:none;"><a id="feedback"><i class="glyphicon glyphicon-bullhorn" /> Support</a></li>
                         <li class="divider-vertical"></li>
 
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="glyphicon glyphicon-question-sign"/>
+                                <span>About Us</span><b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="custom-ui-help" style="display:none;"><a id="hotkeysModalButton" href="#hotkeysModal"  data-toggle="modal"><i class="glyphicon glyphicon-question-sign" /> Help</a> <li>
+                                <li class="divider"></li>
+                                <li class="custom-ui-feedback" style="display:none;"><a id="feedback"><i class="glyphicon glyphicon-bullhorn" /> Support</a></li>
+                                <li class="divider"></li>
+                                <li id="li-info-cytomine"><a id="a-info-cytomine" href="#"><i class="glyphicon glyphicon-info-sign"/> About Cytomine</a></li>
+                            </ul>
+                        </li>
+                        <li class="divider-vertical"></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i id="userIcon" class=""/><span id="loggedUser"></span><b class="caret"></b>&nbsp;<span id="warning-user-logged-as-admin" style="display:none;" class="label label-danger">Logged as admin!</span></a>
                             <ul class="dropdown-menu">
@@ -40,8 +52,6 @@
                                     <li id="li-close-admin-session" style="display: none;"><a id="a-close-admin-session" href="#" > <i class="glyphicon glyphicon glyphicon-chevron-down"/> Close admin session</a></li>
                                 <li class="divider"></li>
                                 <li id="li-cancel-switch-user"><a id="a-cancel-switch-user" href="/j_spring_security_exit_user"><i class="glyphicon glyphicon-transfer"/></a></li>
-                                <li id="li-info-cytomine"><a id="a-info-cytomine" href="#"><i class="glyphicon glyphicon-info-sign"/> About Cytomine</a></li>
-                                <li class="divider"></li>
                                 <li><a id="logout" href="#"><i class="glyphicon glyphicon-off "/> Logout</a></li>
                             </ul>
                         </li>

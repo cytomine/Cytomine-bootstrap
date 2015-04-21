@@ -26,8 +26,8 @@ var UploadFormView = Backbone.View.extend({
     render: function () {
         var self = this;
         require([
-            "text!application/templates/upload/UploadForm.tpl.html"
-        ],
+                "text!application/templates/upload/UploadForm.tpl.html"
+            ],
             function (tpl) {
 
                 if(!window.app.status.user.model.get('guest')) {
@@ -424,9 +424,15 @@ var UploadFormView = Backbone.View.extend({
                 var button = $(this),
                     tmpl = button.closest('.template-upload'),
                     data = tmpl.data('data');
-                if (data && data.submit && !data.jqXHR && data.submit()) {
-                    button.prop('disabled', true);
-                }
+
+                var size = data.files[0].size
+                /*if(size > AVAILABLE_SPACE) {
+                    //return
+                } else {*/
+                    if (data && data.submit && !data.jqXHR && data.submit()) {
+                        button.prop('disabled', true);
+                    }
+                //}
             },
 
             _cancelHandler: function (e) {
@@ -496,8 +502,17 @@ var UploadFormView = Backbone.View.extend({
                     ns = this.options.namespace;
                 fileUploadButtonBar.find('.start')
                     .bind('click.' + ns, function (e) {
+                        var allFiles = $(".template-upload");
+                        var size = 0
+                        for(var i = 0; i< allFiles.length; i++){
+                            size += $(allFiles[i]).data('data').files[0].size;
+                        }
                         e.preventDefault();
-                        filesList.find('.start button').click();
+                        /*if(size > AVAILABLE_SPACE) {
+                            //return
+                        } else {*/
+                            filesList.find('.start button').click();
+                        //}
                     });
                 fileUploadButtonBar.find('.cancel')
                     .bind('click.' + ns, function (e) {
@@ -698,7 +713,16 @@ var UploadFormView = Backbone.View.extend({
              { "sWidth": "20%", "aTargets": [ 4 ] }
              ],*/
             "aoColumns": [
-                { "mDataProp": "originalFilename" },
+                { "mDataProp": "originalFilename", fnRender : function (o, originalFilename) {
+                    if (o.aData.image == null) {
+                        return originalFilename;
+                    }
+                    return '<span onmouseout="$(\'#thumbcommand'+o.aData.image+'\').hide();" '+
+                        'onMouseOver="$(\'#thumbcommand'+o.aData.image+'\').css(\'display\',\'block\');"> '+
+                        '<img class="thumbcommand" id="thumbcommand'+o.aData.image+'" '+
+                        'src="'+o.aData.thumbURL +'" style="display:none;position: absolute;z-index: 100;max-width: 300px;margin-top: 20px;margin-left: 30px;"/>'+originalFilename+'</span>';
+
+                }},
                 { "mDataProp": "created", fnRender : function (o, created) {
                     return window.app.convertLongToDate(created);
                 }},
@@ -719,24 +743,22 @@ var UploadFormView = Backbone.View.extend({
                 },
                 {
                     "fnRender": function (o, val) {
-                        return "<button class='btn btn-info btn-xs deleteimage' id='deleteimage"+o.aData.image+"'>Delete</button>";
+                        return "<button class='btn btn-info btn-xs deleteimage' id='deleteimage"+o.aData.image+"' disabled>Delete</button>";
                     },
                     "aTargets": [ 5 ]
                 }
             ],
             "aaSorting": [[ 1, "desc" ]],
             "sAjaxSource": uploadedFileCollectionUrl,
-            "fnInitComplete": function(oSettings, json) {
+            "fnDrawCallback": function(oSettings, json) {
                 new UploadedFileCollection().fetch({
                     success: function(model,response) {
 
-                        for(var i = 0; i<response.collection.length;i++) {
-                            $.get( "/api/abstractimage/"+ response.collection[i].image+"/used.json", function( data ) {
-                                if(data.result == true) {
-                                    $("#deleteimage"+data.id).prop("disabled",true);
-                                }
-                            });
-                        }
+                        $.get( "/api/abstractimage/unused.json", function( data ) {
+                            for(var i = 0; i<data.collection.length;i++) {
+                                $("#deleteimage"+data.collection[i].id).prop("disabled",false);
+                            }
+                        });
                     }
                 });
             }
@@ -751,37 +773,38 @@ var UploadFormView = Backbone.View.extend({
         $(document).on('click', ".deleteimage", function (e) {
             var id = e.currentTarget.id;
             id = id.replace("deleteimage", "");
-            var uploadFile = new UploadedFileModel({image: id});
 
-            uploadFile.fetch({
-                success: function (model, response) {
+             DialogModal.initDialogModal(null, id, 'AbstractImage', 'Do you want to delete this image ?', 'CONFIRMATIONWARNING', function(){
+                 var uploadFile = new UploadedFileModel({image: id});
 
-                    var up = response.id;
+                 uploadFile.fetch({
+                     success: function (model, response) {
 
-                    new ImageModel({id: id}).destroy({
-                        success: function(model, response){
+                         var up = response.id;
 
-                            new UploadedFileModel({id: up}).destroy({
-                                success: function (model, response) {
-                                    window.app.view.message("Uploaded file", "deleted", "success");
-                                    self.uploadDataTables.fnReloadAjax();
-                                },
-                                error: function (model, response) {
-                                    var json = $.parseJSON(response.responseText);
-                                    window.app.view.message("Delete failed", json.errors, "error");
-                                }
-                            });
+                         new ImageModel({id: id}).destroy({
+                             success: function(model, response){
 
-                        },
-                        error: function(model, response){
-                            var json = $.parseJSON(response.responseText);
-                            window.app.view.message("Delete failed", json.errors, "error");
-                        }
-                    });
-                }
-            });
+                                 new UploadedFileModel({id: up}).destroy({
+                                     success: function (model, response) {
+                                         window.app.view.message("Uploaded file", "deleted", "success");
+                                         self.uploadDataTables.fnReloadAjax();
+                                     },
+                                     error: function (model, response) {
+                                         var json = $.parseJSON(response.responseText);
+                                         window.app.view.message("Delete failed", json.errors, "error");
+                                     }
+                                 });
 
-
+                             },
+                             error: function(model, response){
+                                 var json = $.parseJSON(response.responseText);
+                                 window.app.view.message("Delete failed", json.errors, "error");
+                             }
+                         });
+                     }
+                 });
+             });
         });
     },
     refreshProjectAndStorage : function() {
@@ -881,6 +904,8 @@ var UploadFormView = Backbone.View.extend({
         linkProjectSelect.change(function() {
             self.refreshProjectAndStorage();
         });
+
+        // here fill the free storage_space.
 
         // Render uploaded file
         this.renderUploadedFiles();

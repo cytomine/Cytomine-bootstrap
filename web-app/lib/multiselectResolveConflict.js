@@ -6,3 +6,6 @@
  * To change this template use File | Settings | File Templates.
  */
 $.fn.multiselectNext = $.fn.multiselect;
+if ($.fn.button.noConflict != undefined) {
+    $.fn.button.noConflict();
+}

@@ -1,0 +1,56 @@
+<div class="panel panel-default" id="config-panel-<%= id %>">
+    <div class="panel-heading">
+        <h4><%= titre %></h4>
+    </div>
+    <div class="panel-body">
+        <div class="alert alert-info">
+            Please, note that these values are set for your computer only, changing these values doesn't impact other users.
+        </div>
+        <div class="row col-md-offset-1">
+            <h4>Point</h4>
+            <div class="col-md-3 col-md-offset-1">
+                <form id="pointConfigForm" class="form-horizontal">
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="control-label" for="input_radius">Radius</label>
+                            <div class="input-prepend input-append">
+                                <input type="text"  id="input_radius"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button id="submit_pointConfigForm" type="submit" class="btn btn-default  btn-primary">Save changes
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <div class="row col-md-offset-1">
+            <h4>Magic Wand</h4>
+            <div class="col-md-3 col-md-offset-1">
+                <form id="mwToleranceForm" class="form-horizontal">
+                    <fieldset>
+                        <div class="form-group">
+                            <label class="control-label" for="input_threshold">Threshold</label>
+                            <div class="input-prepend input-append">
+                                <input type="text"  id="input_threshold"/>
+                                <p class="help-block">Note : Is not used for HISTOLOGY projects.</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="input_tolerance">Tolerance</label>
+                            <div class="input-prepend input-append">
+                                <input type="text"  id="input_tolerance"/>
+                                <p class="help-block">Note : only used for HISTOLOGY projects.</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button id="submit_mwToleranceForm" type="submit" class="btn btn-default  btn-primary">Save changes
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

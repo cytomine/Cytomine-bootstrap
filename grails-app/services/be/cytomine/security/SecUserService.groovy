@@ -19,10 +19,12 @@ import be.cytomine.project.Project
 import be.cytomine.project.ProjectDefaultLayer
 import be.cytomine.social.LastConnection
 import be.cytomine.ontology.SharedAnnotation
+import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.News
 import be.cytomine.utils.Task
 import be.cytomine.utils.Utils
+import grails.converters.JSON
 import groovy.sql.Sql
 import org.apache.commons.collections.ListUtils
 import grails.plugin.springsecurity.acl.AclSid
@@ -331,7 +333,7 @@ class SecUserService extends ModelService {
      */
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        securityACLService.checkAdmin(currentUser)
+        securityACLService.checkUser(currentUser)
         return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 

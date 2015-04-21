@@ -59,6 +59,9 @@ environments {
 //      url="jdbc:postgresql://139.165.144.107:5432/cytominedev"
 //      password = 'postgres'
             url = "jdbc:postgresql://localhost:5432/cytomine"
+            /*url = "jdbc:postgresql://localhost:5432/docker"
+            username = "docker"
+            password = "docker"*/
             password = "postgres"
 
         }

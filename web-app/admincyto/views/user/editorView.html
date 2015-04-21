@@ -68,6 +68,9 @@
             <br/>
         </form>
 
+    <div class="alert alert-warning" ng-show="currentEditedUser.ldap">
+        Warning. This user came from a LDAP. Be careful.
+    </div>
     <div class="alert alert-danger" ng-show="user.error.editOrAdd">
         Error. The user cannot be add or modify. {{user.error.editOrAdd.message}} ({{user.error.editOrAdd.status}}).
     </div>

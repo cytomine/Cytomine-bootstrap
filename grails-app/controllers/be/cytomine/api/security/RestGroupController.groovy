@@ -10,6 +10,8 @@ import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiParams
 import org.restapidoc.pojo.RestApiParamType
 
+import static be.cytomine.security.Group.*
+
 /**
  * Controller for group of users
  */
@@ -23,8 +25,15 @@ class RestGroupController extends RestController {
      * List all group
      */
     @RestApiMethod(description="List all group", listing=true)
+    @RestApiParams(params=[
+            @RestApiParam(name="withUser", type="boolean", paramType = RestApiParamType.QUERY, description = "(Optional) If set, each group will have the array of its users."),
+    ])
     def list() {
-        responseSuccess(groupService.list())
+        if (Boolean.parseBoolean(params.withUser) == true) {
+            responseSuccess(groupService.listWithUser())
+        } else {
+            responseSuccess(groupService.list())
+        }
     }
 
     /**
@@ -71,5 +80,29 @@ class RestGroupController extends RestController {
     ])
     def delete() {
         delete(groupService, JSON.parse("{id : $params.id}"),null)
+    }
+
+    @RestApiMethod(description="Check if a group is in the LDAP")
+    @RestApiParams(params=[
+            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The group id "),
+    ])
+    def isInLDAP() {
+        def result = groupService.isInLdap(params.long('id'))
+        def returnArray = [:]
+        returnArray["result"] = result
+        responseSuccess(returnArray)
+    }
+
+    @RestApiMethod(description="Create a group from the LDAP")
+    def createFromLDAP() {
+        responseSuccess(groupService.createFromLDAP(request.JSON))
+    }
+
+    @RestApiParams(params=[
+            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The group id "),
+    ])
+    @RestApiMethod(description="Reset a group with the informations in the LDAP")
+    def resetFromLDAP() {
+        responseSuccess(groupService.resetFromLDAP(params.long('id')))
     }
 }

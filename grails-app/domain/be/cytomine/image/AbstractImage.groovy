@@ -157,10 +157,10 @@ class AbstractImage extends CytomineDomain implements Serializable {
         returnArray['depth'] = image?.getZoomLevels()?.max
         returnArray['resolution'] = image?.resolution
         returnArray['magnification'] = image?.magnification
-        returnArray['thumb'] = UrlApi.getThumbImage((long)image?.id, 512)
-        returnArray['preview'] = UrlApi.getThumbImage((long)image?.id, 1024)
+        returnArray['thumb'] = UrlApi.getThumbImage(image ? (long)image?.id : null, 512)
+        returnArray['preview'] = UrlApi.getThumbImage(image ? (long)image?.id : null, 1024)
         returnArray['fullPath'] = image?.getFullPath()
-        returnArray['macroURL'] = UrlApi.getAssociatedImage((long)image?.id, "macro", 512)
+        returnArray['macroURL'] = UrlApi.getAssociatedImage(image ? (long)image?.id : null, "macro", 512)
         returnArray
     }
 

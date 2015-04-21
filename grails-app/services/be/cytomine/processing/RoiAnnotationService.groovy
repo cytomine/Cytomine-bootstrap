@@ -17,7 +17,6 @@ class RoiAnnotationService extends ModelService {
     def cytomineService
     def transactionService
     def annotationTermService
-    def retrievalService
     def algoAnnotationTermService
     def modelService
     def simplifyGeometryService

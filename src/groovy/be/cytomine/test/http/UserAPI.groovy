@@ -139,4 +139,8 @@ class UserAPI extends DomainAPI {
 //        return doGET(URL,username, password)
 //    }
 
+    static def isInLDAP(String usernameToAsk,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/ldap/${usernameToAsk}/user.json"
+        return doGET(URL, username, password)
+    }
 }

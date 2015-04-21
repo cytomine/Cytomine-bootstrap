@@ -7,6 +7,7 @@ import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.multidim.ImageGroup
 import be.cytomine.image.multidim.ImageSequence
+import be.cytomine.image.server.ImageServer
 import be.cytomine.processing.ProcessingServer
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
@@ -133,12 +134,10 @@ class RestAbstractImageController extends RestController {
     @RestApiParams(params=[
             @RestApiParam(name="id", type="long", paramType = RestApiParamType.QUERY, description = "The id of abstract image"),
     ])
-    def isUsed() {
-        def result = abstractImageService.isUsed(params.id)
-        def returnArray = [:]
-        returnArray["id"] = params.id
-        returnArray["result"] = result
-        responseSuccess(returnArray)
+    def listUnused() {
+        SecUser user = cytomineService.getCurrentUser()
+        def result = abstractImageService.listUnused(user);
+        responseSuccess(result);
     }
 
 
@@ -329,7 +328,7 @@ class RestAbstractImageController extends RestController {
             log.info "all image for this group=$images"
 
 
-            def servers = ProcessingServer.list()
+            def servers = ImageServer.list()
             Random myRandomizer = new Random();
 
 
@@ -364,7 +363,7 @@ class RestAbstractImageController extends RestController {
             def urls = []
 
             (0..5).each {
-                urls << servers.get(myRandomizer.nextInt(servers.size())).url + url
+                urls << servers.get(myRandomizer.nextInt(servers.size())).url +"/"+ url
             }
 
             //retrieve all image instance (same sequence)

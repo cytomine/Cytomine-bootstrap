@@ -15,6 +15,10 @@ class Group extends CytomineDomain {
     @RestApiObjectField(description="The group name")
     String name
 
+    @RestApiObjectField(description = "The id for external connection (LDAP, etc.)")
+    String gid
+
+
     static mapping = {
         table "`group`" //otherwise there is a conflict with the word "GROUP" from the SQL SYNTAX
         sort "id"
@@ -22,6 +26,7 @@ class Group extends CytomineDomain {
 
     static constraints = {
         name(blank: false, unique: true)
+        gid(nullable: true)
     }
 
     /**
@@ -33,6 +38,7 @@ class Group extends CytomineDomain {
     static Group insertDataIntoDomain(def json,def domain=new Group()) {
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.name = JSONUtils.getJSONAttrStr(json,'name',true)
+        domain.gid = JSONUtils.getJSONAttrStr(json,'gid',false)
         return domain;
     }
 
@@ -48,6 +54,7 @@ class Group extends CytomineDomain {
     static def getDataFromDomain(def domain) {
         def returnArray = CytomineDomain.getDataFromDomain(domain)
         returnArray['name'] = domain?.name
+        returnArray['gid'] = domain?.gid
         returnArray
     }
 

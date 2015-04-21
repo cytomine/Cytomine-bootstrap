@@ -38,4 +38,21 @@ class GroupAPI extends DomainAPI {
         String URL = Infos.CYTOMINEURL + "api/group/" + id + ".json"
         return doDELETE(URL,username,password)
     }
+
+    static def isInLDAP(Long id,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/ldap/$id/group.json"
+        return doGET(URL, username, password)
+    }
+
+    static def createFromLDAP(String json,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/ldap/group.json"
+        def result = doPOST(URL, json, username, password)
+        Long idGroup = JSON.parse(result.data)?.data?.group?.id
+        return [data: Group.get(idGroup).encodeAsJSON(), code: result.code]
+    }
+
+    static def resetFromLDAP(Long id,String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/ldap/$id/group.json"
+        return doPUT(URL, "", username, password)
+    }
 }

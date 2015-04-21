@@ -17,7 +17,12 @@ class GroupUrlMappings {
         "/api/image/$idabstractimage/group.$format"(controller:"restGroup"){
             action = [GET: "listGroupByAbstractImage"]
         }
-
+        "/api/ldap/$id/group.$format"(controller:"restGroup"){
+            action = [GET: "isInLDAP", PUT: "resetFromLDAP"]
+        }
+        "/api/ldap/group.$format"(controller:"restGroup"){
+            action = [POST: "createFromLDAP"]
+        }
     }
 }
 
