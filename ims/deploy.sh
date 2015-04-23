@@ -64,6 +64,11 @@ then
 	echo "bioformat.application.enabled=$BIOFORMAT_ENABLED" >> imageserverconfig.properties
 	echo "bioformat.application.location=$BIOFORMAT_LOCATION" >> imageserverconfig.properties
 	echo "bioformat.application.port=$BIOFORMAT_PORT" >> imageserverconfig.properties
+
+	if [ ! -z "$DOC_URL" ]
+	then
+		cd /var/lib/tomcat7/  && wget -q $DOC_URL -O restapidoc.json
+	fi
 fi
 
 service tomcat7 start
