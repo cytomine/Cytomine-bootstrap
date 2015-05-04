@@ -146,6 +146,8 @@ environments {
         grails.readOnlyProjectsByDefault = true
 
         grails.adminPassword = "password"
+        grails.ImageServerPrivateKey = "pubkey"
+        grails.ImageServerPublicKey = "privkey"
     }
     testrun {
         grails.serverURL = "http://localhost:8090"
