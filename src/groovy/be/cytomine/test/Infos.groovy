@@ -40,7 +40,7 @@ class Infos {
     public static String ADMINPASSWORD = 'admin'
 
     public static String SUPERADMINLOGIN = "superadmin"
-    public static String SUPERADMINPASSWORD = 'superadmin'
+    public static String SUPERADMINPASSWORD = Holders.getGrailsApplication().config.grails.adminPassword
 
     public static String ANOTHERLOGIN = "anotheruser"
     public static String ANOTHERPASSWORD = 'password'

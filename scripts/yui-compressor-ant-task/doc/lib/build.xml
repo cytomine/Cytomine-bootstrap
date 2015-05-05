@@ -74,8 +74,7 @@
 <fileset dir="${src.dir}" includes="lib/strftime-min.js"/>
 <fileset dir="${src.dir}" includes="lib/dynatree/jquery.dynatree.js"/>
 <fileset dir="${src.dir}" includes="lib/ui.panel/ui.panel.min.js"/>
-<fileset dir="${src.dir}" includes="lib/multiselect-next/js/ui.multiselect.js"/>
-<fileset dir="${src.dir}" includes="lib/multiselect-next/js/plugins/tmpl/jquery.tmpl.1.1.1.js"/>
+<fileset dir="${src.dir}" includes="lib/multiselect-next/js/jquery.uix.multiselect.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselectResolveConflict.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.js"/>
 <fileset dir="${src.dir}" includes="lib/multiselect/src/jquery.multiselect.filter.js"/>
