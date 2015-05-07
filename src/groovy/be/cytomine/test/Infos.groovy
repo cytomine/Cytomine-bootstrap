@@ -37,13 +37,13 @@ class Infos {
     public static String CYTOMINEURL = Holders.getGrailsApplication().config.grails.serverURL + "/"
 
     public static String ADMINLOGIN = "admin"
-    public static String ADMINPASSWORD = 'admin'
+    public static String ADMINPASSWORD = Holders.getGrailsApplication().config.grails.adminPassword
 
     public static String SUPERADMINLOGIN = "superadmin"
-    public static String SUPERADMINPASSWORD = 'superadmin'
+    public static String SUPERADMINPASSWORD = Holders.getGrailsApplication().config.grails.adminPassword
 
     public static String ANOTHERLOGIN = "anotheruser"
-    public static String ANOTHERPASSWORD = 'password'
+    public static String ANOTHERPASSWORD = Holders.getGrailsApplication().config.grails.adminPassword
 
     public static String GOODPASSWORDUSERJOB = 'PasswordUserJob'
 

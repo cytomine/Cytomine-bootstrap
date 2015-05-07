@@ -28,7 +28,7 @@ class MessageBrokerServerSecurityTests extends SecurityTestsAbstract{
         result = MessageBrokerServerAPI.containsInJSONList(id, JSON.parse(MessageBrokerServerAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD).data))
         assert result
 
-        def data = UpdateData.createUpdateSet(messageBrokerServer, [name: ["OLDNAMEADMIN","NEWNAMEADMIN"], user: [BasicInstanceBuilder.user1, BasicInstanceBuilder.user2]])
+        def data = UpdateData.createUpdateSet(messageBrokerServer, [name: ["OLDNAMEADMIN","NEWNAMEADMIN"]])
         result = MessageBrokerServerAPI.update(messageBrokerServer.id, data.postData, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
@@ -57,7 +57,7 @@ class MessageBrokerServerSecurityTests extends SecurityTestsAbstract{
         result = MessageBrokerServerAPI.containsInJSONList(id, JSON.parse(MessageBrokerServerAPI.list(USERNAME1, PASSWORD1).data))
         assert result
 
-        def data = UpdateData.createUpdateSet(messageBrokerServer, [name: ["OLDNAMESIMPLEUSER","NEWNAMESIMPLEUSER"], user: [BasicInstanceBuilder.user1, BasicInstanceBuilder.user2]])
+        def data = UpdateData.createUpdateSet(messageBrokerServer, [name: ["OLDNAMESIMPLEUSER","NEWNAMESIMPLEUSER"]])
         result = MessageBrokerServerAPI.update(messageBrokerServer.id, data.postData, USERNAME1, PASSWORD1)
         assert 403 == result.code
 
@@ -81,7 +81,7 @@ class MessageBrokerServerSecurityTests extends SecurityTestsAbstract{
         result = MessageBrokerServerAPI.containsInJSONList(id, JSON.parse(MessageBrokerServerAPI.list(Infos.BADLOGIN, Infos.BADPASSWORD).data))
         assert !result
 
-        def data = UpdateData.createUpdateSet(messageBrokerServer, [name: ["OLDNAMEANON","NEWNAMEANON"], user: [BasicInstanceBuilder.user1, BasicInstanceBuilder.user2]])
+        def data = UpdateData.createUpdateSet(messageBrokerServer, [name: ["OLDNAMEANON","NEWNAMEANON"]])
         result = MessageBrokerServerAPI.update(messageBrokerServer.id, data.postData, Infos.BADLOGIN, Infos.BADPASSWORD)
         assert 401 == result.code
 

@@ -658,10 +658,6 @@ class SecUserService extends ModelService {
     }
 
     def deleteDependentMessageBrokerServer(SecUser user, Transaction transaction, Task task = null) {
-        if(user instanceof User) {
-            MessageBrokerServer.findAllByUser(user).each {
-                messageBrokerServerService.delete(it, transaction, null, false)
-            }
-        }
+
     }
 }
