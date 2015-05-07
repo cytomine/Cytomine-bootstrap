@@ -139,7 +139,7 @@ class BootStrap {
         }
 
         //Inserting a MessageBrokerServer for testing purpose
-        if (Environment.getCurrent() == Environment.DEVELOPMENT) {
+        if (Environment.getCurrent() == Environment.DEVELOPMENT || Environment.getCurrent() == Environment.TEST) {
             rabbitConnectionService.getRabbitConnection(mbs)
 
             /*AmqpQueue aq = new AmqpQueue(name: "queueCytomine", host: "localhost", exchange: "exchangeCytomine")
