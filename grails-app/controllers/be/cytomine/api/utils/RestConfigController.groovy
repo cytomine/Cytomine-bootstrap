@@ -11,10 +11,6 @@ import org.restapidoc.pojo.RestApiParamType
 class RestConfigController extends RestController {
 
     def configService
-    def cytomineService
-    def projectService
-    def imageInstanceService
-    def secUserService
 
     @RestApiMethod(description="Get all global configs")
     def list() {
@@ -24,21 +20,15 @@ class RestConfigController extends RestController {
 
     @RestApiMethod(description="Get a config with its id or its key")
     @RestApiParams(params=[
-            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null key must be set) The config id"),
-            @RestApiParam(name="key", type="long", paramType = RestApiParamType.PATH,description = "(Optional, if null id must be set) The config key")
+            @RestApiParam(name="key", type="String", paramType = RestApiParamType.PATH,description = "The config key")
     ])
     def show() {
-        Config config
-        if(params.id != null) {
-            config = configService.read(params.id)
-        } else if (params.key != null) {
-            config = configService.readByKey(params.key)
-        }
+        Config config = configService.readByKey(params.key)
 
         if (config) {
             responseSuccess(config)
         } else {
-            responseNotFound("Config", params.id)
+            responseNotFound("Config", params.key)
         }
     }
 
@@ -56,12 +46,11 @@ class RestConfigController extends RestController {
     /**
      * Delete a Property (Method from RestController)
      */
-    @RestApiMethod(description="Delete a property")
+    @RestApiMethod(description="Delete a config")
     @RestApiParams(params=[
-            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The config id")
+            @RestApiParam(name="key", type="String", paramType = RestApiParamType.PATH,description = "The config key")
     ])
     def delete()  {
-        def json = JSON.parse("{id : $params.id}")
-        delete(configService,json,null)
+        delete(configService, JSON.parse("{id : $params.id}"),null)
     }
 }
