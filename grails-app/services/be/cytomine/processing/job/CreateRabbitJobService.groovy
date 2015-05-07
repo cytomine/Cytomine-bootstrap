@@ -38,7 +38,6 @@ class CreateRabbitJobService extends AbstractJobService{
             throw new MiddlewareException("Amqp queue does not exist, cannot execute the job")
 
 
-        println "ON PASSE"
         //get params defined for this job
         String[] jobParams = getParametersValues(job)
 
@@ -60,8 +59,6 @@ class CreateRabbitJobService extends AbstractJobService{
         }
 
         String jsonArgs = getJSONArrayFromStringArray(allArgs)
-
-        println "Arguments : " + jsonArgs
 
         job.discard()
         printStartJobInfo(job,allArgs)

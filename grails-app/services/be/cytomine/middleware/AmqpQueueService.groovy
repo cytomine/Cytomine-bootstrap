@@ -189,8 +189,6 @@ class AmqpQueueService extends ModelService {
 
 
         try {
-            println "CHANNEL : " + channel
-            println "QUEUE : " + domain.name + " - " + listParams[0] + " - " + listParams[1] + " - " + listParams[2]
             channel.queueDeclare(domain.name, listParams[0], listParams[1], listParams[2], null)
         } catch(IOException e) {
             throw new MiddlewareException("Queue :" + domain.name + " could not be created! : " + e.getMessage())

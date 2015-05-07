@@ -106,8 +106,6 @@ abstract class AbstractJobService {
             command = command.replaceAll('\\\$' + softwareParameter.name + ' ', (String)it.value + ' ')
         }
 
-        println "Commande : " + command
-
         return command.split(' ')
     }
 
