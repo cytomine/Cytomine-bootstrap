@@ -78,7 +78,7 @@ class Software extends CytomineDomain {
         resultName(nullable:true)
         description(nullable:true, blank : false, maxSize: 65560)
         resultSample(nullable:true)
-        executeCommand(nullable: true)
+        executeCommand(nullable: true, maxSize: 5000)
     }
 
     static mapping = {

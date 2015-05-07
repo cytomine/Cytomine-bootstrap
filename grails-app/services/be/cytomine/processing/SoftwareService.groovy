@@ -94,6 +94,14 @@ class SoftwareService extends ModelService {
     def afterAdd(def domain, def response) {
         aclUtilService.addPermission(domain, cytomineService.currentUser.username, BasePermission.ADMINISTRATION)
 
+        // add 'defaults' software parameters
+        SoftwareParameter softParam = new SoftwareParameter(software: domain as Software, name: "host", type: "String", required: true, index: 100, setByServer: true)
+        softParam.save(failOnError: true)
+        softParam = new SoftwareParameter(software: domain as Software, name: "publicKey", type: "String", required: true, index: 200, setByServer: true)
+        softParam.save(failOnError: true)
+        softParam = new SoftwareParameter(software: domain as Software, name: "privateKey", type: "String", required: true, index: 300, setByServer: true)
+        softParam.save(failOnError: true)
+
         // add an AMQP queue with the name of the software (default parameters)
         String queueName = amqpQueueService.queuePrefixSoftware + ((domain as Software).name).capitalize()
         if(!amqpQueueService.checkAmqpQueueDomainExists(queueName)) {
@@ -112,6 +120,10 @@ class SoftwareService extends ModelService {
             amqpQueueService.publishMessage(AmqpQueue.findByName("queueCommunication"), builder.toString())
 
         }
+    }
+
+    def afterDelete(def domain, def response) {
+
     }
 
 

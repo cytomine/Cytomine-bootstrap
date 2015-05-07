@@ -136,7 +136,10 @@ class BootStrap {
         if(!AmqpQueue.findByName("queueCommunication")) {
             AmqpQueue queueCommunication = new AmqpQueue(name: "queueCommunication", host: mbs.host, exchange: "exchangeCommunication")
             queueCommunication.save(failOnError: true, flush: true)
+
+            amqpQueueService.createAmqpQueueDefault(queueCommunication)
         }
+
 
         //Inserting a MessageBrokerServer for testing purpose
         if (Environment.getCurrent() == Environment.DEVELOPMENT) {

@@ -92,8 +92,6 @@ class AmqpQueueConfigService extends ModelService{
     def getValueCasted(String value, String type) {
         def result
 
-        println "Avant : "  + value + " Type : " + type
-
         if(value != null) {
             switch (type) {
                 case "String":
@@ -111,8 +109,6 @@ class AmqpQueueConfigService extends ModelService{
         }
         else
             result = null
-
-        println "Resultat : " + result
 
         return result
     }

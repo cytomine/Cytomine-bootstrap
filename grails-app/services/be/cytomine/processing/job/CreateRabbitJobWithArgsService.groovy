@@ -10,11 +10,10 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 
 /**
  * Created by julien 
- * Date : 20/03/15
- * Time : 14:48
+ * Date : 24/04/15
+ * Time : 16:15
  */
-class CreateRabbitJobService extends AbstractJobService{
-
+class CreateRabbitJobWithArgsService extends AbstractJobService{
     def jobParameterService
     def amqpQueueService
 
@@ -28,6 +27,7 @@ class CreateRabbitJobService extends AbstractJobService{
 
 
     def execute(Job job, UserJob userJob, boolean preview) {
+
         if(!job.software.executeCommand)
             throw new MiddlewareException("No command found for this job, cannot execute it")
 
@@ -37,35 +37,15 @@ class CreateRabbitJobService extends AbstractJobService{
         if(!amqpQueueService.checkRabbitQueueExists(queueName, mbs))
             throw new MiddlewareException("Amqp queue does not exist, cannot execute the job")
 
-
-        println "ON PASSE"
-        //get params defined for this job
-        String[] jobParams = getParametersValues(job)
-
-        //get the executed command value and all its hard-coded parameters
-        String[] mainArgs = createArgsArray(job)
-        String[] allArgs = new String[mainArgs.length+jobParams.length+2]
-
-        int index = 0
-        mainArgs.each {
-            allArgs[index] = mainArgs[index]
-            index++
-        }
-        //build software params
-        allArgs[index++] = job.id
-        allArgs[index++] = UserJob.findByJob(job).id
-
-        jobParams.each {
-            allArgs[index++] = it
-        }
+        String[] allArgs = getCommandJobWithArgs(job)
 
         String jsonArgs = getJSONArrayFromStringArray(allArgs)
-
-        println "Arguments : " + jsonArgs
 
         job.discard()
         printStartJobInfo(job,allArgs)
 
+
+        println "Command tab : " + jsonArgs
         amqpQueueService.publishMessage(amqpQueueService.read(queueName), jsonArgs)
 
         //launchSoftware(allArgs,job)
@@ -77,10 +57,8 @@ class CreateRabbitJobService extends AbstractJobService{
         return null
     }
 
-
     String getJSONArrayFromStringArray(String[] args) {
         JSONArray jsonArgs = new JSONArray(Arrays.asList(args))
         return jsonArgs.toString()
     }
-
 }

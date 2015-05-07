@@ -74,6 +74,45 @@ abstract class AbstractJobService {
     }
 
     /**
+     *
+     * @param job
+     * @return
+     * @throws WrongArgumentException
+     */
+    String[] getCommandJobWithArgs(Job job) throws WrongArgumentException {
+        Collection<SoftwareParameter> parameters = SoftwareParameter.findAllBySoftware(job.software, [sort: "index", order: "asc"])
+        def paramsAndValue = [:]
+
+        //Fill default value if no value specified, check if mandatory value are well defined
+        parameters.eachWithIndex {softParam, i ->
+            JobParameter jobParam = JobParameter.findByJobAndSoftwareParameter(job, softParam)
+
+            String value = softParam.defaultValue
+            if (jobParam) {
+                value = jobParam.value
+            }
+            else if (softParam.required) {
+                throw new WrongArgumentException("Argument " + softParam.name + " is required!")
+            }
+            paramsAndValue.put(softParam, value)
+            log.info softParam.name + "=" + value
+        }
+
+        // Replace the arguments with actual parameters' value
+        String command = job.software.executeCommand
+        SoftwareParameter softwareParameter
+        paramsAndValue.each {
+            softwareParameter = it.key as SoftwareParameter
+            command = command.replaceAll('\\\$' + softwareParameter.name + ' ', (String)it.value + ' ')
+        }
+
+        println "Commande : " + command
+
+        return command.split(' ')
+    }
+
+
+    /**
      * Launch a software instance with all arguments
      * Only works if software is on the same computer
      * First argument must be software path
@@ -205,7 +244,6 @@ abstract class AbstractJobService {
     }
 
     protected def createArgsArray(Job job) {
-        println "TEST 2 : " + job.software.executeCommand
         String[] args = job.software.executeCommand.split(" ")
         return args
     }
