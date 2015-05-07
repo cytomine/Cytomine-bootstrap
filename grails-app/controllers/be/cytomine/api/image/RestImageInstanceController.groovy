@@ -233,12 +233,23 @@ class RestImageInstanceController extends RestController {
             }
             List<Long> imageIDS = [imageInstance.id]
 
-
+            log.info params
             //Create a geometry corresponding to the ROI of the request (x,y,w,h)
-            int x = params.int('topLeftX')
-            int y = params.int('topLeftY')
-            int w =  params.int('width')
-            int h =  params.int('height')
+            int x
+            int y
+            int w
+            int h
+            try {
+                x = params.int('topLeftX')
+                y = params.int('topLeftY')
+                w = params.int('width')
+                h = params.int('height')
+            }catch (Exception e) {
+                x = params.int('x')
+                y = params.int('y')
+                w = params.int('w')
+                h = params.int('h')
+            }
             Geometry roiGeometry = GeometryUtils.createBoundingBox(
                     x,                                      //minX
                     x + w,                                  //maxX
@@ -254,11 +265,16 @@ class RestImageInstanceController extends RestController {
                 def result = annotationListingService.listGeneric(ral)
                 log.info "annotations=${result.size()}"
                 geometries = result.collect {
-                    it["location"]
+                    new WKTReader().read(it["location"])
                 }
 
             } else {
+                log.info "imageInstance=${imageInstance}"
+                log.info "roiGeometry=${roiGeometry}"
+                log.info "termsIDS=${termsIDS}"
+                log.info "userIDS=${userIDS}"
                 Collection<UserAnnotation> annotations = userAnnotationService.list(imageInstance, roiGeometry, termsIDS, userIDS)
+                log.info "annotations=${annotations.size()}"
                 geometries = annotations.collect { geometry ->
                     geometry.getLocation()
                 }

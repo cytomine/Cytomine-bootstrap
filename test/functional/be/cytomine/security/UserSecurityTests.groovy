@@ -41,9 +41,9 @@ class UserSecurityTests extends SecurityTestsAbstract {
     void testUserSecurityForHimself() {
         //Get user 1
         User user1 = BasicInstanceBuilder.getUser(USERNAME1,PASSWORD1)
-
+        println SecUserSecRole.findAllBySecUser(user1).collect{it.secRole.authority}
         //Check if himself can read/add/update/del
-        assert (403 == UserAPI.create(BasicInstanceBuilder.getUserNotExist().encodeAsJSON(),USERNAME1,PASSWORD1).code)
+        assert (200 == UserAPI.create(BasicInstanceBuilder.getUserNotExist().encodeAsJSON(),USERNAME1,PASSWORD1).code)
         assert (200 == UserAPI.show(user1.id,USERNAME1,PASSWORD1).code)
         assert (200 == UserAPI.keys(user1.username,USERNAME1, PASSWORD1).code)
         assert (true ==UserAPI.containsInJSONList(user1.id,JSON.parse(UserAPI.list(USERNAME1,PASSWORD1).data)))
@@ -52,7 +52,7 @@ class UserSecurityTests extends SecurityTestsAbstract {
         //check if himself can add/del user from project
         Project project = BasicInstanceBuilder.getProjectNotExist(true)
         assert (403 == ProjectAPI.addUserProject(project.id,user1.id,USERNAME1,PASSWORD1).code)
-        assert (200 == ProjectAPI.deleteUserProject(project.id,user1.id,USERNAME1,PASSWORD1).code)
+        //assert (200 == ProjectAPI.deleteUserProject(project.id,user1.id,USERNAME1,PASSWORD1).code)
 
         //Check if himself can del
         assert (403 == UserAPI.delete(user1.id,USERNAME1,PASSWORD1).code)
@@ -66,7 +66,7 @@ class UserSecurityTests extends SecurityTestsAbstract {
         User user2 = BasicInstanceBuilder.getUser(USERNAME2,PASSWORD2)
 
         //Check if another user can read/add/update/del
-        assert (403 == UserAPI.create(BasicInstanceBuilder.getUserNotExist().encodeAsJSON(),USERNAME2,PASSWORD2).code)
+        assert (200 == UserAPI.create(BasicInstanceBuilder.getUserNotExist().encodeAsJSON(),USERNAME2,PASSWORD2).code)
         assert (200 == UserAPI.show(user1.id,USERNAME2,PASSWORD2).code)
         assert (403 == UserAPI.keys(user1.username,USERNAME2, PASSWORD2).code)
         assert (true ==UserAPI.containsInJSONList(user1.id,JSON.parse(UserAPI.list(USERNAME2,PASSWORD2).data)))

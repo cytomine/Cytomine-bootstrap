@@ -579,12 +579,10 @@ class UserTests  {
         assert 200 == UserAPI.signature(user.username,"newpassword").code
     }
 
-    void testLDAP() {
-        User user = BasicInstanceBuilder.getUser(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD);
-
-        def result = UserAPI.isInLDAP("u212435", user.username,Infos.SUPERADMINPASSWORD)
-        assert 200 == result.code
-        assert true == JSON.parse(result.data).result
-    }
+//    void testLDAP() {
+//        def result = UserAPI.isInLDAP("u212435",Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
+//        assert 200 == result.code
+//        assert true == JSON.parse(result.data).result
+//    }
 
 }

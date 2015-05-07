@@ -651,5 +651,5 @@ grails.plugin.cookiesession.cookiecount = 10
 grails.plugin.springsecurity.password.algorithm = 'SHA-256'
 grails.plugin.springsecurity.password.hash.iterations = 1
 
-cytomine.middleware.rabbitmq.user = "cytomine"
-cytomine.middleware.rabbitmq.password = "cytomine"
+cytomine.middleware.rabbitmq.user = "router"
+cytomine.middleware.rabbitmq.password = "router"
