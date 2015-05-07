@@ -144,12 +144,12 @@ grails.project.dependency.resolution = {
 //        compile (':hibernate:3.6.10.17') {
 //            excludes('hibernate-ehcache')
 //        }
-        runtime ':hibernate4:4.3.5.5'
+        runtime ':hibernate4:4.3.6.1'
 
-        build ':tomcat:7.0.54'
-        compile ':cache:1.1.7'
+        build ':tomcat:7.0.55'
+        compile ':cache:1.1.8'
 //        compile ':scaffolding:2.1.2'
-        compile ':asset-pipeline:1.9.6'
+        compile ':asset-pipeline:1.9.9'
 
 
         //cytomine.client

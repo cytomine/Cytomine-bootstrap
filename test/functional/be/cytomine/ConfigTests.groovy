@@ -14,28 +14,13 @@ class ConfigTests {
 
     //TEST SHOW
     void testShow() {
-        def result = ConfigAPI.show(-1, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 404 == result.code
-
-        def config = BasicInstanceBuilder.getConfigNotExist()
-        result = ConfigAPI.create(config.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 200 == result.code
-        def id =  result.data.id
-
-        result = ConfigAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 200 == result.code
-
-        def json = JSON.parse(result.data)
-        assert json instanceof JSONObject
-    }
-    void testShowByKey() {
         def result = ConfigAPI.show("-1", Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         def config = BasicInstanceBuilder.getConfigNotExist()
         result = ConfigAPI.create(config.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        def key =  result.data.key
+        String key =  result.data.key
 
         result = ConfigAPI.show(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
@@ -57,25 +42,24 @@ class ConfigTests {
         def configToDelete = BasicInstanceBuilder.getConfigNotExist()
         assert configToDelete.save(flush: true) != null
 
-        def id = configToDelete.id
         def key = configToDelete.key
-        def result = ConfigAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = ConfigAPI.delete(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         //UNDO & REDO
-        result = ConfigAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = ConfigAPI.show(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = ConfigAPI.undo()
         assert 200 == result.code
 
-        result = ConfigAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = ConfigAPI.show(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = ConfigAPI.redo()
         assert 200 == result.code
 
-        result = ConfigAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = ConfigAPI.show(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
 
@@ -85,22 +69,22 @@ class ConfigTests {
 
         def result = ConfigAPI.create(configToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
-        def id =  result.data.id
+        String key =  result.data.key
 
         //UNDO & REDO
-        result = ConfigAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = ConfigAPI.show(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         result = ConfigAPI.undo()
         assert 200 == result.code
 
-        result = ConfigAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = ConfigAPI.show(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
 
         result = ConfigAPI.redo()
         assert 200 == result.code
 
-        result = ConfigAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        result = ConfigAPI.show(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
     }
 
@@ -116,7 +100,7 @@ class ConfigTests {
 
         configToUpdate.value = "test2"
 
-        def result = ConfigAPI.update(configToUpdate.id, configToUpdate.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = ConfigAPI.update(configToUpdate.key, configToUpdate.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject

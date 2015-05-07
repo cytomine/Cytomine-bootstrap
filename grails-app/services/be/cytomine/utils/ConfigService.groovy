@@ -26,23 +26,13 @@ class ConfigService extends ModelService {
         return Config.list()
     }
 
-    def list(String key) {
-        securityACLService.checkGuest(cytomineService.currentUser)
-        Config.findAllByKey(key)
-    }
-
-    def read(def id) {
-        securityACLService.checkGuest(cytomineService.currentUser)
-        Config.read(id)
-    }
-
     def readByKey(String key) {
         securityACLService.checkGuest(cytomineService.currentUser)
         Config.findByKey(key)
     }
 
     def add(def json) {
-        securityACLService.checkGuest(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command command = new AddCommand(user: currentUser)
         return executeCommand(command,null,json)
@@ -55,7 +45,7 @@ class ConfigService extends ModelService {
      * @return  Response structure (new domain data, old domain data..)
      */
     def update(Config ap, def jsonNewData) {
-        securityACLService.checkGuest(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command command = new EditCommand(user: currentUser)
         return executeCommand(command,ap,jsonNewData)
@@ -70,7 +60,7 @@ class ConfigService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(Config domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        securityACLService.checkGuest(cytomineService.currentUser)
+        securityACLService.checkAdmin(cytomineService.currentUser)
         SecUser currentUser = cytomineService.getCurrentUser()
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
         return executeCommand(c,domain,null)

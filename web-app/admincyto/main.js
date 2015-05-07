@@ -28,6 +28,9 @@ angular.module("cytomineUserArea", ["ngRoute","ngSanitize","ngResource","ngTable
         $routeProvider.when("/permission/domain", {
             templateUrl: "views/permission.html"
         });
+        $routeProvider.when("/configuration", {
+            templateUrl: "views/config.html"
+        });
         $routeProvider.otherwise({
             templateUrl: "views/user/tableView.html"
         });
