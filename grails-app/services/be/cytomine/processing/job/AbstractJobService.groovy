@@ -65,8 +65,14 @@ abstract class AbstractJobService {
         parameters.eachWithIndex {softParam, i ->
             JobParameter jobParam = JobParameter.findByJobAndSoftwareParameter(job, softParam)
             String value = softParam.defaultValue
-            if (jobParam) value = jobParam.value
-            else if (softParam.required) throw new WrongArgumentException("Argument " + softParam.name + " is required!")
+            if (jobParam) {
+                value = jobParam.value
+            }
+            else if (softParam.required) {
+                println "Coucou" + softParam
+                println "Coucou" + softParam.name
+                throw new WrongArgumentException("Argument " + softParam.name + " is required!")
+            }
             args[i] = value
             log.info softParam.name + "=" + value
         }
