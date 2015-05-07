@@ -44,9 +44,12 @@ class SoftwareRabbitQueueTests {
         UserJob userJob = BasicInstanceBuilder.getUserJobNotExist(job, true)
 
 
+        // Should I add jobParameters manually?
+
         //def jobparameterToAdd = new JobParameter(value: "host", job:job, softwareParameter:softwareParam)
         //result = JobParameterAPI.create(jobparameterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         //assert result.code == 200
+
         createRabbitJobService.init(job, userJob)
         createRabbitJobService.execute(job, userJob, true)
 
