@@ -22,6 +22,7 @@ import be.cytomine.security.*
 import be.cytomine.ontology.SharedAnnotation
 import be.cytomine.test.http.AmqpQueueAPI
 import be.cytomine.utils.AttachedFile
+import be.cytomine.utils.Config
 import be.cytomine.utils.Description
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
@@ -1643,4 +1644,22 @@ class BasicInstanceBuilder {
         amqpQueueConfigInstance
 
     }
+
+    static Config getConfig() {
+        def key = "test".toUpperCase()
+        def value = "test"
+        def config = Config.findByKey(key)
+
+        if (!config) {
+            config = new Config(key: key, value: value)
+            saveDomain(config)
+        }
+        config
+    }
+
+    static Config getConfigNotExist(boolean save = false, boolean hideByDefault = false) {
+        def config = new Config(key: getRandomString(), value: getRandomString())
+        save ? saveDomain(config) : checkDomain(config)
+    }
+
 }
