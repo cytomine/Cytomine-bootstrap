@@ -118,7 +118,8 @@ grails.project.dependency.resolution = {
 
         runtime 'com.rabbitmq:amqp-client:3.4.4'
 
-
+        compile "javax.validation:validation-api:1.1.0.Final"
+        runtime "org.hibernate:hibernate-validator:5.0.3.Final"
 //        environments {
 //            cluster {
 
@@ -138,18 +139,17 @@ grails.project.dependency.resolution = {
     }
     plugins {
 
-
         compile ":grails-melody:1.49.0"
         compile ":mongodb:3.0.2"
 //        compile (':hibernate:3.6.10.17') {
 //            excludes('hibernate-ehcache')
 //        }
-        runtime ':hibernate4:4.3.6.1'
+        runtime ':hibernate4:4.3.5.5'
 
-        build ':tomcat:7.0.55'
-        compile ':cache:1.1.8'
+        build ':tomcat:7.0.54'
+        compile ':cache:1.1.7'
 //        compile ':scaffolding:2.1.2'
-        compile ':asset-pipeline:1.9.9'
+        compile ':asset-pipeline:1.9.6'
 
 
         //cytomine.client
