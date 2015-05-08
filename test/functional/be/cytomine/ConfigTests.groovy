@@ -43,7 +43,8 @@ class ConfigTests {
         assert configToDelete.save(flush: true) != null
 
         def key = configToDelete.key
-        def result = ConfigAPI.delete(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def id = configToDelete.id
+        def result = ConfigAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
 
         //UNDO & REDO

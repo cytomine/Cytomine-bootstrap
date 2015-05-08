@@ -11,7 +11,7 @@ class ConfigAPI extends DomainAPI {
 
     //SHOW
     static def show(String key, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/config/${key}.json"
+        String URL = Infos.CYTOMINEURL + "api/config/key/${key}.json"
         return doGET(URL, username, password)
     }
 
@@ -31,13 +31,13 @@ class ConfigAPI extends DomainAPI {
 
     //UPDATE
     static def update(String key, def json, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/config/${key}.json"
+        String URL = Infos.CYTOMINEURL + "api/config/key/${key}.json"
         return doPUT(URL,json,username,password)
     }
 
     //DELETE
-    static def delete(String key, String username, String password) {
-        String URL = Infos.CYTOMINEURL + "api/config/${key}.json"
+    static def delete(def id, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/config/${id}.json"
         return doDELETE(URL,username,password)
     }
 }

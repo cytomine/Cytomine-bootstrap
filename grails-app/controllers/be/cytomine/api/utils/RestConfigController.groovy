@@ -3,6 +3,7 @@ package be.cytomine.api.utils
 import be.cytomine.api.RestController
 import be.cytomine.utils.Config
 import grails.converters.JSON
+import grails.converters.XML
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
 import org.restapidoc.annotation.RestApiParams
@@ -48,9 +49,21 @@ class RestConfigController extends RestController {
      */
     @RestApiMethod(description="Delete a config")
     @RestApiParams(params=[
-            @RestApiParam(name="key", type="String", paramType = RestApiParamType.PATH,description = "The config key")
+            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The config id")
     ])
     def delete()  {
         delete(configService, JSON.parse("{id : $params.id}"),null)
     }
+
+    @RestApiMethod(description="Get the boolean LDAP enabled")
+    def ldap() {
+        def data = [:]
+        // ????? TODO
+        data['enabled'] = true
+        withFormat {
+            json { render data as JSON }
+            xml { render data as XML}
+        }
+    }
+
 }
