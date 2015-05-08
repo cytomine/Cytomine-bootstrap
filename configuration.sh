@@ -24,7 +24,7 @@ IIP_CYTO_URL=localhost-iip-cyto
 IIP_JP2_URL=localhost-iip-jp2000
 
 HAS_GLUSTER=false
-GLUSTER_SERVER=192.168.0.202
+GLUSTER_SERVER=
 VOLUME=aurora
 
 IS_LOCAL=true
@@ -46,7 +46,7 @@ RETRIEVAL_ENGINE=memory
 IMS_STORAGE_PATH=/data
 IMS_BUFFER_PATH=/data/_buffer
 
-BIOFORMAT_ENABLED="false"
+BIOFORMAT_ENABLED="true"
 
 # You don't to change the datas below this line instead of advanced customization
 # ---------------------------
