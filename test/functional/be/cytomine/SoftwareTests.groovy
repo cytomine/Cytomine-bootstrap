@@ -47,18 +47,6 @@ class SoftwareTests  {
  
        result = SoftwareAPI.show(idSoftware, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 200 == result.code
- 
-       result = SoftwareAPI.undo()
-       assert 200 == result.code
- 
-       result = SoftwareAPI.show(idSoftware, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       assert 404 == result.code
- 
-       result = SoftwareAPI.redo()
-       assert 200 == result.code
- 
-       result = SoftwareAPI.show(idSoftware, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       assert 200 == result.code
    }
  
    void testAddSoftwareAlreadyExist() {
@@ -140,18 +128,6 @@ class SoftwareTests  {
  
        def showResult = SoftwareAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        assert 404 == showResult.code
- 
-       result = SoftwareAPI.undo()
-       assert 200 == result.code
- 
-       result = SoftwareAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       assert 200 == result.code
- 
-       result = SoftwareAPI.redo()
-       assert 200 == result.code
- 
-       result = SoftwareAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       assert 404 == result.code
    }
  
    void testDeleteSoftwareNotExist() {

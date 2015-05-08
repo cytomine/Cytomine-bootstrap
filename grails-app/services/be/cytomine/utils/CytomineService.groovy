@@ -9,7 +9,6 @@ class CytomineService implements Serializable {
     def springSecurityService
 
     SecUser getCurrentUser() {
-        println "Spring security" + springSecurityService.principal.id
         return SecUser.read(springSecurityService.principal.id)
     }
 

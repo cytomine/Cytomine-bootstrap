@@ -18,6 +18,8 @@ class SoftwareService extends ModelService {
 
     static transactional = true
 
+    boolean saveOnUndoRedoStack = false
+
     def cytomineService
     def transactionService
     def aclUtilService
@@ -84,6 +86,7 @@ class SoftwareService extends ModelService {
      * @return Response structure (code, old domain,..)
      */
     def delete(Software domain, Transaction transaction = null, Task task = null, boolean printMessage = true) {
+        log.info "delete software"
         SecUser currentUser = cytomineService.getCurrentUser()
         securityACLService.check(domain.container(),DELETE)
         Command c = new DeleteCommand(user: currentUser,transaction:transaction)
@@ -132,6 +135,7 @@ class SoftwareService extends ModelService {
     }
 
     def deleteDependentSoftwareParameter(Software software, Transaction transaction, Task task = null) {
+        log.info "deleteDependentSoftwareParameter ${SoftwareParameter.findAllBySoftware(software).size()}"
         SoftwareParameter.findAllBySoftware(software).each {
             softwareParameterService.delete(it,transaction,null, false)
         }
