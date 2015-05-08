@@ -3,6 +3,7 @@ package be.cytomine.processing.job
 import be.cytomine.Exception.MiddlewareException
 import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.processing.Job
+import be.cytomine.processing.SoftwareParameter
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import grails.util.Holders

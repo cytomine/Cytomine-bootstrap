@@ -126,8 +126,8 @@ abstract class AbstractJobService {
     void launchSoftware(String[] args, Job job) {
         Runtime runtime = Runtime.getRuntime();
 
-        println "local dir="+new File("test").absolutePath
-        println "args="+args.join(" ")
+        log.info "local dir="+new File("test").absolutePath
+        log.info "args="+args.join(" ")
 
         final Process process = runtime.exec(args);
 

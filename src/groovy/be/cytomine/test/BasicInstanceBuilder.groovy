@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.json.JSONObject
 
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus
@@ -1229,6 +1230,18 @@ class BasicInstanceBuilder {
 
     static Software getSoftwareNotExist(boolean save = false) {
         def software = new Software(name: getRandomString(),serviceName:"helloWorldJobService")
+        if(save) {
+            saveDomain(software)
+            Infos.addUserRight(Infos.SUPERADMINLOGIN,software)
+        } else {
+            checkDomain(software)
+        }
+
+        software
+    }
+
+    static Software getSoftwareNotExistForRabbit(boolean save = false) {
+        def software = new Software(name: getRandomString(),serviceName:"createRabbitJobService")
         if(save) {
             saveDomain(software)
             Infos.addUserRight(Infos.SUPERADMINLOGIN,software)
