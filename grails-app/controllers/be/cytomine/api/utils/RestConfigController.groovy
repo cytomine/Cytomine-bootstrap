@@ -57,9 +57,10 @@ class RestConfigController extends RestController {
 
     @RestApiMethod(description="Get the boolean LDAP enabled")
     def ldap() {
+
         def data = [:]
-        // ????? TODO
-        data['enabled'] = true
+        data['enabled'] = grailsApplication.config.grails.plugin.springsecurity.ldap.active
+
         withFormat {
             json { render data as JSON }
             xml { render data as XML}
