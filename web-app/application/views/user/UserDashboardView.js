@@ -34,6 +34,7 @@ var UserDashboardView = Backbone.View.extend({
         $("#userdashboard").css("display","inline");
         self.el = $("#userdashboard");
 
+        self.initWelcomeMessage();
         self.initStats(tpStat);
         self.initLastAction();
 ////      //self.initLastNews();
@@ -43,6 +44,17 @@ var UserDashboardView = Backbone.View.extend({
         self.initLastOpenProject(tplProj);
 
         return this;
+    },
+    initWelcomeMessage : function() {
+        var self = this;
+        $.get("/api/config/key/WELCOME.json", function(data) {
+            self.el.find("#welcomeMessage").html(data.value);
+            if(self.el.find("#welcomeMessage").text() == "" || self.el.find("#welcomeMessage").text()==null || self.el.find("#welcomeMessage").text() == undefined) {
+                $("#communicationRow").hide();
+            } else {
+                $("#communicationRow").show();
+            }
+        })
     },
     initLastOpenProject : function(tplProj) {
         var self = this;

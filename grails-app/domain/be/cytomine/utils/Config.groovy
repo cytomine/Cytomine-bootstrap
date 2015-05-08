@@ -18,6 +18,12 @@ class Config extends CytomineDomain implements Serializable {
         key(blank: false, unique: true)
         value(blank: false)
     }
+    static mapping = {
+        id(generator: 'assigned', unique: true)
+        value type: 'text'
+        sort "id"
+        cache true
+    }
 
     /**
      * Define fields available for JSON response

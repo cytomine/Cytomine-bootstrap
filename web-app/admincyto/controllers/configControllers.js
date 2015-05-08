@@ -2,7 +2,7 @@
  * Created by hoyoux on 07.05.15.
  */
 angular.module("cytomineUserArea")
-    .controller("configCtrl", function ($scope,$location, $routeParams,$http, $resource,configService) {
+    .controller("configCtrl", function ($scope,$location, $routeParams,$http, $resource,configService, tempSrvc) {
 
         $scope.configs = {error:{},success:{}};
 
@@ -38,12 +38,41 @@ angular.module("cytomineUserArea")
 
         $scope.saveWelcome = function() {
             var config = $scope.getConfig("WELCOME")
+            var callback = function(data) {
+                $scope.configs.successInfo = tempSrvc(4000);
+                $scope.configs.successInfo.message = data.message
+            };
+
             if(config != null) {
                 config.value = $scope.configs.WELCOME
-                configService.updateConfig("WELCOME", config);
+                configService.updateConfig("WELCOME", config, callback);
             } else {
                 config = {key: "WELCOME", value: $scope.configs["WELCOME"]}
-                configService.addConfig(config);
+                configService.addConfig(config, callback);
             }
+
+
+
         }
-    });
+        $scope.deleteWelcome = function() {
+            var config = $scope.getConfig("WELCOME")
+            var callback = function(data) {
+                $scope.configs.successInfo = tempSrvc(4000);
+                $scope.configs.successInfo.message = data.message
+            };
+            configService.deleteConfig(config, callback);
+            $scope.configs.WELCOME=""
+        }
+    })
+    .service('tempSrvc', ['$timeout', function($timeout) {
+
+        return function(delay) {
+
+            var result = {shown:true};
+            $timeout(function() {
+                result.shown=false;
+            }, delay);
+            return result;
+        };
+
+    }]);

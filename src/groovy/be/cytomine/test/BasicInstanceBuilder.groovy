@@ -1670,7 +1670,7 @@ class BasicInstanceBuilder {
         config
     }
 
-    static Config getConfigNotExist(boolean save = false, boolean hideByDefault = false) {
+    static Config getConfigNotExist(boolean save = false) {
         def config = new Config(key: getRandomString(), value: getRandomString())
         save ? saveDomain(config) : checkDomain(config)
     }

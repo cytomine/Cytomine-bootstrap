@@ -21,6 +21,12 @@
             <div class="row">
                 <div class="col-md-10 col-md-offset-1" style="text-align: right">
                     <a id="saveWelcomeMessageButton" href="javascript:void(0);" class="btn btn-info" ng-click="saveWelcome()">Save</a>
+                    <a id="deleteWelcomeMessageButton" href="javascript:void(0);" class="btn btn-danger" ng-click="deleteWelcome()">Delete</a>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 25px">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="alert alert-success" role="alert" ng-show="configs.successInfo.shown">{{configs.successInfo.message}}</div>
                 </div>
             </div>
         </div>
