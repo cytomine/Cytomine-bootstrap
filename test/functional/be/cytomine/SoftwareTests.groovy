@@ -67,20 +67,6 @@ class SoftwareTests  {
        def showResult = SoftwareAPI.show(idSoftware, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
        json = JSON.parse(showResult.data)
        BasicInstanceBuilder.compare(data.mapNew, json)
-
-       def result = SoftwareAPI.undo()
-       assert 200 == result.code
-       showResult = SoftwareAPI.show(idSoftware, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       System.out.println("toto="+showResult);
-       System.out.println("toto="+showResult.data);
-       System.out.println("toto="+JSON.parse(showResult.data));
-       System.out.println("toto="+JSON.parse(showResult.data).name);
-       BasicInstanceBuilder.compare(data.mapOld, JSON.parse(showResult.data))
-
-       result = SoftwareAPI.redo()
-       assert 200 == result.code
-       showResult = SoftwareAPI.show(idSoftware, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-       BasicInstanceBuilder.compare(data.mapNew, JSON.parse(showResult.data))
    }
  
    void testUpdateSoftwareNotExist() {

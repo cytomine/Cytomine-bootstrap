@@ -259,8 +259,8 @@ class ImageServerTests {
         BufferedImage thumb = result.image
         BufferedImage expected = ImageIO.read(new File("test/functional/be/cytomine/utils/images/cropMin.jpg"))
 
-        assert thumb.width == expected.width
-        assert thumb.height == expected.height
+        assert thumb.width-expected.width==0
+        assert Math.abs(thumb.height-expected.height)<3
 
         result = ImageServerAPI.cropAnnotationMin(annotation.id,true,Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         thumb = result.image
