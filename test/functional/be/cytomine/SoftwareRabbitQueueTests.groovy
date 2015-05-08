@@ -2,13 +2,16 @@ package be.cytomine
 
 import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.processing.Job
+import be.cytomine.processing.JobParameter
 import be.cytomine.processing.Software
 import be.cytomine.security.UserJob
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
+import be.cytomine.test.http.JobParameterAPI
 import be.cytomine.test.http.SoftwareAPI
 import com.rabbitmq.client.Channel
 import com.rabbitmq.client.GetResponse
+import grails.converters.JSON
 import grails.util.Holders
 
 /**
@@ -40,6 +43,14 @@ class SoftwareRabbitQueueTests {
         Job job = BasicInstanceBuilder.getJobNotExist(true, softwareToAdd)
         UserJob userJob = BasicInstanceBuilder.getUserJobNotExist(job, true)
 
+
+        // Should I add jobParameters manually?
+
+        //def jobparameterToAdd = new JobParameter(value: "host", job:job, softwareParameter:softwareParam)
+        //result = JobParameterAPI.create(jobparameterToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        //assert result.code == 200
+
+        createRabbitJobService.init(job, userJob)
         createRabbitJobService.execute(job, userJob, true)
 
         /*

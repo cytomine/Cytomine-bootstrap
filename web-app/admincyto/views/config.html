@@ -1,0 +1,28 @@
+<div class="col-md-10 col-md-offset-1" ng-controller="configCtrl">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>Global Configurations</h4>
+        </div>
+        <br/>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <label class="control-label">Welcome message :</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <textarea ng-model="configs.WELCOME" rows="5" style="width: 100%; resize: none"></textarea>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1" style="text-align: right">
+                    <a id="saveWelcomeMessageButton" href="javascript:void(0);" class="btn btn-info" ng-click="saveWelcome()">Save</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

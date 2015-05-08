@@ -24,10 +24,10 @@ class HelloWorldJobService extends AbstractJobService {
 
     def init(Job job, UserJob userJob) {
         def serverUrl = grailsApplication.config.grails.serverURL.replace("http://", "").replace("https://", "")
-        jobParameterService.add(JSON.parse(createJobParameter("cytomine_host",job, serverUrl).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("host",job, serverUrl).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("cytomine_base_path",job,"/api/").encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("cytomine_public_key",job,userJob.publicKey).encodeAsJSON()))
-        jobParameterService.add(JSON.parse(createJobParameter("cytomine_private_key",job,userJob.privateKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
+        jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("cytomine_id_project",job,job.getProject().id.toString()).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("cytomine_id_software",job,job.getSoftware().id.toString()).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("cytomine_id_job",job,job.id.toString()).encodeAsJSON()))
