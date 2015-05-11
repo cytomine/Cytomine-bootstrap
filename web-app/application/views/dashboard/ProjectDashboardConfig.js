@@ -1,5 +1,5 @@
 var ProjectDashboardConfig = Backbone.View.extend({
-    initialize: function (options) {
+    initialize: function () {
         this.rendered = false;
     },
     render: function () {
@@ -17,23 +17,6 @@ var ProjectDashboardConfig = Backbone.View.extend({
         return this;
     },
     doLayout: function (defaultLayersTemplate,customUIConfigTemplate, AnnotToolsTemplate, imageFiltersTemplate,softwareTemplate, generalConfigTemplate, usersConfigTemplate) {
-
-        // generate the menu skeleton
-
-        var html = '';
-        html = html + '<div class="col-md-2">';
-        html = html + '    <div class="panel panel-default">';
-        html = html + '        <div class="panel-heading">';
-        html = html + '            <h4>Configurations</h4>';
-        html = html + '        </div>';
-
-        html = html + '    </div>';
-        html = html + '</div>';
-
-        var menu = $(html)
-
-        var configMenu = $('<div class="panel-body"></div>');
-
 
         // generate the config tabs
 
@@ -122,47 +105,66 @@ var ProjectDashboardConfig = Backbone.View.extend({
                     var layersToDelete = 0;
                     var layersDeleted = 0;
                     collection.each(function(layer) {
-                        if(users.indexOf(layer.attributes.user) == -1) {
+                        if(users.indexOf(layer.attributes.user) === -1) {
                             layersToDelete++;
                             console.log("deletion de ");
                             console.log(layer.id);
                             layer.destroy({
-                                success: function (model, response) {
+                                success: function () {
                                     layersDeleted++;
-                                    if(layersToDelete == layersDeleted) {
+                                    if(layersToDelete === layersDeleted) {
                                         defaultLayers.refresh();
                                     }
                                 }
                             });
                         }
-                        if(layersToDelete == 0) {
+                        if(layersToDelete === 0) {
                             defaultLayers.refresh();
                         }
                     });
                 }
             });
-        }
+        };
         users.setCallback(callBack);
 
+
+        // Generation of the left menu
+        var menu = this.createConfigMenu(configs)
+
+        $(this.el).append(menu);
+        $(this.el).append(configList);
+
+    },
+    createConfigMenu: function (configs) {
+        // generate the menu skeleton
+
+        var html = '';
+        html = html + '<div class="col-md-2">';
+        html = html + '    <div class="panel panel-default">';
+        html = html + '        <div class="panel-heading">';
+        html = html + '            <h4>Configurations</h4>';
+        html = html + '        </div>';
+
+        html = html + '    </div>';
+        html = html + '</div>';
+
+        var menu = $(html);
+
+        var configMenu = $('<div class="panel-body"></div>');
 
         // Generation of the left menu
         $.each(configs, function (index, value) {
             configMenu.append('<div><input id="'+value.id+'-config-checkbox" type="checkbox" checked> '+value.title+'</div>');
             configMenu.find("input#"+value.id+"-config-checkbox").change(function () {
                 if ($(this).is(':checked')) {
-                    $("#config-panel-"+value.id).show()
+                    $("#config-panel-"+value.id).show();
                 } else {
-                    $("#config-panel-"+value.id).hide()
+                    $("#config-panel-"+value.id).hide();
                 }
             });
-
         });
-
         menu.find(".panel-default").append(configMenu);
-
-        $(this.el).append(menu);
-        $(this.el).append(configList);
-
+        return menu;
     },
     refresh: function () {
         if (!this.rendered) {
@@ -187,11 +189,11 @@ var GeneralConfigPanel = Backbone.View.extend({
 
 
         new ProjectCollection().fetch({
-            success: function (collection, response) {
+            success: function (collection) {
                 self.projects = collection;
 
                 // change handler
-                $(self.el).find("input#retrievalProjectSome-radio-config,input#retrievalProjectAll-radio-config,input#retrievalProjectNone-radio-config").change(function (test) {
+                $(self.el).find("input#retrievalProjectSome-radio-config,input#retrievalProjectAll-radio-config,input#retrievalProjectNone-radio-config").change(function () {
                     self.refreshRetrievalProjectSelect();
                     self.update();
                 });
@@ -226,7 +228,7 @@ var GeneralConfigPanel = Backbone.View.extend({
         if ($(self.el).find("input#retrievalProjectSome-radio-config").is(':checked')) {
             if (!self.projectMultiSelectAlreadyLoad) {
                 self.createRetrievalProjectSelect(self.projects);
-                self.projectMultiSelectAlreadyLoad = true
+                self.projectMultiSelectAlreadyLoad = true;
             } else {
                 $(self.el).find("div#retrievalGroup").find(".uix-multiselect").show();
             }
@@ -292,7 +294,6 @@ var GeneralConfigPanel = Backbone.View.extend({
             success: function (model, response) {
                 console.log("1. Project edited!");
                 window.app.view.message("Project", response.message, "success");
-                var id = response.project.id;
             },
             error: function (model, response) {
                 var json = $.parseJSON(response.responseText);
@@ -315,7 +316,7 @@ var UsersConfigPanel = Backbone.View.extend({
         self.createUserList();
         self.createMultiSelectUser();
 
-        $(self.el).find("input#addUsersByName-radio-config,input#addUsersByGroup-radio-config,input#addUsersByMail-radio-config").change(function (test) {
+        $(self.el).find("input#addUsersByName-radio-config,input#addUsersByGroup-radio-config,input#addUsersByMail-radio-config").change(function () {
             if ($(self.el).find("input#addUsersByName-radio-config").is(':checked')) {
                 $(self.el).find("div#projectedituser").show();
                 $(self.el).find(".uix-multiselect").hide();
@@ -333,8 +334,8 @@ var UsersConfigPanel = Backbone.View.extend({
         $(self.el).find("input#addUsersByName-radio-config,input#addUsersByGroup-radio-config").trigger('change');
 
         $(self.el).find("#invitenewuserbutton").click(function (event) {
-            var username = $(self.el).find("#new_username").val()
-            var mail = $(self.el).find("#new_mail").val()
+            var username = $(self.el).find("#new_username").val();
+            var mail = $(self.el).find("#new_mail").val();
 
             $.ajax({
                 type: "POST",
@@ -345,9 +346,9 @@ var UsersConfigPanel = Backbone.View.extend({
                 success: function() {
                     window.app.view.message("Project", username+" invited!", "success");
                     self.refreshUserList(true);
-                    self.loadMultiSelectUser()
-                    $(self.el).find("#new_username").val("")
-                    $(self.el).find("#new_mail").val("")
+                    self.loadMultiSelectUser();
+                    $(self.el).find("#new_username").val("");
+                    $(self.el).find("#new_mail").val("");
                 },
                 error: function(x) {
                     window.app.view.message("Project", x.responseJSON.errors, "error");
@@ -414,7 +415,7 @@ var UsersConfigPanel = Backbone.View.extend({
             groupUsers.each(function(group) {
 
                 $(self.el).find("#usersByGroup").append('<optgroup label="'+group.attributes.name+'">');
-                var optGroup = $(self.el).find("#usersByGroup optgroup").last()
+                var optGroup = $(self.el).find("#usersByGroup optgroup").last();
                 for(var i=0; i<group.attributes.users.length ; i++) {
                     var currentUser = group.attributes.users[i];
                     if($.inArray( currentUser.id, ids ) == -1){
@@ -435,7 +436,7 @@ var UsersConfigPanel = Backbone.View.extend({
 
         // load current users
         new UserCollection({project:self.model.id}).fetch({
-            success: function (currentUsersCollection, response) {
+            success: function (currentUsersCollection) {
                 currentUsers = currentUsersCollection;
                 reload(currentUsers, self.groups);
             }
@@ -506,20 +507,20 @@ var UsersConfigPanel = Backbone.View.extend({
         }
 
         new UserCollection({}).fetch({
-            success: function (allUserCollection, response) {
+            success: function (allUserCollection) {
                 allUser = allUserCollection;
                 loadUser();
             }});
 
         new UserCollection({project: self.model.id}).fetch({
-            success: function (projectUserCollection, response) {
+            success: function (projectUserCollection) {
                 projectUser = projectUserCollection;
                 window.app.models.projectUser = projectUserCollection;
                 loadUser();
             }});
 
         new UserCollection({project: self.model.id, admin:true}).fetch({
-            success: function (projectUserCollection, response) {
+            success: function (projectUserCollection) {
                 projectAdmin = projectUserCollection;
                 window.app.models.projectAddmin = projectUserCollection;
                 loadUser();
@@ -538,7 +539,7 @@ var UsersConfigPanel = Backbone.View.extend({
                 return
             }
 
-            var projectUserArray=[]
+            var projectUserArray=[];
             projectUsers.each(function(user) {
                 projectUserArray.push(user.id);
             });
@@ -554,7 +555,7 @@ var UsersConfigPanel = Backbone.View.extend({
                     self.loadMultiSelectUser()
                 })
             });
-        }
+        };
 
         new UserCollection({project: self.model.id}).fetch({
             success: function (projectUserCollection, response) {
@@ -596,7 +597,7 @@ var UsersConfigPanel = Backbone.View.extend({
         var users = self.projectUsers;
 
         var admins = self.adminMaggicSuggest.getValue();
-        self.projectAdmins = admins
+        self.projectAdmins = admins;
 
         project.set({users: users, admins:admins});
         project.save({users:users, admins:admins}, {

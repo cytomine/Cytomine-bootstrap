@@ -56,16 +56,16 @@ var AddProjectDialog = Backbone.View.extend({
             //check validate name
             var error = false;
             if (index == 2) {
-                if ($("#project-name").val().toUpperCase().trim() == "") {
+                if ($("#project-name").val().toUpperCase().trim() === "") {
                     window.app.view.message("User", "You must provide a valide project name!", "error");
                     error = true;
                 }
                 console.log($("#projectontology").val());
-                if ($("#projectontology").val() == undefined) {
+                if ($("#projectontology").val() === undefined) {
                     window.app.view.message("Ontology", "You must provide a ontology name!", "error");
                     error = true;
                 }
-                if ($("#projectdiscipline").val() == undefined) {
+                if ($("#projectdiscipline").val() === undefined) {
                     window.app.view.message("Discipline", "You must provide a discipline name!", "error");
                     error = true;
                 }
@@ -106,7 +106,7 @@ var AddProjectDialog = Backbone.View.extend({
         var choice = _.template(disciplinesChoicesRadioTpl, {id: -1, name: "*** Undefined ***"});
         $("#projectdiscipline").append(choice);
         window.app.models.disciplines.fetch({
-            success: function (collection, response) {
+            success: function (collection) {
 
                 collection.each(function (discipline) {
                     var choice = _.template(ontologiesChoicesRadioTpl, {id: discipline.id, name: discipline.get("name")});
@@ -117,7 +117,7 @@ var AddProjectDialog = Backbone.View.extend({
         });
         $("#projectontology").empty();
         window.app.models.ontologiesLigth.fetch({
-            success: function (collection, response) {
+            success: function (collection) {
                 $("#choiceListOntology").empty();
                 $("#choiceListOntology").append('<select class="input-xlarge focused" id="projectontology" />');
 
@@ -134,7 +134,7 @@ var AddProjectDialog = Backbone.View.extend({
             //create ontology
             var projectName = $("#project-name").val().toUpperCase().trim();
             if (projectName != "") {
-                var ontology = new OntologyModel({name: projectName}).save({name: projectName}, {
+                new OntologyModel({name: projectName}).save({name: projectName}, {
                         success: function (model, response) {
                             window.app.view.message("Ontology", response.message, "success");
                             var id = response.ontology.id;
@@ -157,7 +157,7 @@ var AddProjectDialog = Backbone.View.extend({
             }
 
 
-        })
+        });
     },
 
     createUserList: function () {
@@ -186,10 +186,10 @@ var AddProjectDialog = Backbone.View.extend({
                 width: 590,
                 maxSelection: null
             });
-        }
+        };
 
         new UserCollection({}).fetch({
-            success: function (allUserCollection, response) {
+            success: function (allUserCollection) {
                 allUser = allUserCollection;
                 loadUser();
             }});
@@ -200,7 +200,7 @@ var AddProjectDialog = Backbone.View.extend({
             if ($("input#retrievalProjectSome").is(':checked')) {
                 if (!self.projectMultiSelectAlreadyLoad) {
                     self.createRetrievalProjectSelect();
-                    self.projectMultiSelectAlreadyLoad = true
+                    self.projectMultiSelectAlreadyLoad = true;
                 } else {
                     console.log("Show");
                     $("div#retrievalGroup").find(".ui-multiselect").show();
@@ -328,10 +328,8 @@ var AddProjectDialog = Backbone.View.extend({
                         console.log("1. Project added!");
                         clearInterval(timer);
                         window.app.view.message("Project", response.message, "success");
-                        var id = response.project.id;
                         self.projectsPanel.refresh();
                         $("#addproject").modal("hide");
-                        /*$("#addproject").remove();*/
                     },
                     error: function (model, response) {
                         var json = $.parseJSON(response.responseText);

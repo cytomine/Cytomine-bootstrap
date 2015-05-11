@@ -179,7 +179,7 @@ var LeafletView = Backbone.View.extend({
 	show: function (options) {
         var self = this; 
 		L.Util.requestAnimFrame(map.invalidateSize,map,!1,map._container);      
-    },
+    }
 
 });
 

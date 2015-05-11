@@ -74,9 +74,9 @@ var SearchResultView = Backbone.View.extend({
     extractClassName : function(fullClass) {
         var fullClassSplit = fullClass.split(".");
         if(fullClassSplit.length>0) {
-            return fullClassSplit[fullClassSplit.length-1]
+            return fullClassSplit[fullClassSplit.length-1];
         } else {
-            return "Undefined"
+            return "Undefined";
         }
     },
     //just for description, keep only some piece of string around the word

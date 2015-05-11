@@ -2,8 +2,6 @@ var SearchView = Backbone.View.extend({
     projects : null,
     suggestProject : null,
     currentFilter:null,
-    initialize: function (options) {
-    },
     render: function () {
         console.log("render");
         var self = this;
@@ -12,7 +10,7 @@ var SearchView = Backbone.View.extend({
             self.doLayout();
         } else {
             window.app.models.projects.fetch({
-                success: function (collection1, response) {
+                success: function (collection1) {
                     window.app.models.projects = collection1;
                     self.doLayout();
                 }});
@@ -38,7 +36,7 @@ var SearchView = Backbone.View.extend({
     },
     buildDomainCriteria : function() {
         var self = this;
-        $(self.el).find("#domainTypeToShow").change(function(it) {
+        $(self.el).find("#domainTypeToShow").change(function() {
             self.doRequestFirstStep();
         });
         var domain = $("#domainTypeToShow input[checked]");
@@ -88,19 +86,29 @@ var SearchView = Backbone.View.extend({
     },
     getDomainCriteria : function() {
         var val = $("#domainTypeToShow input[name=optionsDomain]:checked").val();
-        if(val=="all") return null;
-        else return val;
+        if(val=="all"){
+            return null;
+        }
+        else{
+            return val;
+        }
     },
     getTypeCriteria : function() {
         var val = $('#attributeTosearch input[name=optionsAtt]:checked').val();
-        if(val=="all") return null;
-        else return val;
+        if(val=="all"){
+            return null;
+        }
+        else {
+            return val;
+        }
     },
     doRequestFirstStep : function() {
         var self = this;
         var resultArea = $(self.el).find(".search-result");
         var words = self.extractWordsFromQueryStr($(self.el).find(".search-area").val());
-        if(words.length==0) return;
+        if(words.length==0){
+            return;
+        }
         resultArea.empty();
         resultArea.append('<img class="img-responsive center-block" src="images/loadingbig.gif"/></div>');
 
@@ -128,7 +136,7 @@ var SearchView = Backbone.View.extend({
             var results = data.collection;
             var ids = _.pluck(results, 'id');
             if(ids.length>0) {
-                var thumb = new SearchResultView({
+                new SearchResultView({
                     listIds: ids,
                     criteria: criteria,
                     words : words,
@@ -143,7 +151,7 @@ var SearchView = Backbone.View.extend({
                 resultArea.append('<div class="alert alert-danger" role="alert">'+data.responseJSON.errors+'</div>');
         });
     },
-    refresh : function(project) {
+    refresh : function() {
 
     },
     extractWordsFromQueryStr : function(queryString) {
