@@ -49,6 +49,7 @@ class BasicInstanceBuilder {
      * @param domain Domain to check
      */
     static def checkDomain(def domain) {
+        println "check domain " + domain.id
         boolean validate = domain.validate()
         if(!validate) {
             println domain.errors
@@ -696,7 +697,7 @@ class BasicInstanceBuilder {
         if (!image) {
             image = new AbstractImage(filename: "filename", scanner: getScanner(), sample: null, mime: getMime(), path: "pathpathpath")
         }
-        saveDomain(image)
+        image = saveDomain(image)
         saveDomain(new StorageAbstractImage(storage : getStorage(), abstractImage : image))
         return image
     }
@@ -1665,13 +1666,18 @@ class BasicInstanceBuilder {
 
         if (!config) {
             config = new Config(key: key, value: value)
-            saveDomain(config)
+            config = saveDomain(config)
         }
         config
     }
 
     static Config getConfigNotExist(boolean save = false) {
         def config = new Config(key: getRandomString(), value: getRandomString())
+        println "add config "+ config.key
+        Config.list().each {
+            println it.id + " " + it.version + " " + it.key
+        }
+
         save ? saveDomain(config) : checkDomain(config)
     }
 

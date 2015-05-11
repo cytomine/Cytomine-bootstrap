@@ -22,7 +22,6 @@ class Config extends CytomineDomain implements Serializable {
         id(generator: 'assigned', unique: true)
         value type: 'text'
         sort "id"
-        cache true
     }
 
     /**

@@ -13,12 +13,11 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class ConfigTests {
 
     //TEST SHOW
-    void testShow() {
-        def result = ConfigAPI.show("-1", Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-        assert 404 == result.code
+
+    void testConfigShow() {
 
         def config = BasicInstanceBuilder.getConfigNotExist()
-        result = ConfigAPI.create(config.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = ConfigAPI.create(config.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         String key =  result.data.key
 
@@ -29,8 +28,13 @@ class ConfigTests {
         assert json instanceof JSONObject
     }
 
+    void testConfigShowNotExist() {
+        def result = ConfigAPI.show("-1", Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+    }
+
     //TEST LIST
-    void testList() {
+    void testConfigList() {
         def result = ConfigAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
@@ -38,9 +42,9 @@ class ConfigTests {
     }
 
     //TEST DELETE
-    void testDelete() {
-        def configToDelete = BasicInstanceBuilder.getConfigNotExist()
-        assert configToDelete.save(flush: true) != null
+    void testConfigDelete() {
+        def configToDelete = BasicInstanceBuilder.getConfigNotExist(true)
+//        assert configToDelete.save(flush: true) != null
 
         def key = configToDelete.key
         def id = configToDelete.id
@@ -63,9 +67,9 @@ class ConfigTests {
         result = ConfigAPI.show(key, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 404 == result.code
     }
-
+//
     //TEST ADD
-    void testAddCorrect() {
+    void testConfigAddCorrect() {
         def configToAdd = BasicInstanceBuilder.getConfigNotExist()
 
         def result = ConfigAPI.create(configToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
@@ -89,19 +93,21 @@ class ConfigTests {
         assert 200 == result.code
     }
 
-    void testAddAlreadyExist() {
+    void testConfigAddAlreadyExist() {
         def configToAdd = BasicInstanceBuilder.getConfig()
         def result = ConfigAPI.create(configToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert (409 == result.code) || (400 == result.code)
     }
 
     //TEST UPDATE
-    void testUpdateCorrect() {
+    void testConfigUpdateCorrect() {
         Config configToUpdate = BasicInstanceBuilder.getConfig()
 
-        configToUpdate.value = "test2"
+        def jsonConfig = configToUpdate.encodeAsJSON()
+        def jsonUpdate = JSON.parse(jsonConfig)
+        jsonUpdate.value = "test2"
 
-        def result = ConfigAPI.update(configToUpdate.key, configToUpdate.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        def result = ConfigAPI.update(configToUpdate.key, jsonUpdate.toString(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code
         def json = JSON.parse(result.data)
         assert json instanceof JSONObject
