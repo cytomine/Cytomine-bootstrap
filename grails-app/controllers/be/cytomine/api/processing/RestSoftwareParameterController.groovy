@@ -4,10 +4,9 @@ import be.cytomine.api.RestController
 import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareParameter
 import grails.converters.JSON
+import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
 import org.restapidoc.annotation.RestApiParams
 import org.restapidoc.pojo.RestApiParamType
 

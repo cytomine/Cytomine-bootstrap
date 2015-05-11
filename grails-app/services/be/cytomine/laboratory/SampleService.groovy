@@ -1,7 +1,6 @@
 package be.cytomine.laboratory
 
 import be.cytomine.Exception.ConstraintException
-
 import be.cytomine.command.*
 import be.cytomine.image.AbstractImage
 import be.cytomine.security.SecUser

@@ -4,29 +4,25 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ForbiddenException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.UrlApi
-import be.cytomine.command.*
+import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
+import be.cytomine.command.EditCommand
+import be.cytomine.command.Transaction
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.AttachedFile
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.LinearRing
-import com.vividsolutions.jts.geom.Polygon
-import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
-import grails.orm.PagedResultList
-import org.codehaus.groovy.grails.plugins.codecs.URLCodec
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
-import static org.springframework.security.acls.domain.BasePermission.*
+import static org.springframework.security.acls.domain.BasePermission.READ
+import static org.springframework.security.acls.domain.BasePermission.WRITE
 
 class AbstractImageService extends ModelService {
 
@@ -292,7 +288,6 @@ class AbstractImageService extends ModelService {
      */
     def imageServers(def id) {
         AbstractImage image = read(id)
-        UploadedFile uploadedFile = getMainUploadedFile(image)
         def urls = []
         for (imageServerStorage in image.getImageServersStorage()) {
             urls << [imageServerStorage.getZoomifyUrl(), image.getPath()].join(File.separator) + "/" //+ "&mimeType=${uploadedFile.mimeType}"

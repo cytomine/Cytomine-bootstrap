@@ -1,10 +1,9 @@
 package be.cytomine.api.image.server
 
 import be.cytomine.api.RestController
+import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
 import org.restapidoc.annotation.RestApiParams
 import org.restapidoc.pojo.RestApiParamType
 

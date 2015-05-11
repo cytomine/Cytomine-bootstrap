@@ -2,17 +2,14 @@ package be.cytomine
 
 import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.processing.Job
-import be.cytomine.processing.JobParameter
 import be.cytomine.processing.Software
 import be.cytomine.security.UserJob
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.JobAPI
-import be.cytomine.test.http.JobParameterAPI
 import be.cytomine.test.http.SoftwareAPI
 import com.rabbitmq.client.Channel
 import com.rabbitmq.client.GetResponse
-import grails.converters.JSON
 import grails.util.Holders
 
 /**

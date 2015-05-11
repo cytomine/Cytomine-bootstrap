@@ -4,13 +4,7 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.Term
-import be.cytomine.processing.JobParameter
-import be.cytomine.processing.JobTemplate
-import be.cytomine.processing.JobTemplateAnnotation
-import be.cytomine.processing.RoiAnnotation
-import be.cytomine.processing.Software
-import be.cytomine.processing.SoftwareParameter
-import be.cytomine.processing.SoftwareProject
+import be.cytomine.processing.*
 import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos

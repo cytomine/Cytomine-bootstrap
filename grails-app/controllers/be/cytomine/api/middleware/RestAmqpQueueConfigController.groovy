@@ -1,7 +1,6 @@
 package be.cytomine.api.middleware
 
 import be.cytomine.api.RestController
-import be.cytomine.middleware.AmqpQueue
 import be.cytomine.middleware.AmqpQueueConfig
 import be.cytomine.utils.Task
 import grails.converters.JSON

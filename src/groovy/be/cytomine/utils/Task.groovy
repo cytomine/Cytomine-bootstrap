@@ -1,8 +1,4 @@
 package be.cytomine.utils
-
-import grails.util.Holders
-import groovy.sql.Sql
-
 /**
  * A task provide info about a command.
  * The main info is the progress status

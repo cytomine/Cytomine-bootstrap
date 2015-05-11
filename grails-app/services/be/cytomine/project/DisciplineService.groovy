@@ -1,7 +1,6 @@
 package be.cytomine.project
 
 import be.cytomine.Exception.ConstraintException
-
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService

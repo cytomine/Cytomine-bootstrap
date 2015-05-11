@@ -2,7 +2,6 @@ package be.cytomine
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AnnotationTerm
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.test.BasicInstanceBuilder

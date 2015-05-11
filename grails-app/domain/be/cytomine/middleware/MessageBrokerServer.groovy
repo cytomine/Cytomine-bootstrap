@@ -2,7 +2,6 @@ package be.cytomine.middleware
 
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
-import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
 import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField

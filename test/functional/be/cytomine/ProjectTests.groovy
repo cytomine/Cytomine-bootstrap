@@ -14,7 +14,6 @@ import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.TaskAPI
 import be.cytomine.test.http.UserAnnotationAPI
-import be.cytomine.utils.Task
 import be.cytomine.utils.UpdateData
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONArray

@@ -1,7 +1,4 @@
 package be.cytomine.utils
-
-import groovy.sql.Sql
-
 /**
  * Comment for a task
  * Example: comment 1: "Start task...", comment 2: "Delete project data", ...

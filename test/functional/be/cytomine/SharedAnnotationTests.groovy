@@ -1,6 +1,5 @@
 package be.cytomine
 
-import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.AnnotationCommentAPI

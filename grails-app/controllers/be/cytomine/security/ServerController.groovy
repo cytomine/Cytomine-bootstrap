@@ -3,15 +3,11 @@ package be.cytomine.security
 import be.cytomine.project.Project
 import be.cytomine.social.LastConnection
 import be.cytomine.social.PersistentConnection
-import be.cytomine.social.PersistentUserPosition
-import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
 import grails.converters.XML
 import grails.plugin.springsecurity.annotation.Secured
 
 //import grails.plugin.springsecurity.annotation.Secured
-import groovy.sql.Sql
-
 import javax.imageio.ImageIO
 
 class ServerController {

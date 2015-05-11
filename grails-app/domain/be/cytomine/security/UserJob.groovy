@@ -1,9 +1,9 @@
 package be.cytomine.security
 
 import be.cytomine.processing.Job
+import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
-import org.restapidoc.annotation.RestApiObject
 
 @RestApiObject(name = "user job", description="A cytomine software user")
 class UserJob extends SecUser {

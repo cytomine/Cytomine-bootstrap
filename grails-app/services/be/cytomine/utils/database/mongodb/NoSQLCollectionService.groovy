@@ -1,8 +1,4 @@
 package be.cytomine.utils.database.mongodb
-
-import groovy.sql.Sql
-import org.joda.time.DateTime
-
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

@@ -7,7 +7,6 @@ import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
-import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
@@ -15,10 +14,6 @@ import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import grails.transaction.Transactional
-import org.codehaus.groovy.grails.web.json.JSONObject
-
-import static org.springframework.security.acls.domain.BasePermission.*
-import static be.cytomine.search.SearchEngineFilter.*
 
 @Transactional
 class SearchEngineFilterService extends ModelService {

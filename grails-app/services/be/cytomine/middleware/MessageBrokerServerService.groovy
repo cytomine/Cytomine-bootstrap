@@ -6,9 +6,6 @@ import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 
-
-import static org.springframework.security.acls.domain.BasePermission.READ
-
 /**
  * Created by jconfetti on 04/02/15.
  */

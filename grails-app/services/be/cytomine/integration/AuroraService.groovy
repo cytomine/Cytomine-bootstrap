@@ -2,19 +2,15 @@ package be.cytomine.integration
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.ontology.Property
-import be.cytomine.test.HttpClient
-import grails.converters.JSON
 import groovy.sql.Sql
-import groovy.json.*
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.HttpResponseException
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 import java.security.InvalidKeyException
 
-import static groovyx.net.http.ContentType.JSON;
-
+import static groovyx.net.http.ContentType.JSON
 
 /**
  * Created by lrollus on 6/17/14.

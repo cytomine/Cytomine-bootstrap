@@ -5,10 +5,9 @@ import be.cytomine.security.Group
 import be.cytomine.security.User
 import be.cytomine.security.UserGroup
 import grails.converters.JSON
+import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
 import org.restapidoc.annotation.RestApiParams
 import org.restapidoc.pojo.RestApiParamType
 

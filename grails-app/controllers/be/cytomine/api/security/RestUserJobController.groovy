@@ -11,12 +11,7 @@ import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import groovy.sql.Sql
 import javassist.tools.rmi.ObjectNotFoundException
-import org.restapidoc.annotation.RestApiMethod
-import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
-import org.restapidoc.annotation.RestApiParams
-import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
 
 import java.text.SimpleDateFormat

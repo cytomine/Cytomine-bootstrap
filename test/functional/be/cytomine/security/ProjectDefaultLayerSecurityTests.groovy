@@ -6,8 +6,6 @@ import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import be.cytomine.test.http.ProjectAPI
 import be.cytomine.test.http.ProjectDefaultLayerAPI
-import grails.converters.JSON
-
 
 /**
  * Created by hoyoux on 13.11.14.

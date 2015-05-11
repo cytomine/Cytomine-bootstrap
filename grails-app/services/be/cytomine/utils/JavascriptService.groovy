@@ -1,7 +1,4 @@
 package be.cytomine.utils
-
-import be.cytomine.ViewPortToBuildXML
-
 /**
  * Cytomine @ GIGA-ULG
  * User: stevben

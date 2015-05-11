@@ -3,8 +3,8 @@ package be.cytomine.project
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObject
+import org.restapidoc.annotation.RestApiObjectField
 
 /**
  * A discipline is a thematic for a project

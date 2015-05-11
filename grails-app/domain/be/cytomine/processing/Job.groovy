@@ -5,9 +5,9 @@ import be.cytomine.command.ResponseService
 import be.cytomine.project.Project
 import be.cytomine.security.UserJob
 import be.cytomine.utils.JSONUtils
+import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
-import org.restapidoc.annotation.RestApiObject
 
 /**
  * A job is a software instance

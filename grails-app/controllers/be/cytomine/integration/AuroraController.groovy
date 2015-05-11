@@ -1,8 +1,6 @@
 package be.cytomine.integration
 
 import be.cytomine.api.RestController
-import be.cytomine.image.AbstractImage
-import grails.converters.JSON
 import grails.plugin.springsecurity.annotation.Secured
 
 @Secured(['ROLE_ADMIN','ROLE_SUPER_ADMIN'])

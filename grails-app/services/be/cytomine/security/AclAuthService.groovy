@@ -1,11 +1,11 @@
 package be.cytomine.security
 
 import be.cytomine.CytomineDomain
-
 import be.cytomine.project.Project
 import be.cytomine.utils.ModelService
 import org.springframework.security.acls.domain.BasePermission
-import static org.springframework.security.acls.domain.BasePermission.*
+
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 class AclAuthService extends ModelService {
 

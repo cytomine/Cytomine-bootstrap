@@ -1,7 +1,6 @@
 package be.cytomine.utils.bootstrap
 
 import be.cytomine.image.server.ImageServer
-import be.cytomine.middleware.AmqpQueueConfig
 import be.cytomine.processing.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser

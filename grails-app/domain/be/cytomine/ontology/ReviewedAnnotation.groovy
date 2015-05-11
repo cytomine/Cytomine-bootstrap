@@ -9,9 +9,9 @@ import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.JSONUtils
 import com.vividsolutions.jts.io.WKTReader
+import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
-import org.restapidoc.annotation.RestApiObject
 
 /**
  *  A reviewed annotation is an user/algo-annotation validated by a user.

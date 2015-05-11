@@ -4,7 +4,6 @@ import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.api.UrlApi
 import be.cytomine.ontology.Term
 import be.cytomine.project.Project
-import be.cytomine.security.User
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.sql.ReviewedAnnotationListing
 import be.cytomine.sql.UserAnnotationListing

@@ -1,7 +1,6 @@
 package be.cytomine.api
 
 import grails.plugin.springsecurity.annotation.Secured
-import grails.plugin.springsecurity.annotation.Secured
 
 @Secured(['permitAll'])
 class ErrorsController extends RestController {

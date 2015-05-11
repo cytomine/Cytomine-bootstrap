@@ -8,13 +8,8 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.security.SecUser
 import grails.converters.JSON
-import org.restapidoc.annotation.RestApiMethod
-import org.restapidoc.annotation.RestApiParam
 import org.codehaus.groovy.grails.web.json.JSONArray
-import org.restapidoc.annotation.RestApi
-
-import org.restapidoc.annotation.RestApiParams
-import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
 
 /**

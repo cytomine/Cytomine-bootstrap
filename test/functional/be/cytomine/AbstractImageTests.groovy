@@ -1,7 +1,6 @@
 package be.cytomine
 
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Property
 import be.cytomine.test.BasicInstanceBuilder

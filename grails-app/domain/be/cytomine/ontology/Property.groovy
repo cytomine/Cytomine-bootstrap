@@ -4,8 +4,8 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObject
+import org.restapidoc.annotation.RestApiObjectField
 
 @RestApiObject(name = "property", description = "A key-value entry that can be map to a domain (project, image, annotation,...)")
 class Property extends CytomineDomain implements Serializable{

@@ -1,6 +1,5 @@
 package be.cytomine.api.image
 
-
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
@@ -12,13 +11,7 @@ import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
 import grails.converters.JSON
-import org.restapidoc.annotation.RestApiMethod
-import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApiResponseObject
-import org.restapidoc.annotation.RestApi
-
-import org.restapidoc.annotation.RestApiParams
-import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
 
 import javax.activation.MimetypesFileTypeMap

@@ -3,7 +3,6 @@ package be.cytomine.test.http
 import be.cytomine.ontology.Ontology
 import be.cytomine.project.Project
 import be.cytomine.test.Infos
-import be.cytomine.utils.Task
 import grails.converters.JSON
 
 /**

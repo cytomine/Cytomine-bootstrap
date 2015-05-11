@@ -1,7 +1,6 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.ServerException
-
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService

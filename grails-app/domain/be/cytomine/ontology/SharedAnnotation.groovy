@@ -1,7 +1,6 @@
 package be.cytomine.ontology
 
 import be.cytomine.CytomineDomain
-import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.User
 
 /**

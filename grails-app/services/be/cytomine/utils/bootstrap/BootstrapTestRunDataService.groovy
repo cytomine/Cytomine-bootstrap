@@ -1,15 +1,8 @@
 package be.cytomine.utils.bootstrap
 
-import be.cytomine.image.server.ImageServer
 import be.cytomine.ontology.Ontology
-import be.cytomine.processing.*
 import be.cytomine.project.Project
-import be.cytomine.security.Group
-import be.cytomine.security.SecRole
-import be.cytomine.security.SecUser
-import be.cytomine.security.SecUserSecRole
-import be.cytomine.security.User
-import be.cytomine.security.UserGroup
+import be.cytomine.security.*
 import be.cytomine.test.Infos
 import groovy.sql.Sql
 

@@ -1,8 +1,5 @@
 package be.cytomine.api.search
 
-import be.cytomine.AnnotationDomain
-import be.cytomine.Exception.InvalidRequestException
-import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
@@ -11,8 +8,6 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
-import be.cytomine.utils.SearchFilter
-import be.cytomine.utils.SearchOperator
 import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
 

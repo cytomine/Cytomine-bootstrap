@@ -1,6 +1,9 @@
 package be.cytomine.image
 
-import be.cytomine.command.*
+import be.cytomine.command.AddCommand
+import be.cytomine.command.Command
+import be.cytomine.command.EditCommand
+import be.cytomine.command.Transaction
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.ModelService

@@ -3,8 +3,6 @@ package be.cytomine.utils
 import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.security.SecUser
-import grails.converters.JSON
 import groovy.sql.Sql
 import org.hibernate.FetchMode
 

@@ -4,7 +4,6 @@ import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.ldap.userdetails.InetOrgPersonContextMapper;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.util.Assert;
 

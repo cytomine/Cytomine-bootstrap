@@ -5,6 +5,7 @@ import be.cytomine.ontology.Property
 import be.cytomine.project.Project
 import be.cytomine.security.SecRole
 import grails.converters.JSON
+
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 
 /**

@@ -1,10 +1,6 @@
 package be.cytomine.utils
 
-import be.cytomine.command.AddCommand
-import be.cytomine.command.Command
-import be.cytomine.command.DeleteCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.command.Transaction
+import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import grails.transaction.Transactional
 

@@ -1,16 +1,4 @@
 package be.cytomine.image
-
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.LineString
-import ij.ImagePlus
-import ij.process.ImageProcessor
-import ij.process.PolygonFiller
-
-import java.awt.*
-import java.awt.geom.Path2D
-import java.awt.image.BufferedImage
-
 /**
  * TODO: refactoring + doc + test
  */

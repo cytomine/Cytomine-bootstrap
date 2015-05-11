@@ -10,10 +10,9 @@ import be.cytomine.project.Project
 import be.cytomine.utils.GeometryUtils
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
+import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
 import org.restapidoc.annotation.RestApiParams
 import org.restapidoc.pojo.RestApiParamType
 

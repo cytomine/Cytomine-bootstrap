@@ -1,7 +1,6 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineException
-import be.cytomine.Exception.MiddlewareException
 import be.cytomine.command.*
 import be.cytomine.middleware.AmqpQueue
 import be.cytomine.middleware.MessageBrokerServer

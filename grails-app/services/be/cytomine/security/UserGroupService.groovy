@@ -1,7 +1,6 @@
 package be.cytomine.security
 
 import be.cytomine.Exception.ObjectNotFoundException
-
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand

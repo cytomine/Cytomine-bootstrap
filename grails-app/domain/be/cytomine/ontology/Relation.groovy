@@ -1,8 +1,8 @@
 package be.cytomine.ontology
 
 import be.cytomine.CytomineDomain
-import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObject
+import org.restapidoc.annotation.RestApiObjectField
 
 /**
  * A relation between terms (e.g. term1 PARENT term2)

@@ -2,7 +2,6 @@ package be.cytomine.ontology
 
 import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.CytomineException
-
 import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
@@ -25,10 +24,9 @@ import org.hibernate.spatial.criterion.SpatialRestrictions
 
 import javax.imageio.ImageIO
 
-//import org.hibernatespatial.criterion.SpatialRestrictions
-
 import static org.springframework.security.acls.domain.BasePermission.READ
 
+//import org.hibernatespatial.criterion.SpatialRestrictions
 class UserAnnotationService extends ModelService {
 
     static transactional = true

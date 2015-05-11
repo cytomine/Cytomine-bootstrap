@@ -1,7 +1,6 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.ConstraintException
-
 import be.cytomine.command.*
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser

@@ -1,4 +1,3 @@
-import grails.util.Environment
 //grails.client = "be.cytomine.integration"
 grails.servlet.version = "3.0"
 grails.reload.enabled = true

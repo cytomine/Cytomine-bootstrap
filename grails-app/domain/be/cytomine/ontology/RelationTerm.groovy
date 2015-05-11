@@ -3,8 +3,8 @@ package be.cytomine.ontology
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.utils.JSONUtils
-import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObject
+import org.restapidoc.annotation.RestApiObjectField
 
 /**
  * Relation between a term 1 and a term 2

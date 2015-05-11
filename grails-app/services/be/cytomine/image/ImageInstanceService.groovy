@@ -1,7 +1,6 @@
 package be.cytomine.image
 
 import be.cytomine.Exception.CytomineException
-
 import be.cytomine.api.UrlApi
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
@@ -16,7 +15,6 @@ import be.cytomine.security.User
 import be.cytomine.utils.Description
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
-import be.cytomine.utils.database.mongodb.NoSQLCollectionService
 import grails.converters.JSON
 import groovy.sql.Sql
 import org.hibernate.FetchMode

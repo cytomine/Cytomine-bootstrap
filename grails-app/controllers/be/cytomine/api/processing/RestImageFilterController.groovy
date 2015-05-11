@@ -2,10 +2,9 @@ package be.cytomine.api.processing
 
 import be.cytomine.api.RestController
 import be.cytomine.processing.ImageFilter
+import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
 import org.restapidoc.annotation.RestApiParams
 import org.restapidoc.pojo.RestApiParamType
 

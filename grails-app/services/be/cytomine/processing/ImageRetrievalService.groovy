@@ -1,30 +1,25 @@
 package be.cytomine.processing
 
 import be.cytomine.AnnotationDomain
-import be.cytomine.Exception.ForbiddenException
 import be.cytomine.image.server.RetrievalServer
 import be.cytomine.ontology.Ontology
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.ontology.UserAnnotationService
 import be.cytomine.project.Project
-import be.cytomine.security.AuthWithToken
-import be.cytomine.security.LoginController
 import be.cytomine.test.HttpClient
 import be.cytomine.utils.ValueComparator
 import grails.converters.JSON
 import groovy.sql.Sql
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.ByteArrayBody
-import org.apache.log4j.Logger
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.acls.model.NotFoundException
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
-import static grails.async.Promises.*
-
+import static grails.async.Promises.task
 import static org.springframework.security.acls.domain.BasePermission.READ
 
 /**

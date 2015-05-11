@@ -32,7 +32,6 @@ class ImagePropertiesService implements Serializable{
         def properties = JSON.parse(new URL(uri).text)
         println properties
         properties.each {
-            String key = it.key
             String value = it.value
             if (value.size() < 256) {
                 def property = new Property(key: it.key, value: it.value, domainIdent: abstractImage.id,domainClassName: abstractImage.class.name)

@@ -2,12 +2,9 @@ import be.cytomine.ldap.LdapUlgMemberPersonContextMapper
 import be.cytomine.security.CASLdapUserDetailsService
 import be.cytomine.web.CytomineMultipartHttpServletRequest
 import grails.plugin.springsecurity.SpringSecurityUtils
+import org.springframework.cache.ehcache.EhCacheFactoryBean
 
 //import grails.plugin.springsecurity.SpringSecurityUtils
-import org.springframework.cache.ehcache.EhCacheFactoryBean
-import org.springframework.security.ldap.userdetails.InetOrgPersonContextMapper
-
-
 // Place your Spring DSL code here
 beans = {
     'apiAuthentificationFilter'(cytomine.web.APIAuthentificationFilters) {

@@ -5,8 +5,8 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.security.SecUser
 import be.cytomine.utils.JSONUtils
-import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObject
+import org.restapidoc.annotation.RestApiObjectField
 
 /**
  * Term added to an annotation by a real user (not a job!)

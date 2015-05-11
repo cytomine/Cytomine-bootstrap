@@ -7,7 +7,6 @@ import be.cytomine.social.LastUserPosition
 import be.cytomine.social.PersistentUserPosition
 import be.cytomine.social.UserPosition
 import be.cytomine.utils.JSONUtils
-import be.cytomine.utils.database.mongodb.NoSQLCollectionService
 import org.joda.time.DateTime
 
 /**

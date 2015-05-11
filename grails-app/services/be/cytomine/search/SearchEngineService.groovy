@@ -9,14 +9,7 @@ import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
-import be.cytomine.search.engine.AbstractImageSearch
-import be.cytomine.search.engine.AlgoAnnotationSearch
-import be.cytomine.search.engine.EngineSearch
-import be.cytomine.search.engine.ImageInstanceSearch
-import be.cytomine.search.engine.ProjectSearch
-
-import be.cytomine.search.engine.ReviewedAnnotationSearch
-import be.cytomine.search.engine.UserAnnotationSearch
+import be.cytomine.search.engine.*
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import groovy.sql.Sql

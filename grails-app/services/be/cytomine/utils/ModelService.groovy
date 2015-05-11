@@ -5,7 +5,6 @@ import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.ServerException
 import be.cytomine.Exception.WrongArgumentException
-
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import grails.util.GrailsNameUtils

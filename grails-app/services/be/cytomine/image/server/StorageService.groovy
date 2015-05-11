@@ -1,17 +1,13 @@
 package be.cytomine.image.server
 
-
 import be.cytomine.command.*
-import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.security.acls.domain.BasePermission
 
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.READ
-import static org.springframework.security.acls.domain.BasePermission.WRITE
+import static org.springframework.security.acls.domain.BasePermission.*
 
 class StorageService extends ModelService {
 

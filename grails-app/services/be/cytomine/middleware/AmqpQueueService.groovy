@@ -2,19 +2,12 @@ package be.cytomine.middleware
 
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.MiddlewareException
-import be.cytomine.command.AddCommand
-import be.cytomine.command.Command
-import be.cytomine.command.DeleteCommand
-import be.cytomine.command.EditCommand
-import be.cytomine.command.Transaction
+import be.cytomine.command.*
 import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
 import com.rabbitmq.client.Channel
-import com.rabbitmq.client.Connection
-import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.MessageProperties
-import grails.util.Holders
 
 /**
  * Created by julien 

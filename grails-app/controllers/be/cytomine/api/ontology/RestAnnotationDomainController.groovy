@@ -22,12 +22,7 @@ import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 import grails.converters.JSON
 import groovy.sql.Sql
-import org.restapidoc.annotation.RestApiMethod
-import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
-import org.restapidoc.annotation.RestApiParams
-import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
 
 import java.text.SimpleDateFormat

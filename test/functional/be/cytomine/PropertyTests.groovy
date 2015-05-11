@@ -1,6 +1,5 @@
 package be.cytomine
 
-import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation

@@ -3,7 +3,6 @@ package be.cytomine.processing
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityUtils
-import org.springframework.security.core.context.SecurityContextHolder
 
 /**
  * Created with IntelliJ IDEA.

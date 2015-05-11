@@ -2,7 +2,6 @@ package be.cytomine.api.search
 
 import be.cytomine.api.RestController
 import be.cytomine.search.SearchEngineFilter
-import be.cytomine.search.SearchEngineFilterService
 import be.cytomine.utils.Task
 import grails.converters.JSON
 import org.restapidoc.annotation.RestApi

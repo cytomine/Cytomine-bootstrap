@@ -4,8 +4,8 @@ import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.project.Project
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
-import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObject
+import org.restapidoc.annotation.RestApiObjectField
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,9 +1,9 @@
 package be.cytomine.security
 
 import be.cytomine.utils.JSONUtils
+import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
-import org.restapidoc.annotation.RestApiObject
 
 /**
  * A cytomine human user

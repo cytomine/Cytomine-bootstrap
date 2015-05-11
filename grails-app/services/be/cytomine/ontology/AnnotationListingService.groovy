@@ -1,7 +1,6 @@
 package be.cytomine.ontology
 
 import be.cytomine.Exception.WrongArgumentException
-
 import be.cytomine.api.UrlApi
 import be.cytomine.sql.AnnotationListing
 import be.cytomine.utils.GisUtils

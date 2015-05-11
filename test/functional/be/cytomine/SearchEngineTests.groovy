@@ -2,25 +2,13 @@ package be.cytomine
 
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-import be.cytomine.ontology.AlgoAnnotation
-import be.cytomine.ontology.AlgoAnnotationTerm
-import be.cytomine.ontology.AnnotationTerm
-import be.cytomine.ontology.Ontology
-import be.cytomine.ontology.Property
-import be.cytomine.ontology.ReviewedAnnotation
-import be.cytomine.ontology.Term
-import be.cytomine.ontology.UserAnnotation
+import be.cytomine.ontology.*
 import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
-import be.cytomine.test.http.DomainAPI
 import be.cytomine.test.http.SearchAPI
 import be.cytomine.utils.Description
-import be.cytomine.utils.SearchFilter
-import be.cytomine.utils.SearchOperator
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
-
 
 class SearchEngineTests {
 

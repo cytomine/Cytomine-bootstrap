@@ -1,56 +1,46 @@
 package be.cytomine.test
 
-import grails.converters.JSON
 import org.apache.commons.io.IOUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.apache.http.Header
 import org.apache.http.HttpEntity
 import org.apache.http.HttpHost
 import org.apache.http.HttpResponse
 import org.apache.http.auth.AuthScope
 import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.client.AuthCache
+import org.apache.http.client.CookieStore
 import org.apache.http.client.methods.HttpDelete
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpPut
 import org.apache.http.client.protocol.ClientContext
-import org.apache.http.conn.params.ConnRoutePNames
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy
+import org.apache.http.conn.scheme.PlainSocketFactory
+import org.apache.http.conn.scheme.Scheme
+import org.apache.http.conn.scheme.SchemeRegistry
+import org.apache.http.conn.ssl.SSLSocketFactory
+import org.apache.http.conn.ssl.TrustStrategy
 import org.apache.http.cookie.Cookie
 import org.apache.http.entity.*
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.impl.auth.BasicScheme
 import org.apache.http.impl.client.BasicAuthCache
+import org.apache.http.impl.client.BasicCookieStore
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.params.HttpConnectionParams
 import org.apache.http.params.HttpParams
 import org.apache.http.protocol.BasicHttpContext
+import org.apache.log4j.Logger
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import org.apache.http.client.CookieStore;
-import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.conn.routing.HttpRoutePlanner;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HttpContext
-
 import java.security.KeyManagementException
 import java.security.KeyStoreException
 import java.security.NoSuchAlgorithmException
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import org.apache.log4j.Logger;
+import java.security.UnrecoverableKeyException
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
+
 /**
  * Created by IntelliJ IDEA.
  * User: lrollus

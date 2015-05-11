@@ -8,11 +8,9 @@ import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONArray
+import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
 import org.restapidoc.annotation.RestApiParams
 import org.restapidoc.pojo.RestApiParamType
 

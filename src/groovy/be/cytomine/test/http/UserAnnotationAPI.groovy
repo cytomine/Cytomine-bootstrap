@@ -2,7 +2,6 @@ package be.cytomine.test.http
 
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.UserAnnotation
-import be.cytomine.project.Project
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos
 import grails.converters.JSON

@@ -1,8 +1,8 @@
 package be.cytomine.security
 
 import be.cytomine.CytomineDomain
-import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObject
+import org.restapidoc.annotation.RestApiObjectField
 
 /**
  * User role (user, admin,...)

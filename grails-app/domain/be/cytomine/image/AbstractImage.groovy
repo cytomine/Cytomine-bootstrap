@@ -11,9 +11,9 @@ import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.laboratory.Sample
 import be.cytomine.security.SecUser
 import be.cytomine.utils.JSONUtils
+import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
-import org.restapidoc.annotation.RestApiObject
 
 /**
  * An abstract image is an image that can be map with projects.

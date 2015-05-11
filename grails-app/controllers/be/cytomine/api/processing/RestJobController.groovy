@@ -3,7 +3,6 @@ package be.cytomine.api.processing
 import be.cytomine.Exception.ConstraintException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.CytomineMethodNotYetImplementedException
-
 import be.cytomine.api.RestController
 import be.cytomine.ontology.AlgoAnnotation
 import be.cytomine.processing.Job
@@ -14,12 +13,7 @@ import be.cytomine.security.User
 import be.cytomine.security.UserJob
 import be.cytomine.utils.Task
 import grails.converters.JSON
-import org.restapidoc.annotation.RestApiMethod
-import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
-import org.restapidoc.annotation.RestApiParams
-import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
 
 import static org.springframework.security.acls.domain.BasePermission.READ

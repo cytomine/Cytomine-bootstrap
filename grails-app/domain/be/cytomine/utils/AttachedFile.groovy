@@ -1,9 +1,9 @@
 package be.cytomine.utils
 
 import be.cytomine.CytomineDomain
+import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
-import org.restapidoc.annotation.RestApiObject
 
 /**
  * A file to attach to any Cytomine domain

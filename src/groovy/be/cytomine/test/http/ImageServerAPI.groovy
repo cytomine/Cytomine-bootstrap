@@ -1,6 +1,5 @@
 package be.cytomine.test.http
 
-import be.cytomine.api.UrlApi
 import be.cytomine.test.Infos
 
 /**

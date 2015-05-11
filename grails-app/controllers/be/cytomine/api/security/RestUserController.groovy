@@ -1,7 +1,6 @@
 package be.cytomine.api.security
 
 import be.cytomine.Exception.CytomineException
-
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
@@ -10,19 +9,11 @@ import be.cytomine.security.Group
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.SecurityUtils
-import be.cytomine.utils.Utils
-import be.cytomine.utils.database.mongodb.NoSQLCollectionService
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.joda.time.DateTime
-import org.restapidoc.annotation.RestApiMethod
-import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
-import org.restapidoc.annotation.RestApiParams
-import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
-
 
 /**
  * Handle HTTP Requests for CRUD operations on the User domain class.

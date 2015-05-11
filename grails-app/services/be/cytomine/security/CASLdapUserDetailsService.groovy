@@ -1,12 +1,10 @@
 package be.cytomine.security
 
 import be.cytomine.ldap.LdapUlgMemberPerson
+import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.userdetails.GormUserDetailsService
 import grails.plugin.springsecurity.userdetails.GrailsUser
-import groovy.sql.Sql
-import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.dao.DataAccessException
-import org.springframework.ldap.NameNotFoundException
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException

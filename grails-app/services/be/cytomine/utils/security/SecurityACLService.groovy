@@ -9,13 +9,10 @@ import be.cytomine.processing.Software
 import be.cytomine.processing.SoftwareProject
 import be.cytomine.project.Project
 import be.cytomine.security.Group
-import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.UserGroup
 import org.springframework.security.acls.model.Permission
 
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
-import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 import static org.springframework.security.acls.domain.BasePermission.ADMINISTRATION
 
 class SecurityACLService {

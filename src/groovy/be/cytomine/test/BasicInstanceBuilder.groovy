@@ -19,8 +19,6 @@ import be.cytomine.project.Project
 import be.cytomine.project.ProjectDefaultLayer
 import be.cytomine.search.SearchEngineFilter
 import be.cytomine.security.*
-import be.cytomine.ontology.SharedAnnotation
-import be.cytomine.test.http.AmqpQueueAPI
 import be.cytomine.utils.AttachedFile
 import be.cytomine.utils.Config
 import be.cytomine.utils.Description
@@ -29,7 +27,6 @@ import grails.converters.JSON
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.json.JSONObject
-
 
 /**
  * Created by IntelliJ IDEA.

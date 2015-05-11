@@ -1,7 +1,6 @@
 package be.cytomine.security
 
 import be.cytomine.image.AbstractImage
-import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
@@ -11,7 +10,6 @@ import be.cytomine.test.Infos
 import be.cytomine.test.http.AbstractImageAPI
 import be.cytomine.test.http.ImageInstanceAPI
 import be.cytomine.test.http.ProjectAPI
-import be.cytomine.test.http.StorageAPI
 import grails.converters.JSON
 
 /**

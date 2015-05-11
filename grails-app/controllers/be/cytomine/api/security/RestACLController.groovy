@@ -3,7 +3,6 @@ package be.cytomine.api.security
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.ObjectNotFoundException
-
 import be.cytomine.api.RestController
 import be.cytomine.image.server.Storage
 import be.cytomine.ontology.Ontology
@@ -11,12 +10,7 @@ import be.cytomine.processing.Software
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import groovy.sql.Sql
-import org.restapidoc.annotation.RestApiMethod
-import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
-import org.restapidoc.annotation.RestApiParams
-import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
 import org.springframework.security.acls.domain.BasePermission
 

@@ -1,13 +1,11 @@
 package be.cytomine.utils
 
-
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
 import be.cytomine.command.Transaction
 import be.cytomine.security.SecUser
 
 import static org.springframework.security.acls.domain.BasePermission.READ
-import static org.springframework.security.acls.domain.BasePermission.WRITE
 
 class AttachedFileService extends ModelService {
 

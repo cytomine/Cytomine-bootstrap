@@ -1,7 +1,6 @@
 package be.cytomine.processing
 
 import be.cytomine.Exception.CytomineException
-
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand

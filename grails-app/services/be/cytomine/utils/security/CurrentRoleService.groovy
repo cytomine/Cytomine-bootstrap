@@ -4,8 +4,6 @@ import be.cytomine.Exception.ForbiddenException
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
-import be.cytomine.security.User
-import be.cytomine.test.Infos
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority

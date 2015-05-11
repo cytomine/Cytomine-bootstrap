@@ -1,7 +1,6 @@
 package be.cytomine.utils
 
 import be.cytomine.CytomineDomain
-import be.cytomine.Exception.AlreadyExistException
 import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 

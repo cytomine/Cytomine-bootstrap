@@ -1,30 +1,19 @@
-import be.cytomine.Exception.InvalidRequestException
-import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.image.AbstractImage
 import be.cytomine.image.UploadedFile
-import be.cytomine.image.server.ImageServer
-import be.cytomine.image.server.MimeImageServer
 import be.cytomine.integration.NotifyAuroraUploadJob
-import be.cytomine.image.Mime
 import be.cytomine.middleware.AmqpQueue
-import be.cytomine.middleware.AmqpQueueConfig
-import be.cytomine.middleware.AmqpQueueConfigInstance
 import be.cytomine.middleware.MessageBrokerServer
-import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
-import be.cytomine.security.User
-import be.cytomine.test.Infos
 import be.cytomine.utils.Version
+import grails.plugin.springsecurity.SecurityFilterPosition
+import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.util.Environment
 import grails.util.Holders
 import org.apache.commons.lang.RandomStringUtils
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
-import grails.plugin.springsecurity.SecurityFilterPosition
-import grails.plugin.springsecurity.SpringSecurityUtils
 
 import java.lang.management.ManagementFactory
 

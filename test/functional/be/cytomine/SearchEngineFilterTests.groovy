@@ -1,6 +1,5 @@
 package be.cytomine
 
-import be.cytomine.search.SearchEngineFilter
 import be.cytomine.security.User
 import be.cytomine.test.BasicInstanceBuilder
 import be.cytomine.test.Infos

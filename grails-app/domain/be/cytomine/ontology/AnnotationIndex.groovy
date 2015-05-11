@@ -3,8 +3,8 @@ package be.cytomine.ontology
 import be.cytomine.CytomineDomain
 import be.cytomine.image.ImageInstance
 import be.cytomine.security.SecUser
-import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObject
+import org.restapidoc.annotation.RestApiObjectField
 
 @RestApiObject(name = "annotation index", description="A index entry that store, for an image and a user, the number of annotation created/reviewed")
 class AnnotationIndex implements Serializable {

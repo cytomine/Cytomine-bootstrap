@@ -14,11 +14,10 @@ import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier
 import groovy.util.logging.Log
+import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
-import org.restapidoc.annotation.RestApiObject
 
 /**
  * User: lrollus

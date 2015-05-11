@@ -1,7 +1,6 @@
 package be.cytomine.utils
 
 import be.cytomine.Exception.ObjectNotFoundException
-
 import be.cytomine.command.*
 import be.cytomine.security.SecUser
 

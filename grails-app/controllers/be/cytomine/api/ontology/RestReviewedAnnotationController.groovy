@@ -4,7 +4,6 @@ import be.cytomine.AnnotationDomain
 import be.cytomine.Exception.AlreadyExistException
 import be.cytomine.Exception.CytomineException
 import be.cytomine.Exception.WrongArgumentException
-
 import be.cytomine.api.RestController
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.AlgoAnnotation
@@ -14,12 +13,7 @@ import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.SecUser
 import be.cytomine.utils.Task
 import grails.converters.JSON
-import org.restapidoc.annotation.RestApiMethod
-import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-
-import org.restapidoc.annotation.RestApiParams
-import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
 
 /**

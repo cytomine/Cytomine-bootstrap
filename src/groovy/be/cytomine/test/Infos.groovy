@@ -9,11 +9,11 @@ import be.cytomine.security.PermissionService
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
 import be.cytomine.security.User
-import grails.converters.JSON
 import grails.util.Holders
 import groovy.util.logging.Log
-//import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+
+//import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 

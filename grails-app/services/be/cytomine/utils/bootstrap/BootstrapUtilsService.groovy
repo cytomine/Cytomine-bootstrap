@@ -2,30 +2,17 @@ package be.cytomine.utils.bootstrap
 
 import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.api.UrlApi
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
 import be.cytomine.image.UploadedFile
-import be.cytomine.image.server.ImageProperty
-import be.cytomine.image.server.ImageServer
-import be.cytomine.image.server.ImageServerStorage
-import be.cytomine.image.server.MimeImageServer
-import be.cytomine.image.server.RetrievalServer
-import be.cytomine.image.server.Storage
-import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.image.server.*
 import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
-import be.cytomine.security.Group
-import be.cytomine.security.SecRole
-import be.cytomine.security.SecUser
-import be.cytomine.security.SecUserSecRole
-import be.cytomine.security.User
-import be.cytomine.utils.JSONUtils
+import be.cytomine.security.*
 import grails.plugin.springsecurity.SpringSecurityUtils
-import groovy.sql.Sql
 
 /**
  * Cytomine @ GIGA-ULG

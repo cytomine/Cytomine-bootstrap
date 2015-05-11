@@ -1,8 +1,8 @@
 package be.cytomine.project
 
 import be.cytomine.Exception.CytomineException
+import be.cytomine.Exception.ObjectNotFoundException
 import be.cytomine.Exception.WrongArgumentException
-import be.cytomine.api.UrlApi
 import be.cytomine.command.*
 import be.cytomine.image.ImageInstance
 import be.cytomine.ontology.Ontology
@@ -11,7 +11,6 @@ import be.cytomine.security.ForgotPasswordToken
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
-import be.cytomine.social.PersistentConnection
 import be.cytomine.utils.JSONUtils
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
@@ -388,7 +387,8 @@ class ProjectService extends ModelService {
             ).save()
             def sender = cytomineService.currentUser
             notificationService.notifyWelcome(sender, user, forgotPasswordToken)
-        } else { //error
+        } else {
+            throw new ObjectNotFoundException("User with username "+guestUser.username+" not found")
         }
         return user
 

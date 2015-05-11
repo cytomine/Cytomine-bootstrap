@@ -1,12 +1,9 @@
 package be.cytomine.api.image
 
 import be.cytomine.Exception.CytomineException
-
-
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
-
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
@@ -21,20 +18,8 @@ import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKTWriter
 import grails.converters.JSON
 import groovy.sql.Sql
-import org.restapidoc.annotation.RestApiMethod
-import org.restapidoc.annotation.RestApiParam
-import org.restapidoc.annotation.RestApi
-import org.restapidoc.annotation.RestApiParams
-import org.restapidoc.annotation.RestApiResponseObject
+import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
-
-import javax.imageio.ImageIO
-import java.awt.Color
-import java.awt.Font
-import java.awt.Graphics2D
-import java.awt.image.BufferedImage
-
-
 
 /**
  * Created by IntelliJ IDEA.
