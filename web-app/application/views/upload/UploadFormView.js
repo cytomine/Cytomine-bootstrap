@@ -44,7 +44,7 @@ var UploadFormView = Backbone.View.extend({
         var self = this;
         var uploadFormView = this;
 
-        var url = window.app.uploadServer +"/upload"
+        var url = window.app.uploadServer +"/upload";
         $.widget('cytomine.fileupload', $.blueimp.fileupload, {
 
             options: {
@@ -106,7 +106,7 @@ var UploadFormView = Backbone.View.extend({
 
                     //update url
                     var $form = $("#fileupload");
-                    req.url = req.url + "?" +  $form.prop('action').split("?")[1]
+                    req.url = req.url + "?" +  $form.prop('action').split("?")[1];
 
                 },
                 //            alert(" SUBMIT TO "+"http://localhost:9090/"+$form.prop('action'));
@@ -239,7 +239,7 @@ var UploadFormView = Backbone.View.extend({
 
                 // Callback for upload progress events:
                 progress: function (e, data) {
-                    console.log(data.context)
+                    console.log(data.context);
                     if (data.context) {
                         data.context.find('.progress-bar').css(
                             'width',
@@ -425,7 +425,7 @@ var UploadFormView = Backbone.View.extend({
                     tmpl = button.closest('.template-upload'),
                     data = tmpl.data('data');
 
-                var size = data.files[0].size
+                var size = data.files[0].size;
                 /*if(size > AVAILABLE_SPACE) {
                     //return
                 } else {*/
@@ -503,7 +503,7 @@ var UploadFormView = Backbone.View.extend({
                 fileUploadButtonBar.find('.start')
                     .bind('click.' + ns, function (e) {
                         var allFiles = $(".template-upload");
-                        var size = 0
+                        var size = 0;
                         for(var i = 0; i< allFiles.length; i++){
                             size += $(allFiles[i]).data('data').files[0].size;
                         }
@@ -592,8 +592,8 @@ var UploadFormView = Backbone.View.extend({
                 this.options.templateContainer = document.createElement(
                     this._files.prop('nodeName')
                 );
-                this.options.uploadTemplate = uploadTpl
-                this.options.downloadTemplate = downloadTpl
+                this.options.uploadTemplate = uploadTpl;
+                this.options.downloadTemplate = downloadTpl;
             },
 
             _initFiles: function () {
@@ -836,7 +836,7 @@ var UploadFormView = Backbone.View.extend({
         var date = new Date().strftime('%a, %d %b %Y %H:%M:%S +0000');
         var forwardURI = "/upload";
         var method = "POST";
-        var query = $form.prop('action').split("?")[1]
+        var query = $form.prop('action').split("?")[1];
 
 
 
@@ -845,7 +845,7 @@ var UploadFormView = Backbone.View.extend({
         $.get( "api/signature.json?date="+encodeURIComponent(date)+"&forwardURI="+forwardURI+"&method="+method+"&queryString="+encodeURIComponent(query), function( data ) {
             var headers = {};
             headers.authorization = "CYTOMINE " + data.publicKey + ":" + data.signature;
-            headers.dateFull = date //cannot edit date header in browser, so dateFull will overwrite it
+            headers.dateFull = date; //cannot edit date header in browser, so dateFull will overwrite it
             self.headers = headers;
             self.waitForSigned = false;
         });
@@ -865,7 +865,7 @@ var UploadFormView = Backbone.View.extend({
 
         linkWithProject.off('change');
         linkWithProject.on('change', function (event) {
-            self.refreshProjectAndStorage()
+            self.refreshProjectAndStorage();
             if ($(this).is(':checked')) {
                 linkProjectSelect.removeAttr("disabled");
             } else {

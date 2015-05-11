@@ -7,7 +7,7 @@ var SearchEngineFiltersView = Backbone.View.extend({
     className: 'input-xlarge focused',
     id: 'filterlist',
     initialize: function (options) {
-        if(options != undefined) {
+        if(options !== undefined) {
             // Since 1.1.0, Backbone Views no longer automatically attach options passed to the constructor as this.options
             this.options = options;
             this.selectCallback = options.selectCallback;
@@ -19,7 +19,7 @@ var SearchEngineFiltersView = Backbone.View.extend({
             var target = e.currentTarget.options[e.currentTarget.options.selectedIndex];
             var value = target.value;
             var name = target.text;
-            if((value != null && value != undefined && value != "") || (name != null && name != undefined && name != "")) {
+            if((value !== null && value !== undefined && value !== "") || (name !== null && name !== undefined && name !== "")) {
                 this.selectCallback(name, value);
             }
         }
@@ -33,8 +33,8 @@ var SearchEngineFiltersView = Backbone.View.extend({
             var filterView = new SearchEngineFilterView({ model: filter });
             self.$el.append(filterView.render().el);
         });
-
-        return this; // returning this for chaining..
+        // returning this for chaining..
+        return this;
     }
 });
 
@@ -46,8 +46,8 @@ var SearchEngineFilterView = Backbone.View.extend({
     tagName: 'option',
     render: function () {
         console.log("render");
-        var self = this;
         this.$el.attr('value', this.model.get( 'id' )).html(this.model.get("name"));
-        return this; // returning this for chaining..
+        // returning this for chaining..
+        return this;
     }
 });

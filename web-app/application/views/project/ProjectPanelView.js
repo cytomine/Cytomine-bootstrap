@@ -167,7 +167,7 @@ var ProjectPanelView = Backbone.View.extend({
             $("#closeProjectDeleteConfirmDialog").click(function (event) {
                 event.preventDefault();
                 new TaskModel({project: self.model.id}).save({}, {
-                        success: function (taskResponse, response) {
+                        success: function (taskResponse) {
                             var task = taskResponse.get('task');
 
                             console.log("task"+task.id);

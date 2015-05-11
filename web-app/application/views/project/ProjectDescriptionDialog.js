@@ -1,6 +1,6 @@
 var ProjectDescriptionDialog = Backbone.View.extend({
     descriptionProjectDialog: null,
-    initialize: function (options) {
+    initialize: function () {
         _.bindAll(this, 'render');
     },
     render: function () {
