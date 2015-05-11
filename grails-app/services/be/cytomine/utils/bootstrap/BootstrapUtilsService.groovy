@@ -308,8 +308,6 @@ class BootstrapUtilsService {
 
     def createMultipleIS() {
 
-
-
         ImageServer.list().each { server ->
             if(!grailsApplication.config.grails.imageServerURL.contains(server.url)) {
                 log.info server.url + " is not in config, drop it"
@@ -338,22 +336,8 @@ class BootstrapUtilsService {
 
     def createNewIS(String name = "", String url) {
 
-        println "*************** createNewIS ********************"
-        println name + "====> " + url
-
         if(!ImageServer.findByUrl(url)) {
-
-//            MimeImageServer.list().each {
-//                it.delete()
-//            }
-//
-//            ImageServerStorage.list().each {
-//                it.delete()
-//            }
-//
-//            ImageServer.list().each {
-//                it.delete()
-//            }
+            log.info "Create new IMS: $url"
             def IIPImageServer = [className : 'IIPResolver', name : 'IIP'+name, service : '/image/tile', url : url, available : true]
             ImageServer imageServer = new ImageServer(
                     className: IIPImageServer.className,
@@ -384,11 +368,7 @@ class BootstrapUtilsService {
                         imageServer: imageServer
                 ).save()
             }
-        } else {
-            println url + " already exist"
         }
-
-
     }
 
     def transfertProperty() {

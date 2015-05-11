@@ -68,7 +68,7 @@ class TriggerService {
 
 
         } catch (org.postgresql.util.PSQLException e) {
-            log.info e
+            log.debug e
         }
 
     }
@@ -92,9 +92,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeInsertUserAnnotationTrigger BEFORE INSERT ON user_annotation FOR EACH ROW EXECUTE PROCEDURE beforeInsertUserAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -126,9 +126,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER afterInsertUserAnnotationTrigger AFTER INSERT ON user_annotation FOR EACH ROW EXECUTE PROCEDURE afterInsertUserAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -157,9 +157,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER afterUpdateUserAnnotationTrigger AFTER UPDATE ON user_annotation FOR EACH ROW EXECUTE PROCEDURE afterUpdateUserAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -184,9 +184,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeDeleteUserAnnotationTrigger BEFORE DELETE ON user_annotation FOR EACH ROW EXECUTE PROCEDURE beforeDeleteUserAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -217,9 +217,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER afterDeleteUserAnnotationTrigger AFTER DELETE ON user_annotation FOR EACH ROW EXECUTE PROCEDURE afterDeleteUserAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -250,9 +250,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeInsertAlgoAnnotationTrigger BEFORE INSERT ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE beforeInsertAlgoAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -284,9 +284,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER afterInsertAlgoAnnotationTrigger AFTER INSERT ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE afterInsertAlgoAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -311,9 +311,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeDeleteAlgoAnnotation BEFORE DELETE ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE beforeDeleteAlgoAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -344,9 +344,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER afterDeleteAlgoAnnotationTrigger AFTER DELETE ON algo_annotation FOR EACH ROW EXECUTE PROCEDURE afterDeleteAlgoAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -368,9 +368,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeInsertImageTrigger BEFORE INSERT ON image_instance FOR EACH ROW EXECUTE PROCEDURE beforeInsertImage(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -392,9 +392,9 @@ class TriggerService {
         String createTrigger = "CREATE TRIGGER incrementProjectImageTrigger AFTER INSERT ON image_instance FOR EACH ROW EXECUTE PROCEDURE incrementProjectImage();"
 
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -415,9 +415,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeDeleteImage BEFORE DELETE ON image_instance FOR EACH ROW EXECUTE PROCEDURE beforeDeleteImage(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -440,9 +440,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER afterDeleteImageTrigger AFTER DELETE ON image_instance FOR EACH ROW EXECUTE PROCEDURE afterDeleteImage(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -466,9 +466,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeUpdateImage BEFORE UPDATE ON image_instance FOR EACH ROW EXECUTE PROCEDURE beforeUpdateImage(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -493,9 +493,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER afterUpdateImageTrigger AFTER UPDATE ON image_instance FOR EACH ROW EXECUTE PROCEDURE afterUpdateImage(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -533,9 +533,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeInsertCommentTrigger BEFORE INSERT ON shared_annotation FOR EACH ROW EXECUTE PROCEDURE beforeInsertComment(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -555,9 +555,9 @@ class TriggerService {
         String createTrigger = "CREATE TRIGGER afterInsertCommentTrigger AFTER INSERT ON shared_annotation FOR EACH ROW EXECUTE PROCEDURE afterInsertComment();"
 
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -594,9 +594,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeInsertReviewedAnnotationTrigger BEFORE INSERT ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE beforeInsertReviewedAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -645,9 +645,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER incrementAnnotationReviewedAnnotationTrigger AFTER INSERT ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE incrementAnnotationReviewedAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -686,9 +686,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER beforeDeleteReviewedAnnotationTrigger BEFORE DELETE ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE beforeDeleteReviewedAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -731,9 +731,9 @@ class TriggerService {
 
         String createTrigger = "CREATE TRIGGER afterDeleteReviewedAnnotationTrigger AFTER DELETE ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE afterDeleteReviewedAnnotation(); "
 
-        log.info createFunction
-        log.info dropTrigger
-        log.info createTrigger
+        log.debug createFunction
+        log.debug dropTrigger
+        log.debug createTrigger
         return createFunction + dropTrigger + createTrigger
     }
 
@@ -767,9 +767,9 @@ class TriggerService {
 //
 //        String createTrigger = "CREATE TRIGGER incrementReviewedAnnotationIndexTrigger AFTER INSERT ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE incrementReviewedAnnotationIndex(); "
 //
-//        log.info createFunction
-//        log.info dropTrigger
-//        log.info createTrigger
+//        log.debug createFunction
+//        log.debug dropTrigger
+//        log.debug createTrigger
 //        return createFunction + dropTrigger + createTrigger
 //    }
 //
@@ -789,9 +789,9 @@ class TriggerService {
 //
 //        String createTrigger = "CREATE TRIGGER decrementReviewedAnnotationIndexTrigger AFTER DELETE ON reviewed_annotation FOR EACH ROW EXECUTE PROCEDURE decrementReviewedAnnotationIndex(); "
 //
-//        log.info createFunction
-//        log.info dropTrigger
-//        log.info createTrigger
+//        log.debug createFunction
+//        log.debug dropTrigger
+//        log.debug createTrigger
 //        return createFunction + dropTrigger + createTrigger
 //    }
 //

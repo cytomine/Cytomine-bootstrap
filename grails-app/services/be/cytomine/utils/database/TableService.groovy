@@ -24,23 +24,20 @@ class TableService {
         sessionFactory.getCurrentSession().clear();
         def connection = sessionFactory.currentSession.connection()
 
-        //drop constraint (for perf)
-        dropForeignKeys()
-
         try {
 
             if(executeSimpleRequest("select character_maximum_length from information_schema.columns where table_name = 'command' and column_name = 'data'")!=null) {
-                log.info "Change type..."
+                log.debug "Change type..."
                 new Sql(dataSource).executeUpdate("alter table command alter column data type character varying")
             }
 
             if(executeSimpleRequest("select character_maximum_length from information_schema.columns where table_name = 'shared_annotation' and column_name = 'comment'")!=null) {
-                log.info "Change type..."
+                log.debug "Change type..."
                 new Sql(dataSource).executeUpdate("alter table shared_annotation alter column comment type character varying")
             }
 
             if(executeSimpleRequest("select character_maximum_length from information_schema.columns where table_name = 'property' and column_name = 'value'")!=null) {
-                log.info "Change type property table..."
+                log.debug "Change type property table..."
                 new Sql(dataSource).executeUpdate("alter table property alter column value type character varying")
             }
 
@@ -100,12 +97,12 @@ class TableService {
 
     def executeSimpleRequest(String request) {
         def response = null
-        log.info "request = $request"
+        log.debug "request = $request"
         new Sql(dataSource).eachRow(request) {
-            log.info it[0]
+            log.debug it[0]
             response = it[0]
         }
-        log.info "response = $response"
+        log.debug "response = $response"
         response
     }
 
@@ -123,50 +120,12 @@ class TableService {
                 new Sql(dataSource).execute(req)
 
             }
-            log.info reqcreate
+            log.debug reqcreate
             new Sql(dataSource).execute(reqcreate)
 
 
         } catch(Exception e) {
             log.error e
         }
-    }
-
-//    def dropConstraint(String table, String constraint) {
-//
-//    }
-
-
-
-    def dropForeignKeys() {
-//        def response = null
-//        String request = """
-//            SELECT
-//                tc.constraint_name, tc.table_name, kcu.column_name,
-//                ccu.table_name AS foreign_table_name,
-//                ccu.column_name AS foreign_column_name
-//            FROM
-//                information_schema.table_constraints AS tc
-//                JOIN information_schema.key_column_usage AS kcu
-//                  ON tc.constraint_name = kcu.constraint_name
-//                JOIN information_schema.constraint_column_usage AS ccu
-//                  ON ccu.constraint_name = tc.constraint_name
-//            WHERE constraint_type = 'FOREIGN KEY' AND (tc.table_name='last_connection');
-//
-//        """
-//        log.info "request = $request"
-//        new Sql(dataSource).eachRow(request) {
-//            def sql = new Sql(dataSource)
-//            try {
-//                String table = it[1]
-//                String constraint = it[0]
-//                String req = "ALTER TABLE $table DROP CONSTRAINT $constraint"
-//                log.info "drop constraint $constraint => $req"
-//                sql.executeUpdate(req)
-//                sql.close()
-//            }catch (Exception e) {}
-//        }
-//        log.info "response = $response"
-//        response
     }
 }

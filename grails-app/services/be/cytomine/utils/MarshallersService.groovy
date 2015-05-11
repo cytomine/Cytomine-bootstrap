@@ -28,9 +28,9 @@ class MarshallersService {
             domain.metaClass.methods.each { method ->
                 if (method.name.equals("getDataFromDomain")) {
                     def domainFullName = domain.packageName + "." + domain.name
-                    log.info "Init Marshaller for domain class : " + domainFullName
+                    log.debug "Init Marshaller for domain class : " + domainFullName
                     def domainInstance = grailsApplication.getDomainClass(domainFullName).newInstance()
-                    log.info("Register custom JSON renderer for " + this.class)
+                    log.debug("Register custom JSON renderer for " + this.class)
                     JSON.registerObjectMarshaller(domain.clazz) { it ->
                         return domainInstance.getDataFromDomain(it)
                     }
