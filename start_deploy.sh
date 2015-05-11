@@ -46,8 +46,8 @@ then
 	done
 fi
 
-nb_docker=0
-
+nb_docker=$(echo "$(sudo docker ps)" | wc -l)
+nb_docker=$((nb_docker-1)) # remove the header line
 
 # create memcached docker
 docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 cytomine/memcached
@@ -67,11 +67,10 @@ cytomine/rabbitmq
 nb_docker=$((nb_docker+1))
 
 # create data only containers
-docker run -d --name postgis_data cytomine/data_postgis || docker start postgis_data
-nb_docker=$((nb_docker+1))
+docker run -d --name postgis_data cytomine/data_postgis && nb_docker=$((nb_docker+1)) || docker start postgis_data
+
 #TODO mongodb
-docker run -d --name retrieval_data cytomine/data_postgres || docker start retrieval_data
-nb_docker=$((nb_docker+1))
+docker run -d --name retrieval_data cytomine/data_postgres && nb_docker=$((nb_docker+1)) || docker start retrieval_data
 
 # create mongodb docker
 docker run -d -p 22 --name mongodb cytomine/mongodb
@@ -300,6 +299,7 @@ done
 docker exec core /bin/bash -c 'echo "ADMIN_PWD=" > /root/.bashrc'
 docker exec core /bin/bash -c "sed -i '/adminPassword/d' /usr/share/tomcat7/.grails/cytomineconfig.groovy"
 docker exec core /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.grails/cytomineconfig.groovy"
+#docker exec ims /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.grails/imageserver.properties"
 
 echo 
 while true; do
