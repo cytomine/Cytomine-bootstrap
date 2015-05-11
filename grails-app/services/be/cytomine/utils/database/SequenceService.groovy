@@ -22,7 +22,7 @@ class SequenceService {
             def createSequenceQuery = "CREATE SEQUENCE " + SEQ_NAME + " START 1;"
             statement.execute(dropSequenceQuery + createSequenceQuery)
         } catch (org.postgresql.util.PSQLException e) {
-            log.info e
+            log.debug e
         }
 
     }

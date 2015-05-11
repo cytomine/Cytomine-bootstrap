@@ -15,28 +15,17 @@ import org.apache.commons.lang.RandomStringUtils
  * Date: 13/03/13
  * Time: 11:30
  */
-class BootstrapTestDataService {
+class BootstrapDataService {
 
     def grailsApplication
     def bootstrapUtilsService
     def dataSource
     def amqpQueueConfigService
 
-    def initVentana() {
-        def mimeSamples = [
-                [extension : 'tif', mimeType : 'ventana/tif']
-        ]
-        bootstrapUtilsService.createMimes(mimeSamples)
-        bootstrapUtilsService.createMimeImageServers([ImageServer.findByName('IIP')], mimeSamples)
-    }
-
     def initData() {
 
         recreateTableFromNotDomainClass()
         amqpQueueConfigService.initAmqpQueueConfigDefaultValues()
-
-//        new Sql(dataSource).executeUpdate("DROP TABLE keywords")
-//        new Sql(dataSource).executeUpdate("CREATE TABLE keywords (key character varying(255))")
 
         def IIPImageServer = [className : 'IIPResolver', name : 'IIP', service : '/image/tile', url : grailsApplication.config.grails.imageServerURL, available : true]
 
@@ -63,8 +52,7 @@ class BootstrapTestDataService {
                 //[username : 'anotheruser', firstname : 'Another', lastname : 'User', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : 'password', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
                 [username : 'ImageServer1', firstname : 'Image', lastname : 'Server', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : RandomStringUtils.random(32,  (('A'..'Z') + ('0'..'0')).join().toCharArray()), color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
                 [username : 'superadmin', firstname : 'Super', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
-                [username : 'admin', firstname : 'Just an', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                [username : Infos.ANOTHERLOGIN, firstname : 'Just an', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]]
+                [username : 'admin', firstname : 'Just an', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]
         ]
 
         bootstrapUtilsService.createUsers(usersSamples)
@@ -83,43 +71,6 @@ class BootstrapTestDataService {
 
         new Sql(dataSource).executeUpdate("CREATE TABLE task (id bigint,progress bigint,project_id bigint,user_id bigint,print_in_activity boolean)")
         new Sql(dataSource).executeUpdate("CREATE TABLE task_comment (task_id bigint,comment character varying(255),timestamp bigint)")
-    }
-
-    def initSoftwareAndJobTemplate(Long idProject, Long term) {
-
-        Project project = Project.read(idProject)
-
-        Software software = new Software(
-                name: "computeTermStats",
-                serviceName: 'launchLocalScriptService',
-                resultName:'DownloadFiles',
-                description: 'Compute term stats area for an annotation',
-                executeCommand: "groovy -cp algo/computeAnnotationStats/Cytomine-Java-Client.jar:algo/computeAnnotationStats/jts-1.13.jar algo/computeAnnotationStats/computeAnnotationStats.groovy"
-        )
-        software.save(failOnError: true,flush: true)
-
-        SoftwareProject softwareProject = new SoftwareProject(software:software, project: project)
-        softwareProject.save(failOnError: true,flush: true)
-
-        SoftwareParameter param0 = new SoftwareParameter(software:software, name:"host",type:"String",required: true, index:10,setByServer:true)
-        param0.save(failOnError: true,flush:true)
-
-        SoftwareParameter param1 = new SoftwareParameter(software:software, name:"publicKey",type:"String",required: true, index:100,setByServer:true)
-        param1.save(failOnError: true,flush:true)
-        SoftwareParameter param2 = new SoftwareParameter(software:software, name:"privateKey",type:"String",required: true, index:200,setByServer:true)
-        param2.save(failOnError: true,flush:true)
-
-        SoftwareParameter param3 = new SoftwareParameter(software:software, name:"annotation",type:"Domain",required: true, index:400)
-        param3.save(failOnError: true,flush:true)
-        SoftwareParameter param4 = new SoftwareParameter(software:software, name:"term",type:"Domain",required: true, index:500, uri: '/api/project/$currentProject$/term.json',uriPrintAttribut: 'name',uriSortAttribut: 'name')
-        param4.save(failOnError: true,flush:true)
-
-        JobTemplate jobTemplate = new JobTemplate(name:"ComputeAdenocarcinomesStat", software: software, project: project)
-        jobTemplate.save(failOnError: true,flush:true)
-
-        JobParameter paramTmpl1 = new JobParameter(job: jobTemplate,softwareParameter: param4, value: term)
-        paramTmpl1.save(failOnError: true, flush:true)
-
     }
 
 }

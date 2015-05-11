@@ -19,12 +19,9 @@ class GrantService {
 
         try {
             def statement = connection.createStatement()
-
-
             statement.execute(getGrantInfo())
-
         } catch (org.postgresql.util.PSQLException e) {
-            log.info e
+            log.debug e
         }
 
     }

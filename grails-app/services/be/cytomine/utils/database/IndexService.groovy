@@ -140,7 +140,7 @@ class IndexService {
             createIndex("auth_with_token", "token_key","hash");
 
         } catch (org.postgresql.util.PSQLException e) {
-            log.info e
+            log.error e
         }
     }
 
@@ -176,10 +176,10 @@ class IndexService {
         //try {statement.execute(reqcreate); } catch(Exception e) { log.info "Cannot create index $name="+e}
         try {
             if(alreadyExist) {
-                log.info "$name already exist, don't create it"
+                log.debug "$name already exist, don't create it"
             } else {
                 String reqcreate = "CREATE INDEX " + name + " ON " + table + " USING $type (" + col + ");"
-                log.info reqcreate
+                log.debug reqcreate
                 sql = new Sql(dataSource)
                  sql.execute(reqcreate)
                 try {

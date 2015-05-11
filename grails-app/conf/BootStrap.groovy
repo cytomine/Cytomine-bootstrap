@@ -34,7 +34,6 @@ import java.lang.management.ManagementFactory
 class BootStrap {
 
     def grailsApplication
-    def messageSource
 
     def sequenceService
     def marshallersService
@@ -47,48 +46,63 @@ class BootStrap {
     def noSQLCollectionService
 
     def retrieveErrorsService
-    def bootstrapTestDataService
-    def bootstrapTestRunDataService
-    def bootstrapProdDataService
+    def bootstrapDataService
 
     def bootstrapUtilsService
-    def javascriptService
+    def bootstrapOldVersionService
+
     def dataSource
     def sessionFactory
 
     def amqpQueueService
     def amqpQueueConfigService
     def rabbitConnectionService
-    def messageBrokerServerService
 
 
     def init = { servletContext ->
 
         //Register API Authentifier
-        log.info "Current directory2="+new File( 'test.html' ).absolutePath
-        println "HeadLess:" +java.awt.GraphicsEnvironment.isHeadless();
-
-
         SpringSecurityUtils.clientRegisterFilter( 'apiAuthentificationFilter', SecurityFilterPosition.DIGEST_AUTH_FILTER.order + 1)
-        log.info "################### SERVER " + grailsApplication.config.grails.serverURL + "##################"
-        log.info "################### IMAGE SERVER " + grailsApplication.config.grails.imageServerURL + "##################"
-        log.info "GrailsUtil.environment= " + Environment.getCurrent().name + " BootStrap.development=" + Environment.DEVELOPMENT
 
-        log.info "################################################"
-        log.info "################## DATABASES ###################"
-        log.info "################################################"
-        log.info "SQL: " + [url:Holders.config.dataSource.url, user:Holders.config.dataSource.username, password:Holders.config.dataSource.password, driver:Holders.config.dataSource.driverClassName]
-        log.info "NOSQL: " + [host:Holders.config.grails.mongo.host, port:Holders.config.grails.mongo.port, databaseName:Holders.config.grails.mongo.databaseName]
+        log.info "#############################################################################"
+        log.info "#############################################################################"
+        log.info "#############################################################################"
+        String cytomineWelcomMessage = """
+                   _____      _                  _
+                  / ____|    | |                (_)
+                 | |    _   _| |_ ___  _ __ ___  _ _ __   ___
+                 | |   | | | | __/ _ \\| '_ ` _ \\| | '_ \\ / _ \\
+                 | |___| |_| | || (_) | | | | | | | | | |  __/
+                  \\_____\\__, |\\__\\___/|_| |_| |_|_|_| |_|\\___|
+                 |  _ \\  __/ |     | |     | |
+                 | |_) ||___/  ___ | |_ ___| |_ _ __ __ _ _ __
+                 |  _ < / _ \\ / _ \\| __/ __| __| '__/ _` | '_ \\
+                 | |_) | (_) | (_) | |_\\__ \\ |_| | | (_| | |_) |
+                 |____/ \\___/ \\___/ \\__|___/\\__|_|  \\__,_| .__/
+                                                         | |
+                                                         |_|
+        """
+        log.info cytomineWelcomMessage
+        log.info "#############################################################################"
+        log.info "#############################################################################"
+        log.info "#############################################################################"
 
-
-        def ctx = servletContext.getAttribute(
-                ApplicationAttributes.APPLICATION_CONTEXT
-        )
-        def dataSource = ctx.dataSourceUnproxied
-
-        println "configuring database connection pool"
-
-        dataSource.properties.each { println it }
+        [
+            "Environment" : Environment.getCurrent().name,
+            "Client": grailsApplication.config.grails.client,
+            "Server URL": grailsApplication.config.grails.serverURL,
+            "Current directory": new File( './' ).absolutePath,
+            "HeadLess: ": java.awt.GraphicsEnvironment.isHeadless(),
+            "SQL": [url:Holders.config.dataSource.url, user:Holders.config.dataSource.username, password:Holders.config.dataSource.password, driver:Holders.config.dataSource.driverClassName],
+            "NOSQL": [host:Holders.config.grails.mongo.host, port:Holders.config.grails.mongo.port, databaseName:Holders.config.grails.mongo.databaseName],
+            "Datasource properties": servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT).dataSourceUnproxied.properties,
+            "JVM Args" : ManagementFactory.getRuntimeMXBean().getInputArguments()
+        ].each {
+            log.info "##### " + it.key + " = " + it.value
+        }
+        log.info "#############################################################################"
+        log.info "#############################################################################"
+        log.info "#############################################################################"
 
         if(Version.count()==0) {
             log.info "Version was not set, set to 0"
@@ -96,202 +110,74 @@ class BootStrap {
         }
 
         //Initialize marshallers and services
+        log.info "init marshaller..."
         marshallersService.initMarshallers()
+
+        log.info "init sequences..."
         sequenceService.initSequences()
+
+        log.info "init trigger..."
         triggerService.initTrigger()
+
+        log.info "init index..."
         indexService.initIndex()
+
+        log.info "init grant..."
         grantService.initGrant()
+
+        log.info "init table..."
         tableService.initTable()
-        termService.initialize()
+
+        log.info "init term service..."
+        termService.initialize() //term service needs userservice and userservice needs termservice => init manualy at bootstrap
+
+        log.info "init amqp service..."
         amqpQueueService.initialize()
+
+        log.info "init retrieve errors hack..."
         retrieveErrorsService.initMethods()
 
-        /* Print JVM infos like XMX/XMS */
-        List inputArgs = ManagementFactory.getRuntimeMXBean().getInputArguments();
-        for (int i = 0; i < inputArgs.size(); i++) {
-            log.info inputArgs.get(i)
-        }
-
         /* Fill data just in test environment*/
+        log.info "fill with data..."
         if (Environment.getCurrent() == Environment.TEST) {
-            bootstrapTestDataService.initData()
+            bootstrapDataService.initData()
             noSQLCollectionService.cleanActivityDB()
-        } else  if(Environment.getCurrent().name.equals("testrun")) {
-            bootstrapTestRunDataService.initData()
+            def usersSamples = [
+                    [username : Infos.ANOTHERLOGIN, firstname : 'Just an', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]]
+            ]
+            bootstrapUtilsService.createUsers(usersSamples)
+        }  else if (SecUser.count() == 0) {
+            //if database is empty, put minimal data
+            bootstrapDataService.initData()
         }
-
-        //if database is empty, put minimal data
-        if (SecUser.count() == 0 && Environment.getCurrent() != Environment.TEST && !Environment.getCurrent().name.equals("testrun")) {
-            bootstrapTestDataService.initData()
-        }
-
 
         // Initialize RabbitMQ server
+        log.info "init RabbitMQ connection..."
         MessageBrokerServer mbs = bootstrapUtilsService.createMessageBrokerServer()
-
         // Initialize default configurations for amqp queues
         amqpQueueConfigService.initAmqpQueueConfigDefaultValues()
-
         // Initialize RabbitMQ queue to communicate software added
         if(!AmqpQueue.findByName("queueCommunication")) {
             AmqpQueue queueCommunication = new AmqpQueue(name: "queueCommunication", host: mbs.host, exchange: "exchangeCommunication")
             queueCommunication.save(failOnError: true, flush: true)
-
             amqpQueueService.createAmqpQueueDefault(queueCommunication)
         }
-
-
         //Inserting a MessageBrokerServer for testing purpose
-        if (Environment.getCurrent() == Environment.DEVELOPMENT || Environment.getCurrent() == Environment.TEST) {
+        if (Environment.getCurrent() == Environment.TEST) {
             rabbitConnectionService.getRabbitConnection(mbs)
-
-            /*AmqpQueue aq = new AmqpQueue(name: "queueCytomine", host: "localhost", exchange: "exchangeCytomine")
-            aq.save()
-
-            AmqpQueueConfigInstance aqciExclusive = new AmqpQueueConfigInstance(queue: aq, config: amqpQueueConfigService.read("exclusive"), value: null)
-            AmqpQueueConfigInstance aqciAutoDelete = new AmqpQueueConfigInstance(queue: aq, config: amqpQueueConfigService.read("autoDelete"), value: null)
-            AmqpQueueConfigInstance aqciDurable = new AmqpQueueConfigInstance(queue: aq, config: amqpQueueConfigService.read("durable"), value: null)
-            AmqpQueueConfigInstance aqciMap = new AmqpQueueConfigInstance(queue: aq, config: amqpQueueConfigService.read("parametersMap"), value: null)
-
-            aqciExclusive.save(failOnError: true)
-            aqciAutoDelete.save(failOnError: true)
-            aqciDurable.save(failOnError: true)
-            aqciMap.save(failOnError: true)
-
-            amqpQueueService.createAmqpQueue(aq)*/
-
         }
 
-        //ventana
-        println "Create ventana"
-//        if (!Mime.findByMimeType("ventana/tif")) {
-//            bootstrapTestDataService.initVentana()
-//        }
-
-        if(!SecUser.findByUsername("admin")) {
-            bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]])
-        }
-        if(!SecUser.findByUsername("superadmin")) {
-            bootstrapUtilsService.createUsers([[username: 'superadmin', firstname: 'Super', lastname: 'Admin', email: 'lrollus@ulg.ac.be', group: [[name: "GIGA"]], password: grailsApplication.config.grails.adminPassword, color: "#FF0000", roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN"]]])
-        }
-
-        if(!SecUser.findByUsername("monitoring")) {
-            bootstrapUtilsService.createUsers([[username : 'monitoring', firstname : 'Monitoring', lastname : 'Monitoring', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : RandomStringUtils.random(32,  (('A'..'Z') + ('0'..'0')).join().toCharArray()), color : "#FF0000", roles : ["ROLE_USER","ROLE_SUPER_ADMIN"]]])
-        }
-
-        //set public/private keys for special image server user
-        //keys regenerated at each deployment
-        SecUser imageServerUser = SecUser.findByUsername("ImageServer1")
-        imageServerUser.setPrivateKey(grailsApplication.config.grails.ImageServerPrivateKey)
-        imageServerUser.setPublicKey(grailsApplication.config.grails.ImageServerPublicKey)
-        imageServerUser.save(flush : true)
-
-
-
-
-        if(!Relation.findByName(RelationTerm.names.PARENT)) {
-            Relation relation = new Relation(name: RelationTerm.names.PARENT)
-            relation.save(flush:true,failOnError: true)
-        }
-
-
-
-        if(Version.isOlderVersion(20140601)) {
-            //version>2014 05 12
-            if(!SecRole.findByAuthority("ROLE_SUPER_ADMIN")) {
-                SecRole role = new SecRole(authority:"ROLE_SUPER_ADMIN")
-                role.save(flush:true,failOnError: true)
-            }
-
-            //version>2014 05 12  OTOD: DO THIS FOR IFRES,...
-            if(SecUser.findByUsername("ImageServer1")) {
-                def imageUser = SecUser.findByUsername("ImageServer1")
-                def superAdmin = SecRole.findByAuthority("ROLE_SUPER_ADMIN")
-                if(!SecUserSecRole.findBySecUserAndSecRole(imageUser,superAdmin)) {
-                    new SecUserSecRole(secUser: imageUser,secRole: superAdmin).save(flush:true)
-                }
-
-            }
-
-            if(SecUser.findByUsername("vmartin")) {
-                def imageUser = SecUser.findByUsername("vmartin")
-                def superAdmin = SecRole.findByAuthority("ROLE_SUPER_ADMIN")
-                if(!SecUserSecRole.findBySecUserAndSecRole(imageUser,superAdmin)) {
-                    new SecUserSecRole(secUser: imageUser,secRole: superAdmin).save(flush:true)
-                }
-            }
-        }
-
+        log.info "create multiple IS and Retrieval..."
         bootstrapUtilsService.createMultipleIS()
         bootstrapUtilsService.createMultipleRetrieval()
 
+        log.info "init change for old version..."
+        bootstrapOldVersionService.execChangeForOldVersion()
 
-        if(Version.isOlderVersion(20140625) && (UploadedFile.count() == 0 || UploadedFile.findByImageIsNull()?.size > 0)) {
-            bootstrapUtilsService.checkImages()
-        }
-
-        if(Version.isOlderVersion(20140630)) {
-            bootstrapUtilsService.transfertProperty()
-        }
-
-//        if(Version.isOlderVersion(20140712)) {
-//            bootstrapUtilsService.createNewIS()
-//        }
-//
-//        if(Version.isOlderVersion(20140713)) {
-//            bootstrapUtilsService.checkImages2() //fix uploadedFile path
-//        }
-
-        /*if(Version.isOlderVersion(20140715) && Environment.getCurrent() == Environment.PRODUCTION) {
-            bootstrapUtilsService.createNewIS2() //add image1.cytomine.be -> image10.cytomine.be
-        }*/
-
-        if(Version.isOlderVersion(20140716)) {
-            bootstrapUtilsService.addMimePyrTiff()
-        }
-
-        if(Version.isOlderVersion(20140717)) {
-            bootstrapUtilsService.addMimePhilipsTiff()
-        }
-
-//        if(Version.isOlderVersion(20140717)) {
-//            bootstrapUtilsService.createMultipleIS()
-//        }
-
-
-        if(Version.isOlderVersion(20140925)) {
-            bootstrapUtilsService.addMimeVentanaTiff()
-        }
-
-
-        Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
-
-
-        println "********************************************"
-        println grailsApplication.config.grails.client
-
-
-
-
-        //             properties.put("patient_id","PATIENT"+i);
-//             properties.put("sample_id","SAMPLE"+i);
-//             properties.put("image_type","IMAGETYPE"+i);
-//             properties.put("version","VERSION"+i);
-
-
-            if(grailsApplication.config.grails.client=="AURORA") {
-//                if(Environment.getCurrent() == Environment.DEVELOPMENT) {
-//                    if(!Property.findByKeyLike("patient_id")) {
-//                        new Property(key:"patient_id",value:"0001",domainIdent: 140736353,domainClassName: "be.cytomine.image.AbstractImage").save(flush:true,failOnError: true)
-//                        new Property(key:"sample_type",value:"Primary",domainIdent: 140736353,domainClassName: "be.cytomine.image.AbstractImage").save(flush:true,failOnError: true)
-//                        new Property(key:"image_type",value:"HER2",domainIdent: 140736353,domainClassName: "be.cytomine.image.AbstractImage").save(flush:true,failOnError: true)
-//                    }
-//                }
-
-                if(Environment.getCurrent() != Environment.TEST) {
-                    NotifyAuroraUploadJob.schedule(grailsApplication.config.grails.integration.aurora.interval,-1, [:])
-                }
-
+        if(grailsApplication.config.grails.client=="AURORA") {
+            if(Environment.getCurrent() != Environment.TEST) {
+                NotifyAuroraUploadJob.schedule(grailsApplication.config.grails.integration.aurora.interval,-1, [:])
             }
+        }
     }
 }
