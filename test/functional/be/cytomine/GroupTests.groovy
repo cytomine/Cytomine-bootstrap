@@ -197,15 +197,19 @@ class GroupTests  {
 
         def ldapDisabled = Holders.getGrailsApplication().config.grails.plugin.springsecurity.ldap.active.toString()=="false"
 
-        def group = Group.findByName("BASICGROUP")
-        if(group == null) {
-            group = Group.findByName("NEWNAME")
-        }
-        def id = group.id
-        println "RESET FROM LDAP"
-        def result = GroupAPI.resetFromLDAP(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        if(!ldapDisabled) {
+            def group = Group.findByName("BASICGROUP")
+            if(group == null) {
+                group = Group.findByName("NEWNAME")
+            }
+            def id = group.id
+            println "RESET FROM LDAP"
+            def result = GroupAPI.resetFromLDAP(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
 
-        assert 404 == result.code
+            assert 404 == result.code
+        }
+
+
     }
 
 }
