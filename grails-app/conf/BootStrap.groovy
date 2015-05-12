@@ -7,6 +7,7 @@ import be.cytomine.ontology.RelationTerm
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
+import be.cytomine.test.Infos
 import be.cytomine.utils.Version
 import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils

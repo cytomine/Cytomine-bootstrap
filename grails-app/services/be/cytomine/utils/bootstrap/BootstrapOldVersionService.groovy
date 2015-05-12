@@ -30,15 +30,7 @@ class BootstrapOldVersionService {
 
     void execChangeForOldVersion() {
         def methods = this.metaClass.methods*.name.sort().unique()
-
-        println methods
-
-        methods.remove("initChangeForOldVersion")
-
-        println methods
-
         Version version = Version.getLastVersion()
-
         methods.each { method ->
             if(method.startsWith("init")) {
                 Long methodDate = Long.parseLong(method.replace("init",""))
@@ -50,7 +42,6 @@ class BootstrapOldVersionService {
                 }
             }
         }
-
 
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
     }
