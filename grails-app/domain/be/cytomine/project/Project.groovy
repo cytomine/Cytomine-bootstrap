@@ -30,7 +30,6 @@ import org.restapidoc.annotation.RestApiObjectFields
  */
 @RestApiObject(name = "project", description="A project is the main cytomine domain, its a workspace to store images, annotations,...")
 class Project extends CytomineDomain implements Serializable {
-
     /**
      * Project name
      */
