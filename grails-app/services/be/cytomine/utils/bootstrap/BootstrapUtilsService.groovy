@@ -145,12 +145,6 @@ class BootstrapUtilsService {
     public def createMimes(def mimeSamples) {
         mimeSamples.each {
             if(!Mime.findByMimeType(it.mimeType)) {
-                log.info "*********************************"
-                log.info "extension="+it.extension
-                log.info "mimeType="+it.mimeType
-                log.info "*********************************"
-                log.info Mime.list().collect{it.extension + "=" + it.mimeType}.join("\n")
-                log.info "*********************************"
                 Mime mime = new Mime(extension : it.extension, mimeType: it.mimeType)
                 if (mime.validate()) {
                     mime.save(flush:true)
