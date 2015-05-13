@@ -74,6 +74,12 @@ class BootstrapDataService {
         bootstrapUtilsService.createRelation()
 
         SecUser admin = SecUser.findByUsername("admin")
+        if(!grailsApplication.config.grails.adminPrivateKey) {
+            throw new IllegalArgumentException("adminPrivateKey must be set!")
+        }
+        if(!grailsApplication.config.grails.adminPublicKey) {
+            throw new IllegalArgumentException("adminPublicKey must be set!")
+        }
         admin.setPrivateKey((String) grailsApplication.config.grails.adminPrivateKey)
         admin.setPublicKey((String) grailsApplication.config.grails.adminPublicKey)
         admin.save(flush : true)
