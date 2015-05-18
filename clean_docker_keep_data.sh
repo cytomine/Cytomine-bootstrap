@@ -22,8 +22,6 @@ docker stop memcached3
 docker rm -v memcached3
 docker stop memcached4
 docker rm -v memcached4
-docker stop rabbitmq
-docker rm -v rabbitmq
 docker stop mongodb
 docker rm -v mongodb
 docker stop retrievaldb
@@ -56,3 +54,5 @@ docker stop retrieval
 docker rm -v retrieval
 docker stop nginx
 docker rm -v nginx
+docker stop software_router
+docker rm -v software_router

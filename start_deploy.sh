@@ -301,6 +301,21 @@ docker exec core /bin/bash -c "sed -i '/adminPassword/d' /usr/share/tomcat7/.gra
 docker exec core /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.grails/cytomineconfig.groovy"
 #docker exec ims /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.grails/imageserver.properties"
 
+
+# create software-router docker
+docker run -d -p 22 --link rabbitmq:rabbitmq \
+--name software_router \
+-e CORE_URL=$CORE_URL \
+-e ALGO_TAR=$ALGO_TAR \
+-e SOFTWARE_ROUTER_JAR=$SOFTWARE_ROUTER_JAR \
+-e ADMIN_PUB_KEY='fadabad6-0201-4825-9f92-02c909605115' \
+-e ADMIN_PRIV_KEY='cc6b82be-93d3-4054-9820-d62faa8ff3fc' \
+-e RABBITMQ_LOGIN=$RABBITMQ_LOGIN \
+-e RABBITMQ_PASSWORD=$RABBITMQ_PASSWORD \
+-e GROOVY_PATH=$GROOVY_PATH \
+cytomine/software_router
+
+
 echo 
 while true; do
     read -p "Do you wish to install some data test? " yn

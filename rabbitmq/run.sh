@@ -15,6 +15,16 @@
 # limitations under the License.
 #
 if [ ! -f /.rabbitmq_password_set ]; then
+	echo "set password"
 	/set_rabbitmq_password.sh
 fi
-exec /usr/sbin/rabbitmq-server
+#exec /usr/sbin/rabbitmq-server
+service rabbitmq-server start
+rabbitmq-plugins enable rabbitmq_management
+sudo rabbitmqctl add_user router router
+sudo rabbitmqctl set_user_tags router administrator
+sudo rabbitmqctl set_permissions -p / router ".*" ".*" ".*"
+
+touch /tmp/test.out
+
+tail -f /tmp/test.out

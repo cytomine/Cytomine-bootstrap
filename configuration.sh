@@ -46,7 +46,11 @@ RETRIEVAL_ENGINE=memory
 IMS_STORAGE_PATH=/data
 IMS_BUFFER_PATH=/data/_buffer
 
-BIOFORMAT_ENABLED="true"
+BIOFORMAT_ENABLED="false"
+
+#RabbitMQ Software Router
+RABBITMQ_LOGIN="router"
+RABBITMQ_PASSWORD="router"
 
 # You don't to change the datas below this line instead of advanced customization
 # ---------------------------
@@ -57,10 +61,15 @@ IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 IMS_DOC_URL="http://cytomine.be/release/ims/restapidoc.json"
 RETRIEVAL_JAR_URL="http://cytomine.be/release/retrieval/CBIRest-0.2.0.zip"
 JAVA_CLIENT_JAR="http://cytomine.be/release/java/cytomine-java-client.jar"
+ALGO_TAR="http://cytomine.be/release/algo/algo.tar.gz"
+SOFTWARE_ROUTER_JAR="http://cytomine.be/release/algo/cytomine-software-router.jar"
 
 MEMCACHED_PASS="mypass"
 
 BIOFORMAT_JAR_URL="http://cytomine.be/release/bioformat/BioFormatStandAlone.tar.gz"
 BIOFORMAT_ALIAS="bioformat"
 BIOFORMAT_PORT="4321"
+
+#In software_router
+GROOVY_PATH="/home/root/.gvm/groovy/current/bin/groovy"
 
