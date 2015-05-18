@@ -18,6 +18,8 @@ docker stop core
 docker rm -v core
 docker stop nginx
 docker rm -v nginx
+docker stop software_router
+docker rm -v software_router
 
 sh create_docker_images.sh
 sh start_deploy.sh

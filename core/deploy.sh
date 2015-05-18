@@ -63,6 +63,7 @@ then
 	echo "grails.notification.smtp.host='$SENDER_EMAIL_SMTP_HOST'" >> cytomineconfig.groovy
 	echo "grails.notification.smtp.port='$SENDER_EMAIL_SMTP_PORT'" >> cytomineconfig.groovy
 
+	echo "grails.messageBrokerServerURL='rabbitmq:5672'" >> cytomineconfig.groovy
 
 	rm -r /var/lib/tomcat7/webapps/*
 	cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
