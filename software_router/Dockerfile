@@ -43,7 +43,7 @@ RUN cd /root/Cytomine/Cytomine-python-datamining/cytomine-datamining/algorithms/
 
 # Groovy Installation
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-RUN cd /tmp/ && curl http://api.gvmtool.net -o install-gvm.sh && bash install-gvm.sh && source "/root/.gvm/bin/gvm-init.sh" && gvm install groovy 1.8.6 --yes
+RUN cd /tmp/ && curl http://api.gvmtool.net -o install-gvm.sh && bash install-gvm.sh && source "/root/.gvm/bin/gvm-init.sh" && gvm install groovy 2.2.2 --yes
 
 ADD config.groovy /tmp/config.groovy
 ADD cytomine-java-client-1.0-SNAPSHOT-jar-with-dependencies.jar /tmp/cytomine-java-client-1.0-SNAPSHOT-jar-with-dependencies.jar
@@ -52,6 +52,9 @@ EXPOSE 8080
 
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
+
+# Fix path
+ENV GROOVY_HOME /root/.gvm/groovy/current
 
 ENTRYPOINT ["/tmp/deploy.sh"]
 

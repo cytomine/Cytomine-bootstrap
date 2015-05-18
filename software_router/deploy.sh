@@ -20,7 +20,10 @@ tar -xvf algo.tar.gz algo
 
 wget -q $SOFTWARE_ROUTER_JAR -O Cytomine-software-router.jar
 
-echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
+if [ $IS_LOCAL = true ]; then
+	echo "#Custom adding" >> /etc/hosts
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
+fi
 
 touch /tmp/test.out
 
