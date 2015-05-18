@@ -274,10 +274,14 @@ class AbstractImageService extends ModelService {
 
         if (params.zoom) parameters.zoom = params.zoom
         if (params.maxSize) parameters.maxSize = params.maxSize
-        if (params.location) parameters.location = params.location
         if (params.mask) parameters.mask = params.mask
         if (params.alphaMask) parameters.alphaMask = params.alphaMask
-        return UrlApi.getCropURL(id, parameters)
+
+        def post = """
+            {"location": "${params.location}"}
+        """
+
+        return [url:UrlApi.getMaskURL(id, parameters), post: post]
     }
 
 

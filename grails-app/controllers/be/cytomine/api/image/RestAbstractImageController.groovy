@@ -26,9 +26,12 @@ import be.cytomine.image.multidim.ImageSequence
 import be.cytomine.image.server.ImageServer
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
+import be.cytomine.test.HttpClient
 import grails.converters.JSON
 import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
+
+import java.awt.image.BufferedImage
 
 /**
  * Controller for abstract image
@@ -142,37 +145,6 @@ class RestAbstractImageController extends RestController {
         responseSuccess(result);
     }
 
-
-//    /**
-//     * Extract image properties from file
-//     */
-//    @RestApiMethod(description="Get all image file properties for a specific image.", listing = true)
-//    @RestApiParams(params=[
-//    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image id")
-//    ])
-//    @RestApiResponseObject(objectIdentifier = "image property")
-//    def imageProperties() {
-//        AbstractImage abstractImage = abstractImageService.read(params.long('id'))
-//        responseSuccess(abstractImageService.imageProperties(abstractImage))
-//    }
-
-//    /**
-//     * Get an image property
-//     */
-//    @RestApiMethod(description="Get a specific image file property", listing = true)
-//    @RestApiParams(params=[
-//    @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image file property id")
-//    ])
-//    @RestApiResponseObject(objectIdentifier ="image property")
-//    def imageProperty() {
-//        def imageProperty = abstractImageService.imageProperty(params.long('imageproperty'))
-//        if (imageProperty) {
-//            responseSuccess(imageProperty)
-//        } else {
-//            responseNotFound("ImageProperty", params.imageproperty)
-//        }
-//    }
-
     /**
      * Get image thumb URL
      */
@@ -274,7 +246,7 @@ class RestAbstractImageController extends RestController {
 
     //TODO:APIDOC
     def windowUrl() {
-        String url = abstractImageService.window(params, request.queryString)
+        String url = abstractImageService.window(params, request.queryString).url
         log.info "response $url"
         responseSuccess([url : url])
     }
@@ -288,8 +260,10 @@ class RestAbstractImageController extends RestController {
 
     //TODO:APIDOC
     def window() {
-        String url = abstractImageService.window(params, request.queryString)
-        redirect(url : url)
+        def req = abstractImageService.window(params, request.queryString)
+        BufferedImage image = new HttpClient().readBufferedImageFromPOST(req.url,req.post)
+//        redirect(url : url)
+        responseBufferedImage(image)
     }
 
     /**

@@ -44,6 +44,16 @@ class UrlApi {
         return "$url?$query"
     }
 
+    static def getMaskURL(Long idImage, def parameters) {
+        String url = "${serverUrl()}/api/abstractimage/$idImage/mask.png"
+        String query = parameters.collect { key, value ->
+            if (value instanceof String)
+                value = URLEncoder.encode(value, "UTF-8")
+            "$key=$value"
+        }.join("&")
+        return "$url?$query"
+    }
+
     /**
      * Return cytomine url to get an image metadata
      * @param url Cytomine base url

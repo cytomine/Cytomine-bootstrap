@@ -371,6 +371,50 @@ class HttpClient {
     }
 
 
+
+//    public BufferedImage readBufferedImageFromURL(String url, String post) throws IOException {
+//        log.debug("readBufferedImageFromURL:" + url);
+//        URL URL = new URL(url);
+//        HttpHost targetHost = new HttpHost(URL.getHost(), URL.getPort());
+//        log.debug("targetHost:" + targetHost);
+//        DefaultHttpClient client = new DefaultHttpClient();
+//
+//        log.debug("client:" + client);
+//        // Add AuthCache to the execution context
+//        BasicHttpContext localcontext = new BasicHttpContext();
+//        log.debug("localcontext:" + localcontext);
+//
+//        BufferedImage img = null;
+//        HttpPost httpPost = new HttpPost(URL.toString());
+//
+//        HttpResponse response = client.execute(targetHost, httpPost, localcontext);
+//        int code = response.getStatusLine().getStatusCode();
+//
+//        log.info("url=" + url + " is " + code + "(OK=" + HttpURLConnection.HTTP_OK + ",MOVED=" + HttpURLConnection.HTTP_MOVED_TEMP + ")");
+//
+//        boolean isOK = (code == HttpURLConnection.HTTP_OK);
+//        boolean isFound = (code == HttpURLConnection.HTTP_MOVED_TEMP);
+//        boolean isErrorServer = (code == HttpURLConnection.HTTP_INTERNAL_ERROR);
+//        if (!isOK && !isFound & !isErrorServer) throw new IOException(url + " cannot be read: " + code);
+//        HttpEntity entity = response.getEntity();
+//        if (entity != null) {
+//            img = ImageIO.read(entity.getContent());
+//        }
+//        return img;
+//    }
+//
+//    public BufferedImage readBufferedImageFromPOST() {
+//        PostMethod post = new PostMethod("http://jakarata.apache.org/");
+//        NameValuePair[] data = {
+//            new NameValuePair("user", "joe"),
+//            new NameValuePair("password", "bloggs")
+//        };
+//        post.setRequestBody(data);
+//
+//        InputStream in = post.getResponseBodyAsStream();
+//    }
+
+
 //     public BufferedImage readBufferedImageFromURLWithoutKey(String url, String loginHTTP, String passHTTP) throws MalformedURLException, IOException {
 //
 //        URL URL = new URL(url);
@@ -414,6 +458,39 @@ class HttpClient {
 //        return img;
 //
 //    }
+
+
+    public  BufferedImage readBufferedImageFromPOST(String url, String post) throws IOException{
+        log.debug("readBufferedImageFromURL:" + url);
+        URL URL = new URL(url);
+        HttpHost targetHost = new HttpHost(URL.getHost(), URL.getPort());
+        log.debug("targetHost:" + targetHost);
+        DefaultHttpClient client = new DefaultHttpClient();
+
+        log.debug("client:" + client);
+        // Add AuthCache to the execution context
+        BasicHttpContext localcontext = new BasicHttpContext();
+        log.debug("localcontext:" + localcontext);
+
+        BufferedImage img = null;
+        HttpPost httpPost = new HttpPost(URL.toString());
+        httpPost.setEntity(new StringEntity(post, "UTF-8"));
+        HttpResponse response = client.execute(targetHost, httpPost, localcontext);
+
+        int code = response.getStatusLine().getStatusCode();
+        log.info("url=" + url + " is " + code + "(OK=" + HttpURLConnection.HTTP_OK + ",MOVED=" + HttpURLConnection.HTTP_MOVED_TEMP + ")");
+
+        boolean isOK = (code == HttpURLConnection.HTTP_OK);
+        boolean isFound = (code == HttpURLConnection.HTTP_MOVED_TEMP);
+        boolean isErrorServer = (code == HttpURLConnection.HTTP_INTERNAL_ERROR);
+
+        if (!isOK && !isFound & !isErrorServer) throw new IOException(url + " cannot be read: " + code);
+        HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            img = ImageIO.read(entity.getContent());
+        }
+        return img;
+    }
 
     private HttpEntity readDataFromURLWithoutKey(String url, String loginHTTP, String passHTTP) throws MalformedURLException, IOException {
         String encoded = url;

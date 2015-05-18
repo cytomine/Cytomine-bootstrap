@@ -20,10 +20,12 @@ import be.cytomine.Exception.CytomineException
 import be.cytomine.api.RestController
 import be.cytomine.image.AbstractImage
 import be.cytomine.image.ImageInstance
+import be.cytomine.image.UploadedFile
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.project.Project
 import be.cytomine.sql.ReviewedAnnotationListing
+import be.cytomine.test.HttpClient
 import be.cytomine.utils.Description
 import be.cytomine.utils.GeometryUtils
 import be.cytomine.utils.Task
@@ -36,6 +38,8 @@ import grails.converters.JSON
 import groovy.sql.Sql
 import org.restapidoc.annotation.*
 import org.restapidoc.pojo.RestApiParamType
+
+import java.awt.image.BufferedImage
 
 /**
  * Created by IntelliJ IDEA.
@@ -200,7 +204,7 @@ class RestImageInstanceController extends RestController {
     def windowUrl() {
         ImageInstance imageInstance = imageInstanceService.read(params.id)
         params.id = imageInstance.baseImage.id
-        responseSuccess([url : abstractImageService.window(params, request.queryString)])
+        responseSuccess([url : abstractImageService.window(params, request.queryString).url])
     }
 
     //todo : move into a service
@@ -292,9 +296,28 @@ class RestImageInstanceController extends RestController {
         if (params.mask || params.alphaMask)
             params.location = getWKTGeometry(imageInstance, params)
         //handle idTerms & idUsers
-        String url = abstractImageService.window(params, request.queryString)
-        log.info "redirect $url"
-        redirect(url : url)
+        def req = abstractImageService.window(params, request.queryString)
+        log.info "req.url=${req.url}"
+        log.info "req.post=${req.post}"
+
+        def queryString = req.url.split("\\?")
+        log.info "queryString=$queryString"
+//        queryString = queryString.replace("?", "")
+        String imageServerURL = imageInstance.baseImage.getRandomImageServerURL()
+        UploadedFile uploadedFile = abstractImageService.getMainUploadedFile(imageInstance.baseImage)
+        String fif = URLEncoder.encode(uploadedFile.absolutePath, "UTF-8")
+        String mimeType = uploadedFile.mimeType
+        String url
+        if(queryString[1].contains("mask=true")) {
+            url = "$imageServerURL/image/mask.png?fif=$fif&mimeType=$mimeType&${queryString[1]}&resolution=${imageInstance.baseImage.resolution}" //&scale=$scale
+        } else {
+            url = "$imageServerURL/image/crop.png?fif=$fif&mimeType=$mimeType&${queryString[1]}&resolution=${imageInstance.baseImage.resolution}" //&scale=$scale
+        }
+
+
+        BufferedImage image = new HttpClient().readBufferedImageFromPOST(url,req.post)
+//        redirect(url : url)
+        responseBufferedImage(image)
     }
 
     //TODO:APIDOC

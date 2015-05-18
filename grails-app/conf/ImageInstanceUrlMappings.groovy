@@ -66,6 +66,7 @@ class ImageInstanceUrlMappings {
         "/api/imageinstance/$id/crop.$format"(controller :"restImageInstance") {
             action = [GET:"crop"]
         }
+        
         "/api/imageinstance/method/lastopened.$format"(controller :"restImageInstance") {
             action = [GET:"listLastOpenImage"]
         }
