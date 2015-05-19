@@ -63,8 +63,7 @@ RABBITMQ_PASS="mypass"
 # create rabbitmq docker
 docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
-cytomine/rabbitmq
-nb_docker=$((nb_docker+1))
+cytomine/rabbitmq && nb_docker=$((nb_docker+1)) || docker start rabbitmq
 
 # create data only containers
 docker run -d --name postgis_data cytomine/data_postgis && nb_docker=$((nb_docker+1)) || docker start postgis_data
