@@ -58,4 +58,3 @@ ENV GROOVY_HOME /root/.gvm/groovy/current
 
 ENTRYPOINT ["/tmp/deploy.sh"]
 
-
