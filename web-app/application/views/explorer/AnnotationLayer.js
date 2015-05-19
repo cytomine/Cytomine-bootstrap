@@ -418,9 +418,9 @@ AnnotationLayer.prototype = {
 
                 if (!self.measureOnSelect) {
                     self.ontologyTreeView.idAnnotation = evt.feature.attributes.idAnnotation;
-                    if (!self.reviewLayer) {
+                    //if (!self.reviewLayer) {
                         self.ontologyTreeView.refresh(evt.feature.attributes.idAnnotation);
-                    }
+                    //}
 
                     if (self.deleteOnSelect == true) {
                         self.removeSelection();

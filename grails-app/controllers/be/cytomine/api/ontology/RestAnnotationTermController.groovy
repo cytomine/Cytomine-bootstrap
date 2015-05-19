@@ -22,6 +22,7 @@ import be.cytomine.Exception.InvalidRequestException
 import be.cytomine.Exception.WrongArgumentException
 import be.cytomine.api.RestController
 import be.cytomine.ontology.AlgoAnnotation
+import be.cytomine.ontology.ReviewedAnnotation
 import be.cytomine.ontology.Term
 import be.cytomine.ontology.UserAnnotation
 import be.cytomine.security.SecUser
@@ -47,6 +48,7 @@ class RestAnnotationTermController extends RestController {
     def algoAnnotationTermService
     def cytomineService
     def roiAnnotationService
+    def reviewedAnnotationService
 
     def currentDomainName() {
         "annotation term or algo annotation term"
@@ -71,6 +73,9 @@ class RestAnnotationTermController extends RestController {
                 annotation = algoAnnotationService.read(params.long('idannotation'))
             }
             if (!annotation) {
+                annotation = reviewedAnnotationService.read(params.long('idannotation'))
+            }
+            if (!annotation) {
                 annotation = roiAnnotationService.read(params.long('idannotation'))
                 responseSuccess([])
             }
@@ -79,6 +84,8 @@ class RestAnnotationTermController extends RestController {
                 responseSuccess(annotationTermService.list(annotation))
             } else if (annotation && !params.idUser && annotation instanceof AlgoAnnotation) {
                 responseSuccess(algoAnnotationTermService.list(annotation))
+            } else if (annotation && !params.idUser && annotation instanceof ReviewedAnnotation) {
+                responseSuccess(reviewedAnnotationService.listTerms(annotation))
             } else if (annotation && params.idUser) {
                 User user = User.read(params.long('idUser'))
                 if (user) {

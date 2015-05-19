@@ -203,6 +203,12 @@ class ReviewedAnnotationService extends ModelService {
     }
 
 
+    def listTerms(ReviewedAnnotation annotation) {
+        return annotation.terms().collect {[term:it.id, user:annotation.image?.reviewUser?.id ]}
+
+    }
+
+
 
 
     /**
