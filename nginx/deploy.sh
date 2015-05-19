@@ -47,6 +47,7 @@ do
 	sed -i "s/IMS_URLS_CONFIG/                listen       80; \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 	sed -i "s/IMS_URLS_CONFIG/                server_name  $x; \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 	sed -i "s/IMS_URLS_CONFIG/                location \/ { \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IMS_URLS_CONFIG/                        add_header Access-Control-Allow-Origin *; \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 	sed -i "s/IMS_URLS_CONFIG/			proxy_set_header Host \$host; \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 	sed -i "s/IMS_URLS_CONFIG/                        proxy_pass http:\/\/$IMS_ALIAS:8080; \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 	sed -i "s/IMS_URLS_CONFIG/                } \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
