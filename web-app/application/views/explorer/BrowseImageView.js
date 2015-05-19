@@ -991,7 +991,6 @@ BrowseImageView = Backbone.View.extend({
         if (zoom == null || lon == null || lat == null) {
             return;
         } //map not yet initialized
-        console.log(this.map.getExtent());
 
         var mapArea = this.map.getExtent();
 
@@ -1054,7 +1053,6 @@ BrowseImageView = Backbone.View.extend({
             if (!self.getUserLayer().magicOnClick) {
                 return;
             }
-
             if (self.processInProgress) {
                 window.app.view.message("Warning", "Magic Wand in progress...", "warning");
                 return;
@@ -1067,97 +1065,153 @@ BrowseImageView = Backbone.View.extend({
             var newCanvasHeight = tiles.length * tiles[0][0].size.h;
             newCanvas.width = newCanvasWidth;
             newCanvas.height = newCanvasHeight;
-            newCanvas.display = 'none';
+            //newCanvas.display = 'none';
             document.body.appendChild(newCanvas);
             var mapContainerDiv = $("#maptabs-image" + self.model.id).children().children()[0];
             var viewPositionLeft = parseInt($(mapContainerDiv).css("left"), 10);
             var viewPositionTop = parseInt($(mapContainerDiv).css("top"), 10);
+
+            /**
+             * How does it works:
+             * First create the canvas (code above)
+             * Browse each tile (openlayers tiles) and call loadTile
+             *  loadTile -> read image url and call tileFullyLoaded when loading is ok
+             *      tileFullyLoaded -> draw image, if its the last tile, run maggicwand
+             */
+
+
+            //Code triggered when:
+            // * user click on magicwand + on the screen
+            // * all tiles has been converted into a newContext canvas
+            var maggicLaunch = function(evt,newContext) {
+                var startX = evt.xy.x;
+                var startY = evt.xy.y;
+                var imgd = newContext.getImageData(0, 0, newCanvasWidth, newCanvasHeight);
+                //TMP HACK in order to decide if we use the GREEN Channel or not
+                var toleranceKey = "mw_tolerance" + window.app.status.currentProject;
+                var thresholdKey = "th_threshold" + window.app.status.currentProject;
+                var tolerance = window.localStorage.getItem(toleranceKey) || Processing.MagicWand.defaultTolerance;
+                var threshold = window.localStorage.getItem(thresholdKey) || Processing.Threshold.defaultTheshold;
+                console.log("threshold=" + threshold);
+                console.log("tolerance=" + tolerance);
+                if (window.app.status.currentProjectModel.get('disciplineName') == 'HISTOLOGY') {
+                    Processing.ColorChannel.process({canvas: imgd, channel: Processing.ColorChannel.GREEN});
+                } else {
+                    Processing.Threshold.process({canvas: imgd, threshold: threshold});
+                }
+
+                //process PIX
+                console.log("MagicWand...");
+                var wandResult = Processing.MagicWand.process({
+                    canvas: imgd,
+                    canvasWidth: newCanvasWidth,
+                    canvasHeight: newCanvasHeight,
+                    startX: startX,
+                    startY: startY,
+                    tolerance: tolerance
+                });
+                if (!wandResult.success) {
+                    self.processInProgress = false;
+                    document.body.removeChild(newCanvas);
+                    window.app.view.message("Warning", "Can't find interesting region", "error");
+                    return;
+                }
+                console.log("done");
+                console.log("Outline");
+                var outline = Processing.Outline.process({
+                    canvas: imgd,
+                    canvasWidth: newCanvasWidth,
+                    canvasHeight: newCanvasHeight,
+                    bbox: wandResult.bbox
+                });
+                console.log("done");
+                self.processInProgress  = false;
+                var debug = false;
+                if (debug) {
+                    newContext.putImageData(imgd, 0, 0);
+                    newContext.fillStyle = "#FF0000";
+                    newContext.fillRect(wandResult.bbox.xmin - 5, wandResult.bbox.ymin - 5, 10, 10);
+                    newContext.fillRect(wandResult.bbox.xmin - 5, wandResult.bbox.ymax - 5, 10, 10);
+                    newContext.fillRect(wandResult.bbox.xmax - 5, wandResult.bbox.ymin - 5, 10, 10);
+                    newContext.fillRect(wandResult.bbox.xmax - 5, wandResult.bbox.ymax - 5, 10, 10);
+                    newContext.fillStyle = "#00FF00";
+                    newContext.fillRect(outline.startX - 5, outline.startY - 5, 10, 10);
+                    for (var i = 0; i < outline.points.length; i++) {
+                        newContext.fillStyle = "#00FFFF";
+                        newContext.fillRect(outline.points[i].x - 1, outline.points[i].y - 1, 3, 3);
+                    }
+                }
+                if (!debug) {
+                    document.body.removeChild(newCanvas);
+                }
+                var polyPoints = []
+                for (var i = 0; i + 5 < outline.points.length; i = i + 5) {
+                    var _p = self.map.getLonLatFromViewPortPx({ x: outline.points[i].x, y: outline.points[i].y});
+                    var point = new OpenLayers.Geometry.Point(
+                        _p.lon,
+                        _p.lat);
+                    polyPoints.push(point);
+                }
+                polyPoints.push(polyPoints[0]);
+                var linear_ring = new OpenLayers.Geometry.LinearRing(polyPoints);
+                var polygonFeature = new OpenLayers.Feature.Vector(
+                    new OpenLayers.Geometry.Polygon([linear_ring]), null, {});
+                self.getUserLayer().addAnnotation(polygonFeature);
+            };
+
+            //number of tile loaded
+            var tileProgress = 0;
+
+            //Code triggered when the image has been loaded in a canvas item
+            var tileFullyLoaded = function(newContext,img, tile,countTile,evt) {
+                tileProgress++;
+                console.log("drawImage..."+tile.position.x + "-"+tile.position.y);
+                newContext.drawImage(
+                    img,
+                    viewPositionLeft + tile.position.x,
+                    viewPositionTop + tile.position.y);
+
+                if(countTile==tileProgress) {
+                    //all tiles has been loaded, run maggicwand!
+                    maggicLaunch(evt,newContext);
+                }
+
+            };
+
+            //Load a tile into a canvas
+            var loadTile = function(newContext,tile,countTile,evt) {
+                var img = new Image();
+                img.addEventListener("load", function() {
+                    tileFullyLoaded(newContext,img,tile,countTile,evt)
+                }, false);
+                img.crossOrigin = "Anonymous";
+                img.src = tile.url; // Set source path
+            };
+
+
+            var countTile = 0;
+
+            //just count the number of valid tiles into countTile
             for (var row = 0; row < tiles.length; row++) {
                 for (var col = 0; col < tiles[row].length; col++) {
                     var tile = tiles[row][col];
                     var tileCtx = tile.getCanvasContext();
                     if (tileCtx) {
-                        newContext.drawImage(
-                            tileCtx.canvas,
-                                viewPositionLeft + tile.position.x,
-                                viewPositionTop + tile.position.y);
+                        countTile++;
                     }
                 }
             }
-            var startX = evt.xy.x;
-            var startY = evt.xy.y;
-            var imgd = newContext.getImageData(0, 0, newCanvasWidth, newCanvasHeight);
-            //TMP HACK in order to decide if we use the GREEN Channel or not
-            var toleranceKey = "mw_tolerance" + window.app.status.currentProject;
-            var thresholdKey = "th_threshold" + window.app.status.currentProject;
-            var tolerance = window.localStorage.getItem(toleranceKey) || Processing.MagicWand.defaultTolerance;
-            var threshold = window.localStorage.getItem(thresholdKey) || Processing.Threshold.defaultTheshold;
-            console.log("threshold=" + threshold);
-            console.log("tolerance=" + tolerance);
-            if (window.app.status.currentProjectModel.get('disciplineName') == 'HISTOLOGY') {
-                Processing.ColorChannel.process({canvas: imgd, channel: Processing.ColorChannel.GREEN});
-            } else {
-                Processing.Threshold.process({canvas: imgd, threshold: threshold});
-            }
 
-            //process PIX
-            console.log("MagicWand...");
-            var wandResult = Processing.MagicWand.process({
-                canvas: imgd,
-                canvasWidth: newCanvasWidth,
-                canvasHeight: newCanvasHeight,
-                startX: startX,
-                startY: startY,
-                tolerance: tolerance
-            });
-            if (!wandResult.success) {
-                self.processInProgress = false;
-                document.body.removeChild(newCanvas);
-                window.app.view.message("Warning", "Can't find interesting region", "error");
-                return;
-            }
-            console.log("done");
-            console.log("Outline");
-            var outline = Processing.Outline.process({
-                canvas: imgd,
-                canvasWidth: newCanvasWidth,
-                canvasHeight: newCanvasHeight,
-                bbox: wandResult.bbox
-            });
-            console.log("done");
-            self.processInProgress  = false;
-            var debug = false;
-            if (debug) {
-                newContext.putImageData(imgd, 0, 0);
-                newContext.fillStyle = "#FF0000";
-                newContext.fillRect(wandResult.bbox.xmin - 5, wandResult.bbox.ymin - 5, 10, 10);
-                newContext.fillRect(wandResult.bbox.xmin - 5, wandResult.bbox.ymax - 5, 10, 10);
-                newContext.fillRect(wandResult.bbox.xmax - 5, wandResult.bbox.ymin - 5, 10, 10);
-                newContext.fillRect(wandResult.bbox.xmax - 5, wandResult.bbox.ymax - 5, 10, 10);
-                newContext.fillStyle = "#00FF00";
-                newContext.fillRect(outline.startX - 5, outline.startY - 5, 10, 10);
-                for (var i = 0; i < outline.points.length; i++) {
-                    newContext.fillStyle = "#00FFFF";
-                    newContext.fillRect(outline.points[i].x - 1, outline.points[i].y - 1, 3, 3);
+            //for each valid tile, load it into a canvas item
+            for (var row = 0; row < tiles.length; row++) {
+                for (var col = 0; col < tiles[row].length; col++) {
+                    var tile = tiles[row][col];
+                    var tileCtx = tile.getCanvasContext();
+                    if (tileCtx) {
+                        loadTile(newContext,tile,countTile,evt)
+                    }
                 }
             }
-            if (!debug) {
-                document.body.removeChild(newCanvas);
-            }
-            var polyPoints = []
-            for (var i = 0; i + 5 < outline.points.length; i = i + 5) {
-                var _p = self.map.getLonLatFromViewPortPx({ x: outline.points[i].x, y: outline.points[i].y});
-                var point = new OpenLayers.Geometry.Point(
-                    _p.lon,
-                    _p.lat);
-                polyPoints.push(point);
-            }
-            polyPoints.push(polyPoints[0]);
-            var linear_ring = new OpenLayers.Geometry.LinearRing(polyPoints);
-            var polygonFeature = new OpenLayers.Feature.Vector(
-                new OpenLayers.Geometry.Polygon([linear_ring]), null, {});
-            self.getUserLayer().addAnnotation(polygonFeature);
-
 
         }
         if (self.getUserLayer() != undefined) {
