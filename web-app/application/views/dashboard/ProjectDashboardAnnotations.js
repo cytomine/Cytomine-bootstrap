@@ -30,6 +30,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         console.log("ProjectDashboardAnnotations.selectedUsers=" + this.selectedUsers);
         console.log("ProjectDashboardAnnotations.selectedJobs=" + this.selectedJobs);
         var self = this;
+        //$(self.el).empty();
         new UserJobCollection({project: window.app.status.currentProject, tree: true}).fetch({
             success: function (collection, response) {
                 window.app.models.projectUserJobTree = collection;
@@ -143,9 +144,21 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         $(self.el).find("#refreshAnnotations").click(function () {
             self.refreshSelectedTermsWithUserFilter();
         });
+        $(self.el).find("#refreshFullPage").click(function () {
+            new UserJobCollection({project: window.app.status.currentProject, tree: true}).fetch({
+                success: function (collection, response) {
+                    window.app.models.projectUserJobTree = collection;
+                        $(self.el).find("#treeJobListing").dynatree("option", "children",window.app.models.projectUserJobTree.toJSON());
+                        $(self.el).find('#treeJobListing').dynatree("getTree").reload();
+                        var rootNode = $("#treeJobListing").dynatree("getTree").getNodeByKey(self.model.id);
+                        if(rootNode) rootNode.expand(true);
+                }
+            });
+        });
         self.terms = new TermCollection({idOntology: self.model.get('ontology')}).fetch({
             success: function (collection, response) {
                 self.terms = collection;
+
                 window.app.status.currentTermsCollection = collection;
                 $("#listtabannotation").append(_.template(termTabContentTpl, { project: self.model.id, id: -1, name: "Undefined", className: "noDropZone"}));
                 //$("#tabsterm-panel-"+self.model.id+"--1").panel();
@@ -576,10 +589,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
     initSelectJobs: function () {
         var self = this;
 
-        console.log("#########################");
-        console.log("#########################");
-        console.log("#########################");
-        console.log(window.app.models.projectUserJobTree.toJSON());
+
+        //$(self.el).find('#treeJobListing').empty();
 
         $(self.el).find('#treeJobListing').dynatree({
             checkbox: true,
@@ -612,6 +623,8 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             cookieId: "dynatree-Cb-job-" + self.model.id,
             idPrefix: "dynatree-Cbjobs-" + self.model.id + "-"
         });
+
+
         self.jobTreeLoaded = true;
         //expand root node
         var rootNode = $("#treeJobListing").dynatree("getTree").getNodeByKey(self.model.id);
