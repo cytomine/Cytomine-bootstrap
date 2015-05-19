@@ -27,6 +27,15 @@ fi
 
 touch /tmp/test.out
 
+# horrible hack for groovy with dash
+PATH="$PATH:$GROOVY_HOME/bin"
+TEST_GROOVY=$(type -P command1 &>/dev/null && echo "Found" || echo "Not Found")
+while [ "${TEST_GROOVY}" = "Not Found" ]
+do
+   TEST_GROOVY=$(type -P groovy &>/dev/null && echo "Found" || echo "Not Found")
+   sleep 5
+done
+
 java -jar Cytomine-software-router.jar
 
 tail -f /tmp/test.out
