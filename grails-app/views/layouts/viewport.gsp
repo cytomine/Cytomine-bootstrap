@@ -50,8 +50,13 @@ body {
 </wthr:isOldMsie>
 <wthr:isNotOldMsie>
     <script type="text/javascript" src ="lib/jquery-2.0.3.min.js"></script>
-    <script src="lib/nvd3-1.1.15/lib/d3.v3.js"></script>
-    <script src="lib/nvd3-1.1.15/nv.d3.js"></script>
+    %{--<script src="lib/nvd3-1.1.15/lib/d3.v3.js"></script>--}%
+    %{--<script src="lib/nvd3-1.1.15/nv.d3.js"></script>--}%
+
+    <script src="lib/nvd3/d3.min.js" charset="utf-8"></script>
+    <script src="lib/nvd3/nv.d3.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="lib/nvd3/nv.d3.css" />
+
 </wthr:isNotOldMsie>
 
 <script type="text/javascript" src="lib/jquery-ui-bootstrap/js/jquery-ui-1.9.2.custom.min.js"></script>
@@ -64,7 +69,7 @@ body {
 <script type="text/javascript" src="lib/bowser/bowser.min.js"></script>
 
 
-<link rel="stylesheet" href="lib/nvd3-1.1.15/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->
+%{--<link rel="stylesheet" href="https://cdn.rawgit.com/novus/nvd3/v1.7.1/build/nv.d3.css" /> <!-- bug with svg style in nb.d3.min.css -->--}%
 
 %{--<script type="text/javascript" src="lib/OpenLayers-2.12/Openlayers-cytomine.js"></script>--}%
 <script type="text/javascript" src="lib/OpenLayers-2.13.1/OpenLayers.js"></script>
