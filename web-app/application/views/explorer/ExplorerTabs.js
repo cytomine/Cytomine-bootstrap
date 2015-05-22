@@ -190,7 +190,7 @@ var ExplorerTabs = Backbone.View.extend({
         var object = _.detect(this.tabs, function (object) {
             return object.idImage == idImage;
         });
-        return object != null ? object : null;
+        return object;
     },
     /**
      * Remove a Tab

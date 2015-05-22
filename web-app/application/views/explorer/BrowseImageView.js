@@ -96,7 +96,11 @@ BrowseImageView = Backbone.View.extend({
             var isAdmin = window.app.status.currentProjectModel.isAdmin(window.app.models.projectAdmin);
             var name = this.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'), isAdmin);
             if(isAdmin) {
-                name = name[1] +" | "+ name[0]
+                if(window.app.status.currentProjectModel.get('blindMode')) {
+                    name = name[1] +" | "+ name[0];
+                } else {
+                    name = name[0];
+                }
             }
 
             tabs.append(_.template(tabTpl, {

@@ -70,8 +70,19 @@ var ImageTabsView = Backbone.View.extend({
                 var imageInstanceModel = new ImageInstanceModel({});
                 imageInstanceModel.set(o.aData);
                 var names = imageInstanceModel.getVisibleName(window.app.status.currentProjectModel.get('blindMode'),isAdmin);
-                return names[1]+"<br/><i>"+names[0]+"</i>";
+                if(isAdmin) {
+                    if(window.app.status.currentProjectModel.get('blindMode')) {
+                        return names[1]+"<br/><i>"+names[0]+"</i>";
+                    } else {
+                        return names[0];
+                    }
+                }
+                return names;
                 return o.aData["originalFilename"];
+
+
+
+
             }}
             ,
             { "mDataProp": "width", sDefaultContent: "", "bSearchable": false,"bSortable": false, "fnRender" : function(o) {
