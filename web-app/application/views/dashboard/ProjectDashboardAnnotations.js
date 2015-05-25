@@ -787,7 +787,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
         var multipleTerm = (idTerm == -2? true: undefined);
         idTerm = (idTerm != -1 && idTerm != -2? idTerm: undefined);
 
-        var collection = new AnnotationCollection({project: self.model.id, term: idTerm, noTerm:noTerm,multipleTerm:multipleTerm,users: usersFilter, images: imagesFilter,reviewed:reviewed, max: 30});
+        var collection = new AnnotationCollection({project: self.model.id, term: idTerm, noTerm:noTerm,multipleTerm:multipleTerm,users: (reviewed? undefined: usersFilter), reviewUsers:(reviewed? usersFilter:undefined), images: imagesFilter,reviewed:reviewed, max: 30});
 
         $($elem).empty();
         self.annotationsViews[idTerm] = new AnnotationView({

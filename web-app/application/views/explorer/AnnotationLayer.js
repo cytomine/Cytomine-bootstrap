@@ -302,6 +302,7 @@ AnnotationLayer.prototype = {
         this.strokeColor = "#5BB75B";
         this.opacity = .8;
         this.strokeWidth = 5;
+        this.strokeOpacity = 1;
         if (selected) {
             this.opacity = .5;
             this.strokeColor = "#006600";
@@ -315,6 +316,7 @@ AnnotationLayer.prototype = {
             "strokeColor": self.strokeColor,
             'fillOpacity': self.opacity,
             'strokeWidth': self.strokeWidth,
+            'strokeOpacity': self.strokeOpacity,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
@@ -322,6 +324,7 @@ AnnotationLayer.prototype = {
             "strokeColor": self.strokeColor,
             'fillOpacity': self.opacity,
             'strokeWidth': self.strokeWidth,
+            'strokeOpacity': self.strokeOpacity,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
@@ -329,6 +332,7 @@ AnnotationLayer.prototype = {
             "strokeColor": self.strokeColor,
             'fillOpacity': self.opacity,
             'strokeWidth': self.strokeWidth,
+            'strokeOpacity': self.strokeOpacity,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
@@ -336,6 +340,7 @@ AnnotationLayer.prototype = {
             "strokeColor": self.strokeColor,
             'fillOpacity': self.opacity,
             'strokeWidth': self.strokeWidth,
+            'strokeOpacity': self.strokeOpacity,
             'pointRadius': this.pointRadius
         };
         window.app.status.currentTermsCollection.each(function (term) {
@@ -344,6 +349,7 @@ AnnotationLayer.prototype = {
                 "strokeColor": self.strokeColor,
                 'fillOpacity': self.opacity,
                 'strokeWidth': self.strokeWidth,
+                'strokeOpacity': self.strokeOpacity,
                 'pointRadius': this.pointRadius
             }
         });
@@ -353,6 +359,7 @@ AnnotationLayer.prototype = {
         this.strokeColor = "#BD362F";
         this.opacity = .3;
         this.strokeWidth = 5;
+        this.strokeOpacity = 1;
         if (selected) {
             this.opacity = .15;
             this.strokeColor = "#FF0000";
@@ -366,13 +373,16 @@ AnnotationLayer.prototype = {
             "strokeColor": self.strokeColor,
             'fillOpacity': self.opacity,
             'strokeWidth': self.strokeWidth,
+            'strokeOpacity': self.strokeOpacity,
             'pointRadius': this.pointRadius
+
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#CCCCCC",
             "strokeColor": self.strokeColor,
             'fillOpacity': self.opacity,
             'strokeWidth': self.strokeWidth,
+            'strokeOpacity': self.strokeOpacity,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
@@ -380,6 +390,7 @@ AnnotationLayer.prototype = {
             "strokeColor": self.strokeColor,
             'fillOpacity': self.opacity,
             'strokeWidth': self.strokeWidth,
+            'strokeOpacity': self.strokeOpacity,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
@@ -387,6 +398,7 @@ AnnotationLayer.prototype = {
             "strokeColor": self.strokeColor,
             'fillOpacity': self.opacity,
             'strokeWidth': self.strokeWidth,
+            'strokeOpacity': self.strokeOpacity,
             'pointRadius': this.pointRadius
         };
         window.app.status.currentTermsCollection.each(function (term) {
@@ -395,6 +407,7 @@ AnnotationLayer.prototype = {
                 "strokeColor": self.strokeColor,
                 'fillOpacity': self.opacity,
                 'strokeWidth': self.strokeWidth,
+                'strokeOpacity': self.strokeOpacity,
                 'pointRadius': this.pointRadius
             }
         });

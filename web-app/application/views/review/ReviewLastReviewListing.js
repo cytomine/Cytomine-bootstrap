@@ -25,7 +25,7 @@ var ReviewLastReviewListing = Backbone.View.extend({
     render: function () {
         var self = this;
         console.log("*********************"+self.project);
-        self.model = new AnnotationCollection({project: self.project, user: self.user, max: 5,reviewed:true});
+        self.model = new AnnotationCollection({project: self.project, ReviewUser: self.user, max: 5,reviewed:true});
         self.refresh();
         return this;
     },
