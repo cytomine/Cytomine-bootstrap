@@ -135,7 +135,7 @@ var ReviewPanel = SideBarPanel.extend({
         $("#" + self.browseImageView.divId).find('#toolbar' + self.model.get('id')).find('a#none' + self.model.get('id')).click();
 
         self.reviewLayer.controls.select.unselectAll();
-        self.reviewLayer.removeSelection();
+        self.reviewLayer.removeSelection(true);
         self.addToListLayer(layer);
 
         console.log("*********** Layer");
@@ -350,7 +350,6 @@ var ReviewPanel = SideBarPanel.extend({
                 });
 
            });
-            el.find('#addReviewLayerSelect').css("height","31px");
             el.find('#addReviewLayerSelect').find("#ms-input-0").css("width","30px");
 
  // TODO end: ENABLE THIS IF MAGIC SUGGEST

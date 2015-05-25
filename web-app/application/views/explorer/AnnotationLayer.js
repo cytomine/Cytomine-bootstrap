@@ -167,7 +167,6 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
     defaultStyle.addRules(rules);
 
 
-
     var selectStyle = null;
 
 //    if(!reviewMode)  {
@@ -238,6 +237,7 @@ var AnnotationLayer = function (user,name, imageID, userID, color, ontologyTreeV
     });
     this.vectorsLayer.strategies[0].activate();
 
+
     this.controls = null;
     this.dialog = null;
     this.rotate = false;
@@ -299,37 +299,103 @@ AnnotationLayer.prototype = {
         return symbolizers_lookup
     },
     getSymbolizerReview: function (selected) {
-        var strokeColor = this.defaultStrokeColor;
+        this.strokeColor = "#5BB75B";
+        this.opacity = .8;
+        this.strokeWidth = 5;
         if (selected) {
-            strokeColor = this.selectedStrokeColor;
+            this.opacity = .5;
+            this.strokeColor = "#006600";
+            this.strokeWidth = 5;
         }
+
         var symbolizers_lookup = {};
         var self = this;
         symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
-            'fillColor': "#5BB75B",
-            'strokeWidth': 3,
+            'fillColor': "#EEEEEE",
+            "strokeColor": self.strokeColor,
+            'fillOpacity': self.opacity,
+            'strokeWidth': self.strokeWidth,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor': "#5BB75B",
-            'strokeWidth': 3,
+            'fillColor': "#CCCCCC",
+            "strokeColor": self.strokeColor,
+            'fillOpacity': self.opacity,
+            'strokeWidth': self.strokeWidth,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor': "#5BB75B",
-            'strokeWidth': 5,
+            'fillColor': "#FF0000",
+            "strokeColor": self.strokeColor,
+            'fillOpacity': self.opacity,
+            'strokeWidth': self.strokeWidth,
             'pointRadius': this.pointRadius
         };
         symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
             'fillColor': "#5BB75B",
-            'strokeWidth': 5,
+            "strokeColor": self.strokeColor,
+            'fillOpacity': self.opacity,
+            'strokeWidth': self.strokeWidth,
             'pointRadius': this.pointRadius
         };
         window.app.status.currentTermsCollection.each(function (term) {
             symbolizers_lookup[term.id] = {
-                'fillColor': "#5BB75B",
-                'strokeWidth': 3,
-                'pointRadius': self.pointRadius
+                'fillColor': term.get('color'),
+                "strokeColor": self.strokeColor,
+                'fillOpacity': self.opacity,
+                'strokeWidth': self.strokeWidth,
+                'pointRadius': this.pointRadius
+            }
+        });
+        return symbolizers_lookup
+    },
+    getSymbolizerReviewNotReviewLayer: function (selected) {
+        this.strokeColor = "#BD362F";
+        this.opacity = .3;
+        this.strokeWidth = 5;
+        if (selected) {
+            this.opacity = .15;
+            this.strokeColor = "#FF0000";
+            this.strokeWidth = 5;
+        }
+
+        var symbolizers_lookup = {};
+        var self = this;
+        symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
+            'fillColor': "#EEEEEE",
+            "strokeColor": self.strokeColor,
+            'fillOpacity': self.opacity,
+            'strokeWidth': self.strokeWidth,
+            'pointRadius': this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor': "#CCCCCC",
+            "strokeColor": self.strokeColor,
+            'fillOpacity': self.opacity,
+            'strokeWidth': self.strokeWidth,
+            'pointRadius': this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor': "#FF0000",
+            "strokeColor": self.strokeColor,
+            'fillOpacity': self.opacity,
+            'strokeWidth': self.strokeWidth,
+            'pointRadius': this.pointRadius
+        };
+        symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
+            'fillColor': "#BD362F",
+            "strokeColor": self.strokeColor,
+            'fillOpacity': self.opacity,
+            'strokeWidth': self.strokeWidth,
+            'pointRadius': this.pointRadius
+        };
+        window.app.status.currentTermsCollection.each(function (term) {
+            symbolizers_lookup[term.id] = {
+                'fillColor': term.get('color'),
+                "strokeColor": self.strokeColor,
+                'fillOpacity': self.opacity,
+                'strokeWidth': self.strokeWidth,
+                'pointRadius': this.pointRadius
             }
         });
         return symbolizers_lookup
@@ -366,43 +432,6 @@ AnnotationLayer.prototype = {
 
         return symbolizers_lookup
     },
-    getSymbolizerReviewNotReviewLayer: function (selected) {
-        var strokeColor = this.defaultStrokeColor;
-        if (selected) {
-            strokeColor = this.selectedStrokeColor;
-        }
-        var symbolizers_lookup = {};
-        var self = this;
-        symbolizers_lookup[AnnotationStatus.NO_TERM] = { //NO TERM ASSOCIATED
-            'fillColor': "#BD362F",
-            'strokeWidth': 3,
-            'pointRadius': this.pointRadius
-        };
-        symbolizers_lookup[AnnotationStatus.MULTIPLE_TERM] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor': "#BD362F",
-            'strokeWidth': 3,
-            'pointRadius': this.pointRadius
-        };
-        symbolizers_lookup[AnnotationStatus.TOO_SMALL] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor': "#BD362F",
-            'strokeWidth': 5,
-            'pointRadius': this.pointRadius
-        };
-        symbolizers_lookup[AnnotationStatus.REVIEW] = { //MULTIPLE TERM ASSOCIATED
-            'fillColor': "#BD362F",
-            'strokeWidth': 5,
-            'pointRadius': this.pointRadius
-        };
-        window.app.status.currentTermsCollection.each(function (term) {
-            symbolizers_lookup[term.id] = {
-                'fillColor': "#BD362F",
-                'strokeWidth': 3,
-                'pointRadius': self.pointRadius
-            }
-        });
-        return symbolizers_lookup
-    },
-
     registerEvents: function (map) {
 
         var self = this;
@@ -423,7 +452,7 @@ AnnotationLayer.prototype = {
                     //}
 
                     if (self.deleteOnSelect == true) {
-                        self.removeSelection();
+                        self.removeSelection(false);
                     } else {
                         self.showPopup(map, evt);
                         self.browseImageView.jobTemplatePanel.changeAnnotation(evt.feature.attributes.idAnnotation);
@@ -569,13 +598,20 @@ AnnotationLayer.prototype = {
         }
         return null;
     },
-    removeSelection: function () {
+    removeSelection: function (reviewAction) {
+        console.log("removeSelection");
         var self = this;
         for (var i in this.vectorsLayer.selectedFeatures) {
             var feature = this.vectorsLayer.selectedFeatures[i];
-            DialogModal.initDialogModal(null, feature.attributes.idAnnotation, 'Annotation', 'Do you want to delete this annotation ?', 'CONFIRMATIONWARNING', function(){
+            if(reviewAction) {
+                //if this method is call in review (accept/reject action), we simply delete it from the layer
                 self.removeAnnotation(feature);
-            });
+            } else {
+                DialogModal.initDialogModal(null, feature.attributes.idAnnotation, 'Annotation', 'Do you want to delete this annotation ?', 'CONFIRMATIONWARNING', function(){
+                    self.removeAnnotation(feature);
+                });
+            }
+
         }
     },
     clearPopup: function (map, evt) {

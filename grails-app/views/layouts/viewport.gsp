@@ -378,7 +378,6 @@ body {
 <div id="alerts"></div>
 <div id="phono-messages"></div>
 
-
 <script type="text/javascript">
     function showClassicWidget() {
         /*		FreshWidget.show();
