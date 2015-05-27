@@ -333,10 +333,9 @@ var LayerSwitcherPanel = SideBarPanel.extend({
         var panel = $("#layerSwitcher" + self.model.get("id"));
         layerAnnotation.loadAnnotations(self.browseImageView);
 
-
-
-        var item = panel.find("#entry" + user.get('id'));
+        var item = panel.find(user!=null? "#entry" + user.get('id') : "#entryREVIEW");
         item.show();
+
 
         if(!defaultLayer) {
             if(user!=null) {
