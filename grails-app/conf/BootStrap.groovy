@@ -160,7 +160,7 @@ class BootStrap {
 
         //set public/private keys for special image server user
         //keys regenerated at each deployment with Docker
-        //if keys deleted ffrom external config files for security, keep old keys
+        //if keys deleted from external config files for security, keep old keys
         if(grailsApplication.config.grails.ImageServerPrivateKey && grailsApplication.config.grails.ImageServerPublicKey) {
             SecUser imageServerUser = SecUser.findByUsername("ImageServer1")
             imageServerUser.setPrivateKey(grailsApplication.config.grails.ImageServerPrivateKey)
