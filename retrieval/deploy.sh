@@ -35,6 +35,9 @@ cd CBIRest-0.2.0/
 cp -r /tmp/testsvectors testsvectors
 cp -r /tmp/config config
 
+touch password.txt
+echo "cytomine:PASSWORD_AUTOGENERE" > password.txt
+
 
 if [ "$ENGINE" == "memory" ] 
 then
@@ -44,9 +47,6 @@ else
 
 	java -jar retrieval-0.2-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
 fi
-
-touch password.txt
-#echo "password must be put here" > password.txt
 
 touch test.out
 tail -F /tmp/test.out
