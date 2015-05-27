@@ -101,26 +101,37 @@ class AnnotationTermService extends ModelService {
      */
     def addWithDeletingOldTerm(def idAnnotation, def idterm, Boolean fromAllUser = false) {
         SecUser currentUser = cytomineService.getCurrentUser()
-        UserAnnotation annotation = UserAnnotation.read(idAnnotation)
+        AnnotationDomain annotation = AnnotationDomain.getAnnotationDomain(idAnnotation)
         if (!annotation) throw new ObjectNotFoundException("Annotation $idAnnotation not found")
         //Start transaction
-        Transaction transaction = transactionService.start()
+        if(annotation instanceof UserAnnotation) {
+            Transaction transaction = transactionService.start()
 
-        //Delete all annotation term
-        def annotationTerm
-        if(!fromAllUser) {
+            //Delete all annotation term
+            def annotationTerm
+            if(!fromAllUser) {
 
-            annotationTerm = AnnotationTerm.findAllByUserAnnotationAndUser(annotation, currentUser)
-        } else {
-            annotationTerm = AnnotationTerm.findAllByUserAnnotation(annotation)
+                annotationTerm = AnnotationTerm.findAllByUserAnnotationAndUser(annotation, currentUser)
+            } else {
+                annotationTerm = AnnotationTerm.findAllByUserAnnotation(annotation)
+            }
+            log.info "Delete old annotationTerm= " + annotationTerm.size()
+            annotationTerm.each { annotterm ->
+                log.info "unlink annotterm:" + annotterm.id
+                this.delete(annotterm,transaction,null,true)
+            }
+            //Add annotation term
+            return addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser, transaction)
+        } else if(annotation instanceof ReviewedAnnotation) {
+            Transaction transaction = transactionService.start()
+            ReviewedAnnotation reviewed = (ReviewedAnnotation)annotation
+            reviewed.terms.clear()
+            reviewed.terms.add(Term.read(idterm))
+            reviewed.save(flush:true)
+            return [status:200]
+
         }
-        log.info "Delete old annotationTerm= " + annotationTerm.size()
-        annotationTerm.each { annotterm ->
-            log.info "unlink annotterm:" + annotterm.id
-            this.delete(annotterm,transaction,null,true)
-        }
-        //Add annotation term
-        return addAnnotationTerm(idAnnotation, idterm, null, currentUser.id, currentUser, transaction)
+
     }
 
     def getStringParamsI18n(def domain) {
