@@ -278,7 +278,14 @@ class BootstrapUtilsService {
         grailsApplication.config.grails.retrievalServerURL.eachWithIndex { it, index ->
 
             if(!RetrievalServer.findByUrl(it)) {
-                RetrievalServer server = new RetrievalServer(description:"retrieval $index", url:"${it}",path:'/retrieval-web/api/resource.json')
+                RetrievalServer server =
+                        new RetrievalServer(
+                                description:"retrieval $index",
+                                url:"${it}",
+                                path:'/retrieval-web/api/resource.json',
+                                username: grailsApplication.config.grails.retrievalUsername,
+                                password: grailsApplication.config.grails.retrievalPassword
+                        )
                 if (server.validate()) {
                     server.save()
                 } else {

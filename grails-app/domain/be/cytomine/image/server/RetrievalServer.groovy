@@ -31,6 +31,10 @@ class RetrievalServer extends CytomineDomain {
     String description
     String url
     String path
+
+    String username
+    String password
+
     int port = 0
 
     String toString() { return getFullURL(); }
@@ -41,6 +45,8 @@ class RetrievalServer extends CytomineDomain {
 
     static constraints = {
         path nullable: true
+        username nullable:true
+        password nullable:true
     }
 
 
