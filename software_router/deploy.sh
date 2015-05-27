@@ -11,8 +11,8 @@ echo "cytomineCoreURL='http://$CORE_URL'" >> config.groovy
 echo "rabbitUsername='$RABBITMQ_LOGIN'" >> config.groovy
 echo "rabbitPassword='$RABBITMQ_PASSWORD'" >> config.groovy
 echo "groovyPath='$GROOVY_PATH'" >> config.groovy
-echo "publicKey='$ADMIN_PUB_KEY'" >> config.groovy
-echo "privateKey='$ADMIN_PRIV_KEY'" >> config.groovy
+echo "publicKey='$RABBITMQ_PUB_KEY'" >> config.groovy
+echo "privateKey='$RABBITMQ_PRIV_KEY'" >> config.groovy
 
 
 wget -q $ALGO_TAR -O algo.tar.gz

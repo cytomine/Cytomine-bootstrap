@@ -212,6 +212,8 @@ fi
 
 ADMIN_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
 ADMIN_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
+RABBITMQ_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
+RABBITMQ_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 
 # create CORE docker
 docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link mongodb:mongodb \
@@ -227,6 +229,8 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e ADMIN_PWD=$admin_pwd \
 -e ADMIN_PUB_KEY=$ADMIN_PUB_KEY \
 -e ADMIN_PRIV_KEY=$ADMIN_PRIV_KEY \
+-e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
+-e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e IMS_PUB_KEY=$IMS_PUB_KEY \
 -e IMS_PRIV_KEY=$IMS_PRIV_KEY \
 -e SENDER_EMAIL=$SENDER_EMAIL \
@@ -308,8 +312,8 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 -e CORE_URL=$CORE_URL \
 -e ALGO_TAR=$ALGO_TAR \
 -e SOFTWARE_ROUTER_JAR=$SOFTWARE_ROUTER_JAR \
--e ADMIN_PUB_KEY=$ADMIN_PUB_KEY \
--e ADMIN_PRIV_KEY=$ADMIN_PRIV_KEY \
+-e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
+-e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e RABBITMQ_LOGIN=$RABBITMQ_LOGIN \
 -e RABBITMQ_PASSWORD=$RABBITMQ_PASSWORD \
 -e GROOVY_PATH=$GROOVY_PATH \

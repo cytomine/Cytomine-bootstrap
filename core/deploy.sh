@@ -57,6 +57,8 @@ then
 	echo "grails.adminPublicKey='$ADMIN_PUB_KEY'" >> cytomineconfig.groovy
 	echo "grails.ImageServerPrivateKey='$IMS_PRIV_KEY'" >> cytomineconfig.groovy
 	echo "grails.ImageServerPublicKey='$IMS_PUB_KEY'" >> cytomineconfig.groovy
+        echo "grails.rabbitMQPrivateKey='$RABBITMQ_PRIV_KEY'" >> cytomineconfig.groovy
+        echo "grails.rabbitMQPublicKey='$RABBITMQ_PUB_KEY'" >> cytomineconfig.groovy
 
 	echo "grails.notification.email='$SENDER_EMAIL'" >> cytomineconfig.groovy
 	echo "grails.notification.password='$SENDER_EMAIL_PASS'" >> cytomineconfig.groovy
