@@ -52,14 +52,19 @@ class ImageRetrievalService {
     def abstractImageService
 
 
-    public void indexImageSync(BufferedImage image,String id, String storage, Map<String,String> properties) {
-        log.info "Index image sync:$id $storage"
-        indexImage(image,id,storage,properties)
-    }
-
     public void indexImageAsync(BufferedImage image,String id, String storage, Map<String,String> properties) {
         log.info "Index image async:$id $storage"
-        def process = task { indexImage(image,id,storage,properties) }
+
+        if(!RetrievalServer.list().isEmpty()) {
+            RetrievalServer server = RetrievalServer.list().get(0)
+            def process = task {
+                println "index - starting"
+                indexImage(image,id,storage,properties,server.url,server.username,server.password)
+                println "index - ending"
+            }
+        } else {
+            log.info "No retrieval server found"
+        }
     }
 
     /**
@@ -168,7 +173,7 @@ class ImageRetrievalService {
         if(!RetrievalServer.list().isEmpty()) {
             RetrievalServer server = RetrievalServer.list().get(0)
             def cropUrl = searchAnnotation.urlImageServerCrop(abstractImageService)
-            def responseJSON = doRetrievalSearch(server.url+"/api/searchUrl","admin","admin",searchAnnotation.id,cropUrl,projectSearch.collect{it+""})
+            def responseJSON = doRetrievalSearch(server.url+"/api/searchUrl",server.username,server.password,searchAnnotation.id,cropUrl,projectSearch.collect{it+""})
             def result =  readRetrievalResponse(searchAnnotation,responseJSON.data)
             log.info "result=$result"
             return result
@@ -282,7 +287,7 @@ class ImageRetrievalService {
                 //log.info "jsonData $jsonData!"
                 String url = server.url + "/api/index/full"
                 HttpClient client = new HttpClient()
-                client.connect(url,"admin","admin")
+                client.connect(url,server.username,server.password)
                 client.post(jsonData)
                 String response = client.getResponseData()
                 int code = client.getResponseCode()
@@ -334,7 +339,7 @@ class ImageRetrievalService {
     private List<Long> getIndexedResource() {
         RetrievalServer server = RetrievalServer.findByDeletedIsNull()
         String URL = server.url+"/api/images"
-        List json = JSON.parse(getGetResponse(URL))
+        List json = JSON.parse(getGetResponse(URL),server.username,server.password)
         List<Long> resources = new ArrayList<Long>()
         json.each { image ->
             log.debug "resource=" + Long.parseLong(image.id)
@@ -343,9 +348,9 @@ class ImageRetrievalService {
         resources
     }
 
-    private String getGetResponse(String URL) {
+    private String getGetResponse(String URL, String username, String password) {
         HttpClient client = new HttpClient();
-        client.connect(URL, "admin", "admin");
+        client.connect(URL,username,password);
         client.get()
         String response = client.getResponseData()
         client.disconnect();
@@ -376,16 +381,18 @@ class ImageRetrievalService {
 
 
 
-    public void indexImage(BufferedImage image,String id, String storage, Map<String,String> properties) {
-        if(!RetrievalServer.list().isEmpty()) {
-            RetrievalServer server = RetrievalServer.list().get(0)
-            doRetrievalIndex(server.url+"/api/images","admin","admin",image,id,storage,properties)
-        } else {
-            log.info "No retrieval server found"
-        }
+    public void indexImage(BufferedImage image,String id, String storage, Map<String,String> properties, String url, String username, String password) {
+//        if(!RetrievalServer.list().isEmpty()) {
+//            RetrievalServer server = RetrievalServer.list().get(0)
+            log.info "Index to retrieval"
+            doRetrievalIndex(url+"/api/images",username,password,image,id,storage,properties)
+//        } else {
+//            log.info "No retrieval server found"
+//        }
     }
 
     public def doRetrievalIndex(String url, String username, String password, BufferedImage image,String id, String storage, Map<String,String> properties) {
+        try {
         List<String> keys = []
         List<String> values = []
         properties.each {
@@ -409,7 +416,11 @@ class ImageRetrievalService {
          String response = client.getResponseData()
          int code = client.getResponseCode()
          log.info "code=$code response=$response"
-        return [code:code,response:response]
+        return [code:code,response:response] }
+        catch (Exception e) {
+            log.info "Unable to index resource"
+            log.error e
+        }
     }
 
     public MultipartEntity createEntityFromImage(BufferedImage image) {
