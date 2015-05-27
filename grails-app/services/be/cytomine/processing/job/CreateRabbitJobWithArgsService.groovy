@@ -32,11 +32,22 @@ import org.codehaus.groovy.grails.web.json.JSONArray
 class CreateRabbitJobWithArgsService extends AbstractJobService{
     def jobParameterService
     def amqpQueueService
+    def softwareParameterService
 
     def init(Job job, UserJob userJob) {
         jobParameterService.add(JSON.parse(createJobParameter("host",job,Holders.getGrailsApplication().config.grails.serverURL).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
+
+        //get all parameters with set by server = true.
+        def softwareParameters = softwareParameterService.list(job.software, true);
+
+        // then set if these parameters exist
+        if(softwareParameters.find {it.name == "cytomine_id_software"})
+            jobParameterService.add(JSON.parse(createJobParameter("cytomine_id_software",job,job.software.id.toString()).encodeAsJSON()))
+        if(softwareParameters.find {it.name == "cytomine_id_project"})
+            jobParameterService.add(JSON.parse(createJobParameter("cytomine_id_project",job,job.project.id.toString()).encodeAsJSON()))
+
         //Execute Job
         log.info "Execute Job..."
     }
