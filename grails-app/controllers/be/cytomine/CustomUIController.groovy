@@ -131,6 +131,9 @@ class CustomUIController extends RestController {
     }
 
     boolean shouldBeShow(Set<SecRole> roles, boolean isProjectAdmin, def config) {
+        if(currentRoleServiceProxy.isAdminByNow(cytomineService.currentUser))
+            return true;
+
         boolean mustBeShow = false
         if(isProjectAdmin) {
             mustBeShow = config["ADMIN_PROJECT"]
