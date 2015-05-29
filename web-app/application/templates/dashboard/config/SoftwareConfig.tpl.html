@@ -3,17 +3,18 @@
         <h4><%= titre %></h4>
     </div>
     <div class="panel-body row">
-        <div class="col-md-1"></div>
-        <div class="col-md-3">
-            <ul class="softwares">
-                <li>
-                    <button id="addSoftwareButton" class="btn btn-default btn-sm btn-primary"><i
-                            class="icon-plus icon-white"></i> Add&nbsp;&nbsp;&nbsp;</button>
-                </li>
-                <li>
-                    <select id="addSoftware"></select></li>
-                </li>
-            </ul>
+        <div class="col-md-3 col-md-offset-1">
+            <p> Softwares</p>
+        </div>
+
+        <div class="col-md-5 dropdown">
+            <select id="addSoftware" class="input-xlarge focused">
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <a id="addSoftwareButton" href="javascript:void(0);" class="btn btn-info">Add</a>
         </div>
     </div>
+    <div id="addedSoftwares" class="row"></div>
 </div>

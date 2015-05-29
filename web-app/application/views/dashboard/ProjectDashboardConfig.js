@@ -729,7 +729,7 @@ var SoftwareProjectPanel = Backbone.View.extend({
         var self = this;
         new SoftwareProjectModel({ id: idSoftwareProject }).destroy({
             success: function (model, response) {
-                $(self.el).find("li.software" + idSoftwareProject).remove();
+                $(self.el).find("#software" + idSoftwareProject).remove();
                 window.app.view.message("", response.message, "success");
             },
             error: function (model, response) {
@@ -751,9 +751,18 @@ var SoftwareProjectPanel = Backbone.View.extend({
         });
 
     },
-    renderSoftware: function (softwareProject, el) {
-        var tpl = _.template("<li class='software<%= id %>' style='padding-bottom : 3px;'><a class='btn btn-default  btn-sm btn-danger removeSoftware' data-id='<%= id %>' href='#'><i class='icon-trash icon-white' /> Delete</a> <%= name %></li>", softwareProject.toJSON());
-        $(el).append(tpl);
+    renderSoftware: function (softwareProject) {
+        var self = this;
+
+        var softwares = $(self.el).find("#addedSoftwares");
+
+        var newSoft = softwareProject.toJSON()
+
+        softwares.append(
+                '<div id="software'+newSoft.id+'" class="row">' +
+                    '<div class="col-md-5 col-md-offset-4"><p>' + newSoft.name + '</p></div>' +
+                    '<div class="col-md-2"><a class="removesoftwarebutton btn btn-danger" href="javascript:void(0);" data-id='+newSoft.id+'>Remove</a></div>'+
+                '</div>');
     },
 
     render: function () {
@@ -768,7 +777,7 @@ var SoftwareProjectPanel = Backbone.View.extend({
                     event.preventDefault();
                     new SoftwareProjectModel({ project: self.model.id, software: $(self.el).find("#addSoftware").val()}).save({}, {
                         success: function (softwareProject, response) {
-                            self.renderSoftware(new SoftwareProjectModel(softwareProject.toJSON().softwareproject), el);
+                            self.renderSoftware(new SoftwareProjectModel(softwareProject.toJSON().softwareproject));
                             window.app.view.message("", response.message, "success");
                         },
                         error: function (model, response) {
@@ -782,7 +791,7 @@ var SoftwareProjectPanel = Backbone.View.extend({
 
         self.renderSoftwares();
 
-        $(document).on('click', "a.removeSoftware", function () {
+        $(self.el).on('click', ".removesoftwarebutton", function () {
             var idSoftwareProject = $(this).attr('data-id');
             self.removeSoftware(idSoftwareProject);
             return false;
@@ -813,7 +822,7 @@ var DefaultLayerPanel = Backbone.View.extend({
                 if ($(self.el).find('#selectedDefaultLayers #defaultlayer' + selected.value).length == 0) {
                     $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + selected.value + '" class="hideByDefault"> Hide layers by default</div>');
                     $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-5"><p>' + selected.text + '</p></div>');
-                    $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + selected.value + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
+                    $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + selected.value + '" class="projectremovedefaultlayersbutton btn btn-danger" href="javascript:void(0);">Remove</a></div>');
                     save(selected.value, false);
                 }
             }
@@ -909,7 +918,7 @@ var DefaultLayerPanel = Backbone.View.extend({
                     $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-3 col-md-offset-1"><input type="checkbox" id="hideByDefault' + defaultLayersArray[i].id + '" class="hideByDefault"> Hide layers by default</div>');
                     $(self.el).find('#hideByDefault' + defaultLayersArray[i].id)[0].checked = defaultLayersArray[i].hideByDefault;
                     $(self.el).find('#selectedDefaultLayers').append('<div id = "tmp'+ defaultLayersArray[i].userId +'" class="col-md-5"><p></p></div>');
-                    $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + defaultLayersArray[i].id + '" class="projectremovedefaultlayersbutton btn btn-info" href="javascript:void(0);">Remove</a></div>');
+                    $(self.el).find('#selectedDefaultLayers').append('<div class="col-md-2"><a id="defaultlayer' + defaultLayersArray[i].id + '" class="projectremovedefaultlayersbutton btn btn-danger" href="javascript:void(0);">Remove</a></div>');
                     new UserModel({id: defaultLayersArray[i].userId}).fetch({
                         success: function (model) {
                             $(self.el).find('#tmp'+model.id).find("p").text(model.prettyName());
@@ -928,7 +937,7 @@ var ImageFiltersProjectPanel = Backbone.View.extend({
         var self = this;
         new ProjectImageFilterModel({ id: idImageFilter}).destroy({
             success: function (model, response) {
-                $(self.el).find("li.imageFilter" + idImageFilter).remove();
+                $(self.el).find("#imageFilter" + idImageFilter).remove();
                 window.app.view.message("", response.message, "success");
             }
         });
@@ -946,8 +955,17 @@ var ImageFiltersProjectPanel = Backbone.View.extend({
         });
     },
     renderImageFilter: function (imageFilter, el) {
-        var tpl = _.template("<li class='imageFilter<%= id %>' style='padding-bottom : 3px;'> <a class='btn btn-default  btn-sm btn-danger removeImageFilter' data-id='<%= id %>' href='#'><i class=' icon-trash icon-white' /> Delete</a> <%= name %></li>", imageFilter.toJSON());
-        $(el).append(tpl);
+        var self = this;
+
+        var filters = $(self.el).find("#addedImageFilters");
+
+        var newFilter = imageFilter.toJSON()
+
+        filters.append(
+                '<div id="imageFilter'+newFilter.id+'" class="row">' +
+                    '<div class="col-md-5 col-md-offset-4"><p>' + newFilter.name + '</p></div>' +
+                    '<div class="col-md-2"><a class="removeImageFilterButton btn btn-danger" href="javascript:void(0);" data-id='+newFilter.id+'>Remove</a></div>'+
+                '</div>');
     },
     render: function () {
         var self = this;
@@ -963,7 +981,7 @@ var ImageFiltersProjectPanel = Backbone.View.extend({
                     event.preventDefault();
                     new ProjectImageFilterModel({ project: self.model.id, imageFilter: $(self.el).find("#addImageFilter").val()}).save({}, {
                         success: function (imageFilter, response) {
-                            self.renderImageFilter(new ImageFilterModel(imageFilter.toJSON().imagefilterproject), el);
+                            self.renderImageFilter(new ImageFilterModel(imageFilter.toJSON().imagefilterproject));
                             window.app.view.message("", response.message, "success");
                         },
                         error: function (response) {
@@ -977,7 +995,7 @@ var ImageFiltersProjectPanel = Backbone.View.extend({
 
         self.renderFilters();
 
-        $(document).on('click', "a.removeImageFilter", function () {
+        $(self.el).on('click', ".removeImageFilterButton", function () {
             var idImageFilter = $(this).attr("data-id");
             self.removeImageFilter(idImageFilter);
             return false;
