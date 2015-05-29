@@ -62,6 +62,9 @@ class BootstrapOldVersionService {
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
     }
 
+    void init20150530(){
+        new Sql(dataSource).executeUpdate("ALTER TABLE sec_user ADD CONSTRAINT unique_public_key UNIQUE (public_key);")
+    }
     void init20150101() {
         if(!SecUser.findByUsername("admin")) {
             bootstrapUtilsService.createUsers([[username : 'admin', firstname : 'Admin', lastname : 'Master', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]]])
@@ -72,13 +75,6 @@ class BootstrapOldVersionService {
         if(!SecUser.findByUsername("monitoring")) {
             bootstrapUtilsService.createUsers([[username : 'monitoring', firstname : 'Monitoring', lastname : 'Monitoring', email : 'lrollus@ulg.ac.be', group : [[name : "GIGA"]], password : RandomStringUtils.random(32,  (('A'..'Z') + ('0'..'0')).join().toCharArray()), color : "#FF0000", roles : ["ROLE_USER","ROLE_SUPER_ADMIN"]]])
         }
-
-        //set public/private keys for special image server user
-        //keys regenerated at each deployment
-        SecUser imageServerUser = SecUser.findByUsername("ImageServer1")
-        imageServerUser.setPrivateKey(grailsApplication.config.grails.ImageServerPrivateKey)
-        imageServerUser.setPublicKey(grailsApplication.config.grails.ImageServerPublicKey)
-        imageServerUser.save(flush : true)
     }
 
     void init20140925() {
