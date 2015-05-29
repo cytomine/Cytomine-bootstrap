@@ -438,7 +438,7 @@ class SecUserService extends ModelService {
     }
 
     private void removeOntologyRightIfNecessary(Project project, User user) {
-        //we remove the right ONLY if user has another project with this ontology
+        //we remove the right ONLY if user has no other project with this ontology
         List<Project> projects = securityACLService.getProjectList(user,project.ontology)
         List<Project> otherProjects = projects.findAll{it.id!=project.id}
 
