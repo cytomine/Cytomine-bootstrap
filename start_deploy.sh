@@ -68,17 +68,11 @@ cytomine/rabbitmq && nb_docker=$((nb_docker+1)) || docker start rabbitmq
 # create data only containers
 docker run -d --name postgis_data cytomine/data_postgis && nb_docker=$((nb_docker+1)) || docker start postgis_data
 
-#TODO mongodb
-docker run -d --name retrieval_data cytomine/data_postgres && nb_docker=$((nb_docker+1)) || docker start retrieval_data
-
 # create mongodb docker
 docker run -d -p 22 --name mongodb cytomine/mongodb
 nb_docker=$((nb_docker+1))
 
 # create database docker
-
-docker run -p 22 -m 8g -d --name retrievaldb cytomine/postgres_retrieval
-nb_docker=$((nb_docker+1))
 
 docker run -p 22 -m 8g -d --name db --volumes-from postgis_data cytomine/postgis
 nb_docker=$((nb_docker+1))
@@ -97,20 +91,6 @@ then
 	-e RECEIVER_EMAIL=$RECEIVER_EMAIL \
 	-e SGBD='postgres' \
 	-e DATABASE='docker' \
-	-e USER='docker' \
-	-e PASSWD='docker' \
-	cytomine/backup
-	nb_docker=$((nb_docker+1))
-
-	docker run -p 22 -d --name backup_retrieval --link retrievaldb:db -v /backup/retrieval:$BACKUP_PATH \
-	-e BACKUP_PATH=$BACKUP_PATH \
-	-e SENDER_EMAIL=$SENDER_EMAIL \
-	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
-	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
-	-e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
-	-e RECEIVER_EMAIL=$RECEIVER_EMAIL \
-	-e SGBD='postgres' \
-	-e DATABASE='retrieval' \
 	-e USER='docker' \
 	-e PASSWD='docker' \
 	cytomine/backup
@@ -242,9 +222,9 @@ nb_docker=$((nb_docker+1))
 
 # create retrieval docker
 RETRIEVAL_FOLDER=/data/thumb
-docker run -m 8g -d -p 22 --name retrieval --link retrievaldb:db \
--v $RETRIEVAL_FOLDER:$RETRIEVAL_FOLDER --volumes-from retrieval_data \
--e CORE_URL=$CORE_URL \
+docker run -m 8g -d -p 22 --name retrieval \
+-v $RETRIEVAL_FOLDER:$RETRIEVAL_FOLDER \
+-e IMS_URLS=$IMS_URLS \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
 -e RETRIEVAL_FOLDER=$RETRIEVAL_FOLDER \

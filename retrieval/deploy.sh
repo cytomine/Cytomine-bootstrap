@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-#/etc/init.d/ssh start
+/etc/init.d/ssh start
 
 apt-get update
 apt-get install -y wget
@@ -30,7 +30,7 @@ mkdir -p $RETRIEVAL_FOLDER
 
 echo "lauch retrieval"
 
-cd CBIRest-0.2.0/
+cd CBIRest-0.2.1/
 
 cp -r /tmp/testsvectors testsvectors
 cp -r /tmp/config config
@@ -39,13 +39,28 @@ touch password.txt
 echo "cytomine:PASSWORD_AUTOGENERE" > password.txt
 
 
+### transform the ims urls for the config file ###
+arr=$(echo $IMS_URLS | tr "," "\n")
+arr=$(echo $arr | tr "[" "\n")
+arr=$(echo $arr | tr "]" "\n")
+
+if [ $IS_LOCAL = true ]; then
+	echo "#Custom adding" >> /etc/hosts
+	for x in $arr
+	do
+	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
+	done
+fi
+
+
+
 if [ "$ENGINE" == "memory" ] 
 then
-	java -jar retrieval-0.2-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=MEMORY --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
+	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=MEMORY --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
 else
 	redis-server&
 
-	java -jar retrieval-0.2-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
+	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
 fi
 
 touch test.out
