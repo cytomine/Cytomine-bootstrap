@@ -300,23 +300,26 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 cytomine/software_router
 
 
-echo 
-while true; do
-    read -p "Do you wish to install some data test? " yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
+if [ ! -f ./.cookies ];
+then
+	echo
+	while true; do
+	    read -p "Do you wish to install some data test? " yn
+	    case $yn in
+	        [Yy]* ) break;;
+	        [Nn]* ) exit;;
+	        * ) echo "Please answer yes or no.";;
+	    esac
+	done
 
-# create test docker
-docker run -d -p 22 \
---name data_test \
--e IS_LOCAL=$IS_LOCAL \
--e CORE_URL=$CORE_URL \
--e UPLOAD_URL=$UPLOAD_URL \
--e PUBLIC_KEY=$ADMIN_PUB_KEY \
--e PRIVATE_KEY=$ADMIN_PRIV_KEY \
--e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
-cytomine/data_test
+	# create test docker
+	docker run -d -p 22 \
+	--name data_test \
+	-e IS_LOCAL=$IS_LOCAL \
+	-e CORE_URL=$CORE_URL \
+	-e UPLOAD_URL=$UPLOAD_URL \
+	-e PUBLIC_KEY=$ADMIN_PUB_KEY \
+	-e PRIVATE_KEY=$ADMIN_PRIV_KEY \
+	-e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
+	cytomine/data_test
+fi
