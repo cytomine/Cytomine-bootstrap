@@ -34,7 +34,7 @@ var ImageTabsView = Backbone.View.extend({
         if(table && table.dataTable()) {
             table.dataTable().fnDestroy();
         }
-        this.render()
+        this.update()
     },
     render : function() {
         var self = this;
@@ -47,6 +47,13 @@ var ImageTabsView = Backbone.View.extend({
                 self.container.imagesTabsView.refresh();
             });
 
+        });
+        return this;
+    },
+    update : function() {
+        var self = this;
+        require(["text!application/templates/image/ImageReviewAction.tpl.html"], function (actionMenuTpl) {
+            self.doLayout(actionMenuTpl);
         });
         return this;
     },
