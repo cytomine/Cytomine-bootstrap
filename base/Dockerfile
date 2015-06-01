@@ -46,5 +46,7 @@ RUN sed -ri 's/#UsePAM no/UsePAM no/g' /etc/ssh/sshd_config
 
 RUN apt-get install -y locate
 
+ENV LANG C.UTF-8
+
 EXPOSE 22
 
