@@ -444,7 +444,7 @@ class SecUserService extends ModelService {
 
         if(otherProjects.isEmpty()) {
             //user has no other project with this ontology, remove the right!
-            permissionService.deletePermission(project.ontology,user.username,READ)
+            //permissionService.deletePermission(project.ontology,user.username,READ)
         }
 
     }
