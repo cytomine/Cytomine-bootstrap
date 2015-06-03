@@ -19,14 +19,9 @@ RUN apt-get install -y libglib2.0-0
 RUN apt-get install -y language-pack-en-base
 RUN dpkg-reconfigure locales
 
-# Cytomine-python-client and Cytomine-python-datamining
-RUN cd /root/ && mkdir Cytomine/
+# Cytomine-python-datamining
 RUN apt-get -y update
 RUN apt-get -y install git
-RUN cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-client.git
-
-RUN cd /root/Cytomine/Cytomine-python-client/client/ && python setup.py build && python setup.py install
-RUN cd /root/Cytomine/Cytomine-python-client/utilities/ &&  python setup.py build && python setup.py install
 
 # Uncomment when datamining will be open source and comment next line (with the .zip archive)
 # RUN cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-datamining
