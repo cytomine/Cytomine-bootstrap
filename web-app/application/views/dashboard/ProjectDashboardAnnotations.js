@@ -145,6 +145,7 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             self.refreshSelectedTermsWithUserFilter();
         });
         $(self.el).find("#refreshFullPage").click(function () {
+            self.hideAllJobs(false);
             new UserJobCollection({project: window.app.status.currentProject, tree: true}).fetch({
                 success: function (collection, response) {
                     window.app.models.projectUserJobTree = collection;
