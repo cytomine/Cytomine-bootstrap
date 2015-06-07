@@ -255,18 +255,6 @@ docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS
 cytomine/nginx
 nb_docker=$((nb_docker+1))
 
-nb_started_docker=$(echo "$(sudo docker ps)" | wc -l)
-nb_started_docker=$((nb_started_docker-1)) # remove the header line
-#echo "number of started docker = $nb_started_docker"
-#echo "number of asked docker = $nb_docker"
-if [ $nb_started_docker -eq $nb_docker ]
-then
-	touch ./.cookies
-else
-	echo "A problem occurs. Please check into your docker logs."
-fi
-
-
 # wait for the admin password is setted by the core
 OUTPUT_CORE_CYTOMINE=$(docker logs core)
 COUNTER_CYTOMINE=0
@@ -290,7 +278,9 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 --name software_router \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
+-e IMS_URLS=$IMS_URLS \
 -e ALGO_TAR=$ALGO_TAR \
+-e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
 -e SOFTWARE_ROUTER_JAR=$SOFTWARE_ROUTER_JAR \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
@@ -298,11 +288,11 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 -e RABBITMQ_PASSWORD=$RABBITMQ_PASSWORD \
 -e GROOVY_PATH=$GROOVY_PATH \
 cytomine/software_router
-
+nb_docker=$((nb_docker+1))
 
 if [ ! -f ./.cookies ];
 then
-	echo
+	echo 
 	while true; do
 	    read -p "Do you wish to install some data test? " yn
 	    case $yn in
@@ -322,4 +312,17 @@ then
 	-e PRIVATE_KEY=$ADMIN_PRIV_KEY \
 	-e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
 	cytomine/data_test
+	nb_docker=$((nb_docker+1))
 fi
+
+nb_started_docker=$(echo "$(sudo docker ps)" | wc -l)
+nb_started_docker=$((nb_started_docker-1)) # remove the header line
+#echo "number of started docker = $nb_started_docker"
+#echo "number of asked docker = $nb_docker"
+if [ $nb_started_docker -eq $nb_docker ]
+then
+        touch ./.cookies
+else
+        echo "A problem occurs. Please check into your docker logs."
+fi
+

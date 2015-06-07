@@ -26,6 +26,7 @@ echo "privateKey='$RABBITMQ_PRIV_KEY'" >> config.groovy
 wget -q $ALGO_TAR -O algo.tar.gz
 tar -xvf algo.tar.gz algo
 rm algo.tar.gz
+mv algo/lib .
 
 #mkdir algo
 #cd algo/ && git clone https://github.com/cytomine/Cytomine-python-datamining.git
@@ -39,16 +40,28 @@ rm algo.tar.gz
 
 
 wget -q $SOFTWARE_ROUTER_JAR -O Cytomine-software-router.jar
+wget -q $JAVA_CLIENT_JAR -O cytomine-java-client.jar
+mv cytomine-java-client.jar lib/jars/Cytomine-client-java.jar
+
+
+### transform the ims urls for the config file ###
+arr=$(echo $IMS_URLS | tr "," "\n")
+arr=$(echo $arr | tr "[" "\n")
+arr=$(echo $arr | tr "]" "\n")
 
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
+	for x in $arr
+	do
+	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
+	done
 fi
 
 touch /tmp/test.out
 
 # horrible hack for groovy with dash
-PATH="$PATH:$GROOVY_HOME/bin"
+PATH="$PATH:$GROOVY_HOME/bin:/root/anaconda/bin"
 
 java -jar Cytomine-software-router.jar
 
