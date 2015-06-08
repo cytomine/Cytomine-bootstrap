@@ -276,6 +276,7 @@ docker exec core /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.g
 # create software-router docker
 docker run -d -p 22 --link rabbitmq:rabbitmq \
 --name software_router \
+-v /data/algo/models/:/software_router/algo/models/ \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
