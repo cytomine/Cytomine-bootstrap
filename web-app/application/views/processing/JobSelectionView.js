@@ -67,7 +67,6 @@ var JobSelectionView = Backbone.View.extend({
             self.refreshWithDate(self.currentDate);
             $(self.el).find("#datepicker").datepicker('setDate', self.currentDate);
         });
-
     },
     refresh: function () {
         this.refreshWithDate(undefined)
@@ -259,7 +258,7 @@ var JobSelectionView = Backbone.View.extend({
         self.initSubGridDatatables();
 
         //hide id column
-        self.table.fnSetColumnVis(1, false);
+        //self.table.fnSetColumnVis(1, false);
 
 
         //add select input elemen for each column

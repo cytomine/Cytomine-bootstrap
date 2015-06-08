@@ -19,6 +19,8 @@ package be.cytomine.processing.job
 import be.cytomine.Exception.MiddlewareException
 import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.processing.Job
+import be.cytomine.processing.JobParameter
+import be.cytomine.processing.SoftwareParameter
 import be.cytomine.security.UserJob
 import grails.converters.JSON
 import grails.util.Holders
@@ -39,6 +41,8 @@ class CreateRabbitJobWithArgsService extends AbstractJobService{
         jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
 
+        SoftwareParameter modelJob = softwareParameterService.list(job.software).find {it.name == "model_id_job"};
+
         //get all parameters with set by server = true.
         def softwareParameters = softwareParameterService.list(job.software, true);
 
@@ -47,6 +51,17 @@ class CreateRabbitJobWithArgsService extends AbstractJobService{
             jobParameterService.add(JSON.parse(createJobParameter("cytomine_id_software",job,job.software.id.toString()).encodeAsJSON()))
         if(softwareParameters.find {it.name == "cytomine_id_project"})
             jobParameterService.add(JSON.parse(createJobParameter("cytomine_id_project",job,job.project.id.toString()).encodeAsJSON()))
+        if(softwareParameters.find {it.name == "pyxit_save_to"})
+            jobParameterService.add(JSON.parse(createJobParameter("pyxit_save_to",job,"algo/models/"+job.software.name+"/"+job.id+".pkl").encodeAsJSON()))
+        if(softwareParameters.find {it.name == "pyxit_load_from"}) {
+            JobParameter jobParam = JobParameter.findByJobAndSoftwareParameter(job, modelJob)
+            if (jobParam) {
+                Job previousJob = Job.read(jobParam.value)
+                jobParameterService.add(JSON.parse(createJobParameter("pyxit_load_from",job,"algo/models/"+previousJob.software.name+"/"+previousJob.id+".pkl").encodeAsJSON()))
+            }
+            // TODO throw error
+            println "no jobParam."
+        }
 
         //Execute Job
         log.info "Execute Job..."

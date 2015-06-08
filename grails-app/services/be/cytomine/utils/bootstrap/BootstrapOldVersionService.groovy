@@ -62,7 +62,16 @@ class BootstrapOldVersionService {
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
     }
 
-    void init20150530(){
+    void init20150604(){
+        if(!SecUser.findByUsername("rabbitmq")) {
+            bootstrapUtilsService.createUsers([[username : 'rabbitmq', firstname : 'rabbitmq', lastname : 'user', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : RandomStringUtils.random(32,  (('A'..'Z') + ('0'..'0')).join().toCharArray()), color : "#FF0000", roles : ["ROLE_USER"]]])
+            SecUser rabbitMQUser = SecUser.findByUsername("rabbitmq")
+            rabbitMQUser.setPrivateKey(grailsApplication.config.grails.rabbitMQPrivateKey)
+            rabbitMQUser.setPublicKey(grailsApplication.config.grails.rabbitMQPublicKey)
+            rabbitMQUser.save(flush : true)
+        }
+    }
+    void init20150529(){
         new Sql(dataSource).executeUpdate("ALTER TABLE sec_user ADD CONSTRAINT unique_public_key UNIQUE (public_key);")
     }
     void init20150101() {
