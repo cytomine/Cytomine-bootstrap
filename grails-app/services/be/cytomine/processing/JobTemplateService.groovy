@@ -52,7 +52,7 @@ class JobTemplateService extends ModelService {
      def list(Project project, Software software = null) {
          securityACLService.check(project.container(),READ)
          if(software) {
-             return JobTemplate.findAllByProject(project,software)
+             return JobTemplate.findAllByProjectAndSoftware(project,software)
          } else {
              return JobTemplate.findAllByProject(project)
          }

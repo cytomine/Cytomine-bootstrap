@@ -98,6 +98,8 @@ body {
 
 <!-- Twitter bootstrap -->
 <script type="text/javascript" src="lib/bootstrap-3.0.3/js/bootstrap.js"></script>
+%{--<script type="text/javascript" src="lib/bootstrap-3.2.0/js/bootstrap-transition.js"></script>--}%
+%{--<script type="text/javascript" src="lib/bootstrap-3.2.0/js/bootstrap-collapse.js"></script>--}%
 <script type="text/javascript" src="lib/typeahead.js/typeahead.js"></script>
 
 

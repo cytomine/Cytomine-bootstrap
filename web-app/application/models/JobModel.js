@@ -120,11 +120,16 @@ var JobTemplateModel = Backbone.Model.extend({
 var JobTemplateCollection = PaginatedCollection.extend({
     model: JobTemplateModel,
     url: function () {
-        return "api/project/"+this.project + "/jobtemplate.json"
+        var url = "api/project/"+this.project + "/jobtemplate.json";
+        if(this.software) {
+            url = url + "?software="+this.software
+        }
+        return url;
     },
     initialize: function (options) {
         this.initPaginator(options);
         this.project = options.project;
+        this.software = options.software;
     },
     comparator: function (job) {
         return -job.get("id");

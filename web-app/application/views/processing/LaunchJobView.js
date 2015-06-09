@@ -21,6 +21,8 @@ var LaunchJobView = Backbone.View.extend({
     parent: null,
     params: [],
     paramsViews: [],
+    jobTemplate: null,
+    templates: null,
     initialize: function (options) {
         this.width = options.width;
         this.software = options.software;
@@ -34,7 +36,6 @@ var LaunchJobView = Backbone.View.extend({
             "text!application/templates/processing/JobLaunch.tpl.html"
         ],
             function (JobLaunchTpl) {
-
                 self.loadResult(JobLaunchTpl);
             });
         return this;
@@ -46,46 +47,155 @@ var LaunchJobView = Backbone.View.extend({
 
         $(self.el).empty();
         $(self.el).append(content);
+
+        self.loadTemplate();
+
+    },
+    loadTemplate : function() {
+        var self = this;
+        console.log($("#preFilledjobTemplate"));
+        new JobTemplateCollection({project: this.project.get("id"), software: this.software.get("id")}).fetch({
+            success: function (collection, response) {
+                console.log(collection);
+                if(collection.size()==0) {
+                    $("#preFilledjobTemplate").replaceWith("(Not available: no Job template)");
+                    $("#optionPrefilled").prop('disabled', 'disabled');
+                } else {
+                    //get all project id/name
+                    $("#preFilledjobTemplate").empty();
+                    collection.each(function(jobTemplate) {
+                        console.log("apprend "+jobTemplate.get('name'));
+                        $("#preFilledjobTemplate").append('<option value="'+jobTemplate.get("id")+'">'+jobTemplate.get('name')+'</option>');
+                    });
+                }
+                self.templates = collection;
+                self.loadChoice();
+
+                $("#previewJobBtn").on("click", function (evt) {
+                    self.createJobFromParam(self.previewJob);
+                });
+            }
+        });
+    },
+    loadChoice : function() {
+        var self = this;
+        var refreshSelection = function() {
+            console.log("refreshSelection");
+            var selectedOption = $('input[name=customOrTemplate]:checked').val();
+            console.log("selectedOption="+selectedOption);
+            if(selectedOption=="optionCustomForm") {
+                $("#preFilledjobTemplate").prop('disabled', 'disabled');
+                self.jobTemplate = null;
+            } else {
+                $("#preFilledjobTemplate").prop('disabled',false);
+                var id = $('#preFilledjobTemplate').val();
+                self.jobTemplate = self.templates.get(id);
+            }
+            self.loadParams();
+        }
+        refreshSelection();
+
+        $("#optionCustomForm").change(function () {
+            console.log("change");
+            refreshSelection();
+        });
+        $("#optionPrefilled").change(function () {
+            console.log("change");
+            refreshSelection();
+        });
+
+        $("#preFilledjobTemplate").change(function () {
+            console.log("change");
+            refreshSelection();
+        });
+    },
+
+    loadParams : function() {
+        var self = this;
         self.params = [];
         self.paramsViews = [];
 
-        _.each(self.software.get('parameters'), function (param) {
-            self.params.push(param);
-            self.paramsViews.push(self.getParamView(param));
-        });
+        //if(self.jobTemplate==null) {
+            _.each(self.software.get('parameters'), function (param) {
+                self.params.push(param);
+                self.paramsViews.push(self.getParamView(param));
+            });
+        //}
 
         self.printSoftwareParams();
 
-        $("#previewJobBtn").on("click", function (evt) {
-            self.createJobFromParam(self.previewJob);
-        });
     },
+
+    retrieveDefaultValue : function(param) {
+        var self = this;
+
+        var defaultValue = param.defaultParamValue;
+
+
+        console.log(self.jobTemplate);
+
+        if(self.jobTemplate!=null) {
+
+            var paramsTemplate = self.jobTemplate.get("jobParameters");
+            console.log("Looking for "+param.name + " in template");
+            var paramTemplate = _.find(paramsTemplate, function(paramT){ return paramT.name==param.name; });
+            console.log(paramTemplate);
+            if(paramTemplate) {
+                defaultValue = paramTemplate.value;
+            }
+        }
+
+        if(param.type == "Boolean") {
+            if (defaultValue != undefined && defaultValue.toLowerCase() == "true") {
+                return 'checked="checked"';
+            } else {
+                return "";
+            }
+        } else if(param.type=="Domain" || param.type=="ListDomain") {
+
+            if (!defaultValue) return [];
+            var split = defaultValue.split(",");
+            var values = [];
+            _.each(split, function (s) {
+                values.push(window.app.replaceVariable(s));
+            });
+
+            return values;
+        } else {
+            return window.app.replaceVariable(defaultValue)
+        }
+
+
+    },
+
+
     getParamView: function (param) {
+
         if (param.type == "String") {
-            return new InputTextView({param: param});
+            return new InputTextView({param: param, container:this});
         }
         console.log("##########################");
         console.log(param);
         if (param.type == "Number" || (param.type == "Domain" && !param.uri)) {
-            return new InputNumberView({param: param});
+            return new InputNumberView({param: param, container:this});
         }
         if (param.type == "Date") {
-            return new InputDateView({param: param});
+            return new InputDateView({param: param, container:this});
         }
         if (param.type == "Boolean") {
-            return new InputBooleanView({param: param});
+            return new InputBooleanView({param: param, container:this});
         }
         if (param.type == "List") {
-            return new InputListView({param: param});
+            return new InputListView({param: param, container:this});
         }
         if (param.type == "ListDomain") {
-            return new InputListDomainView({param: param, multiple: true});
+            return new InputListDomainView({param: param, container:this, multiple: true});
         }
         if (param.type == "Domain") {
-            return new InputListDomainView({param: param, multiple: false});
+            return new InputListDomainView({param: param, container:this, multiple: false});
         }
         else {
-            return new InputTextView({param: param});
+            return new InputTextView({param: param, container:this});
         }
     },
     printSoftwareParams: function () {
@@ -198,9 +308,11 @@ var InputTextView = Backbone.View.extend({
     param: null,
     parent: null,
     trElem: null,
+    container:null,
     initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
+        this.container = options.container;
     },
     addRow: function (tbody) {
         var self = this;
@@ -218,7 +330,7 @@ var InputTextView = Backbone.View.extend({
         });
     },
     getDefaultValue: function () {
-        return window.app.replaceVariable(this.param.defaultParamValue)
+        return this.container.retrieveDefaultValue(this.param);
     },
     checkEntryValidation: function () {
         var self = this;
@@ -245,9 +357,11 @@ var InputNumberView = Backbone.View.extend({
     param: null,
     parent: null,
     trElem: null,
+    container:null,
     initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
+        this.container = options.container;
     },
     addRow: function (tbody) {
         var self = this;
@@ -264,7 +378,7 @@ var InputNumberView = Backbone.View.extend({
         });
     },
     getDefaultValue: function () {
-        return window.app.replaceVariable(this.param.defaultParamValue)
+        return this.container.retrieveDefaultValue(this.param);
     },
     checkEntryValidation: function () {
         var self = this;
@@ -295,9 +409,11 @@ var InputDateView = Backbone.View.extend({
     param: null,
     parent: null,
     trElem: null,
+    container:null,
     initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
+        this.container = options.container;
     },
     addRow: function (tbody) {
         var self = this;
@@ -331,7 +447,7 @@ var InputDateView = Backbone.View.extend({
         });
     },
     getDefaultValue: function () {
-        return window.app.replaceVariable(this.param.defaultParamValue)
+        return this.container.retrieveDefaultValue(this.param);
     },
     checkEntryValidation: function () {
         var self = this;
@@ -366,9 +482,11 @@ var InputBooleanView = Backbone.View.extend({
     param: null,
     parent: null,
     trElem: null,
+    container: null,
     initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
+        this.container = options.container;
     },
     addRow: function (tbody) {
         var self = this;
@@ -384,10 +502,8 @@ var InputBooleanView = Backbone.View.extend({
         });
     },
     getDefaultValue: function () {
-        if (this.param.type == "Boolean" && this.param.defaultParamValue != undefined && this.param.defaultParamValue.toLowerCase() == "true") {
-            return 'checked="checked"';
-        }
-        return "";
+        return this.container.retrieveDefaultValue(this.param);
+
     },
     checkEntryValidation: function () {
         var self = this;
@@ -409,9 +525,11 @@ var InputListView = Backbone.View.extend({
     param: null,
     parent: null,
     trElem: null,
+    container:null,
     initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
+        this.container = options.container;
     },
     addRow: function (tbody) {
         var self = this;
@@ -454,15 +572,7 @@ var InputListView = Backbone.View.extend({
         return valueStr;
     },
     getDefaultValue: function () {
-        var self = this;
-        if (!self.param.defaultParamValue) return [];
-
-        var split = self.param.defaultParamValue.split(",");
-        var values = [];
-        _.each(split, function (s) {
-            values.push(window.app.replaceVariable(s));
-        });
-        return values;
+        return this.container.retrieveDefaultValue(this.param);
     },
     checkEntryValidation: function () {
         var self = this;
@@ -497,11 +607,13 @@ var InputListDomainView = Backbone.View.extend({
     collection: null,
     printAttribut: null,
     elemSuggest : null,
+    container:null,
     initialize: function (options) {
         this.param = options.param;
         this.parent = options.parent;
         this.multiple = options.multiple;
         this.printAttribut = this.param.uriPrintAttribut;
+        this.container = options.container;
     },
     addRow: function (tbody) {
         var self = this;
@@ -553,7 +665,7 @@ var InputListDomainView = Backbone.View.extend({
 
 
         var magicSuggestData = self.collection.toJSON();
-        var magicSuggestValue = undefined;
+        var magicSuggestValue = self.getDefaultValue();
 
         /*if (magicSuggestData.length == 1) { //select the single choice
             magicSuggestValue = [magicSuggestData[0].id];
@@ -619,15 +731,8 @@ var InputListDomainView = Backbone.View.extend({
 
     },
     getDefaultValue: function () {
-        var self = this;
-        if (!self.param.defaultParamValue) return [];
-        var split = self.param.defaultParamValue.split(",");
-        var values = [];
-        _.each(split, function (s) {
-            values.push(window.app.replaceVariable(s));
-        });
+        return this.container.retrieveDefaultValue(this.param);
 
-        return values;
     },
     getHtmlElem: function () {
         return "<div class='suggest' />";
