@@ -111,7 +111,7 @@ class CustomUIController extends RestController {
 
     public def getProjectConfig(Set<SecRole> roles, Project project) {
         def configProject = grailsApplication.config.cytomine.customUI.project
-        boolean isProjectAdmin = projectService.listByAdmin(cytomineService.currentUser)
+        boolean isProjectAdmin = projectService.listByAdmin(cytomineService.currentUser).collect {it.id}.contains(project.id)
         List<Property> properties = Property.findAllByDomainIdentAndKey(project.id,CUSTOM_UI_PROJECT,[max: 1,sort:"created", order:"desc" ])
         def result = [:]
 

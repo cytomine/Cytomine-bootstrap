@@ -84,11 +84,6 @@ class BootstrapDataService {
         admin.setPrivateKey((String) grailsApplication.config.grails.adminPrivateKey)
         admin.setPublicKey((String) grailsApplication.config.grails.adminPublicKey)
         admin.save(flush : true)
-
-        SecUser rabbitMQUser = SecUser.findByUsername("rabbitmq")
-        rabbitMQUser.setPrivateKey(grailsApplication.config.grails.rabbitMQPrivateKey)
-        rabbitMQUser.setPublicKey(grailsApplication.config.grails.rabbitMQPublicKey)
-        rabbitMQUser.save(flush : true)
     }
 
     public void recreateTableFromNotDomainClass() {

@@ -167,6 +167,14 @@ class BootStrap {
             imageServerUser.setPublicKey(grailsApplication.config.grails.ImageServerPublicKey)
             imageServerUser.save(flush : true)
         }
+        if(grailsApplication.config.grails.rabbitMQPrivateKey && grailsApplication.config.grails.rabbitMQPublicKey) {
+            SecUser rabbitMQUser = SecUser.findByUsername("rabbitmq")
+            if(rabbitMQUser) {
+                rabbitMQUser.setPrivateKey(grailsApplication.config.grails.rabbitMQPrivateKey)
+                rabbitMQUser.setPublicKey(grailsApplication.config.grails.rabbitMQPublicKey)
+                rabbitMQUser.save(flush : true)
+            }
+        }
 
         // Initialize RabbitMQ server
         log.info "init RabbitMQ connection..."
