@@ -675,8 +675,16 @@ var InputListDomainView = Backbone.View.extend({
         }*/
 
         self.elemSuggest = cell.find(".suggest").magicSuggest({
-            displayField : self.printAttribut,
             data: magicSuggestData,
+            selectionRenderer: function(v){
+                var displayField;
+                if (v.class == 'be.cytomine.processing.Job') {
+                    displayField = v.softwareName+" "+ window.app.convertLongToDate(v.created);
+                } else {
+                    displayField = v[self.printAttribut];
+                }
+                return displayField;
+            },
             selectionPosition: 'inner',
             selectionStacked: false,
             maxSelection: (self.multiple ? null : 1),
