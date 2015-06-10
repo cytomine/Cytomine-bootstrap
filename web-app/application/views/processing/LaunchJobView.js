@@ -700,6 +700,8 @@ var InputListDomainView = Backbone.View.extend({
                 var item
                 if (v.thumb) { //image/annotation model
                     item =  _.template('<div><div style="float:left; width : 128px;"><img src="<%= thumb %>" style="max-width : 64px; max-height : 64px;" /></div><div style="padding-left: 20px;"><%= name %></div></div><div style="clear:both;"></div>', { thumb : v.thumb, name : v[self.printAttribut]});
+                } else if (v.class == 'be.cytomine.processing.Job') {
+                    item = _.template('<%= name %>', { name : v.softwareName+" "+ window.app.convertLongToDate(v.created) });
                 } else {
                     item = _.template('<%= name %>', { name : v[self.printAttribut] });
                 }
