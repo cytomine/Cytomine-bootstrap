@@ -41,8 +41,6 @@ class CreateRabbitJobWithArgsService extends AbstractJobService{
         jobParameterService.add(JSON.parse(createJobParameter("publicKey",job,userJob.publicKey).encodeAsJSON()))
         jobParameterService.add(JSON.parse(createJobParameter("privateKey",job,userJob.privateKey).encodeAsJSON()))
 
-        SoftwareParameter modelJob = softwareParameterService.list(job.software).find {it.name == "model_id_job"};
-
         //get all parameters with set by server = true.
         def softwareParameters = softwareParameterService.list(job.software, true);
 
@@ -51,8 +49,15 @@ class CreateRabbitJobWithArgsService extends AbstractJobService{
             jobParameterService.add(JSON.parse(createJobParameter("cytomine_id_software",job,job.software.id.toString()).encodeAsJSON()))
         if(softwareParameters.find {it.name == "cytomine_id_project"})
             jobParameterService.add(JSON.parse(createJobParameter("cytomine_id_project",job,job.project.id.toString()).encodeAsJSON()))
+
         if(softwareParameters.find {it.name == "pyxit_save_to"})
             jobParameterService.add(JSON.parse(createJobParameter("pyxit_save_to",job,"algo/models/"+job.software.name+"/"+job.id+".pkl").encodeAsJSON()))
+        if(softwareParameters.find {it.name == "model_save_to_dir"})
+            jobParameterService.add(JSON.parse(createJobParameter("model_save_to_dir",job,"algo/models/"+job.software.name+"/").encodeAsJSON()))
+        if(softwareParameters.find {it.name == "model_name_to_save"})
+            jobParameterService.add(JSON.parse(createJobParameter("model_name_to_save",job,""+job.id).encodeAsJSON()))
+
+        SoftwareParameter modelJob = softwareParameterService.list(job.software).find {it.name == "model_id_job"};
         if(softwareParameters.find {it.name == "pyxit_load_from"}) {
             JobParameter jobParam = JobParameter.findByJobAndSoftwareParameter(job, modelJob)
             if (jobParam) {
@@ -62,6 +67,23 @@ class CreateRabbitJobWithArgsService extends AbstractJobService{
             // TODO throw error
             println "no jobParam."
         }
+        SoftwareParameter modelsJob = softwareParameterService.list(job.software).find {it.name == "models_id_job"};
+        if(softwareParameters.find {it.name == "cytomine_model_names_to_load"}) {
+            JobParameter jobParam = JobParameter.findByJobAndSoftwareParameter(job, modelsJob)
+            if (jobParam) {
+                def ids = ((String) jobParam.value).split(",")
+                def paths = []
+                ids.each {
+                    Job previousJob = Job.read(ids)
+                    paths << previousJob.software.name+"/"+previousJob.id
+                }
+                paths =  paths.join(",")
+                jobParameterService.add(JSON.parse(createJobParameter("cytomine_model_names_to_load",job,paths).encodeAsJSON()))
+            }
+            // TODO throw error
+            println "no jobParam."
+        }
+
 
         //Execute Job
         log.info "Execute Job..."
