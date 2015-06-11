@@ -658,48 +658,33 @@ var InputListDomainView = Backbone.View.extend({
         var cell = self.trElem.find("td#" + self.param.id);
         cell.empty();
         cell.append(self.getHtmlElem());
-//        if(self.multiple) {
-//            cell.append('<button class="btn" id="checkAll'+self.param.id+'">Check All</button>');
-//            cell.append('<button class="btn" id="uncheckAll'+self.param.id+'">Uncheck All</button>');
-//        }
 
 
         var magicSuggestData = self.collection.toJSON();
         var magicSuggestValue = self.getDefaultValue();
 
-        /*if (magicSuggestData.length == 1) { //select the single choice
-            magicSuggestValue = [magicSuggestData[0].id];
-        } else if (magicSuggestData.length > 1) { //add a ALL choices
-            magicSuggestData.push({ id : -1, a : "ALL"});
-            magicSuggestValue = [-1];
-        }*/
-
         self.elemSuggest = cell.find(".suggest").magicSuggest({
-            displayField : self.printAttribut,
             data: magicSuggestData,
+            selectionRenderer: function(v){
+                var displayField;
+                if (v['class'] == 'be.cytomine.processing.Job') {
+                    displayField = v.softwareName+" "+ window.app.convertLongToDate(v.created);
+                } else {
+                    displayField = v[self.printAttribut];
+                }
+                return displayField;
+            },
             selectionPosition: 'inner',
             selectionStacked: false,
             maxSelection: (self.multiple ? null : 1),
             value : magicSuggestValue,
             width : 750,
-//            selectionRenderer: function (a){
-//
-//                if(self.elemSuggest.getSelectedItems().length>5) {
-//                    var maxNumberOfChar = 40;
-//                    var title = a[self.printAttribut];
-//                    if (title.length > maxNumberOfChar) {
-//                        var newTitle = title.substr(0, maxNumberOfChar/2) + "...";
-//                        newTitle = newTitle + title.substr(title.length-(maxNumberOfChar/2), title.length);
-//                    }
-//                    return newTitle;
-//                } else {
-//                    return a[self.printAttribut];
-//                }
-//            },
             renderer: function(v){
                 var item
                 if (v.thumb) { //image/annotation model
                     item =  _.template('<div><div style="float:left; width : 128px;"><img src="<%= thumb %>" style="max-width : 64px; max-height : 64px;" /></div><div style="padding-left: 20px;"><%= name %></div></div><div style="clear:both;"></div>', { thumb : v.thumb, name : v[self.printAttribut]});
+                } else if (v['class'] == 'be.cytomine.processing.Job') {
+                    item = _.template('<%= name %>', { name : v.softwareName+" "+ window.app.convertLongToDate(v.created) });
                 } else {
                     item = _.template('<%= name %>', { name : v[self.printAttribut] });
                 }

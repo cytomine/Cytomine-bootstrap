@@ -50,7 +50,6 @@ class SoftwareParameterService extends ModelService{
     }
 
     def list(Software software, Boolean includeSetByServer = false) {
-        securityACLService.check(software,READ)
         SoftwareParameter.findAllBySoftwareAndSetByServer(software, includeSetByServer)
     }
 

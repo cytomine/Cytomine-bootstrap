@@ -66,7 +66,6 @@ class SecUserService extends ModelService {
     def currentRoleServiceProxy
     def securityACLService
     def projectDefaultLayerService
-    def messageBrokerServerService
 
     def currentDomain() {
         User
