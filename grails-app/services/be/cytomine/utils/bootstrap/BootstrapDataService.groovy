@@ -66,7 +66,7 @@ class BootstrapDataService {
         def usersSamples = [
                 //[username : 'anotheruser', firstname : 'Another', lastname : 'User', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : 'password', color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
                 [username : 'ImageServer1', firstname : 'Image', lastname : 'Server', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : RandomStringUtils.random(32,  (('A'..'Z') + ('0'..'0')).join().toCharArray()), color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
-                [username : 'superadmin', firstname : 'Super', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : grailsApplication.config.grails.superAdminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
+                [username : 'superadmin', firstname : 'Super', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN","ROLE_SUPER_ADMIN"]],
                 [username : 'admin', firstname : 'Just an', lastname : 'Admin', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : grailsApplication.config.grails.adminPassword, color : "#FF0000", roles : ["ROLE_USER", "ROLE_ADMIN"]],
                 [username : 'rabbitmq', firstname : 'rabbitmq', lastname : 'user', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : RandomStringUtils.random(32,  (('A'..'Z') + ('0'..'0')).join().toCharArray()), color : "#FF0000", roles : ["ROLE_USER"]],
                 [username : 'jsnow', firstname : 'John', lastname : 'Snow', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : "jsnow", color : "#FF0000", roles : ["ROLE_USER"]],
@@ -88,6 +88,18 @@ class BootstrapDataService {
         admin.setPrivateKey((String) grailsApplication.config.grails.adminPrivateKey)
         admin.setPublicKey((String) grailsApplication.config.grails.adminPublicKey)
         admin.save(flush : true)
+
+        SecUser superAdmin = SecUser.findByUsername("superadmin")
+        if(!grailsApplication.config.grails.superAdminPrivateKey) {
+            throw new IllegalArgumentException("superadminPrivateKey must be set!")
+        }
+        if(!grailsApplication.config.grails.superAdminPublicKey) {
+            throw new IllegalArgumentException("superadminPublicKey must be set!")
+        }
+        superAdmin.setPrivateKey((String) grailsApplication.config.grails.superAdminPrivateKey)
+        superAdmin.setPublicKey((String) grailsApplication.config.grails.superAdminPublicKey)
+        superAdmin.save(flush : true)
+
     }
 
     public void recreateTableFromNotDomainClass() {
