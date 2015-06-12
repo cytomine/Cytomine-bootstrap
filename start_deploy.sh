@@ -232,6 +232,15 @@ docker run -m 8g -d -p 22 --name retrieval \
 cytomine/retrieval
 nb_docker=$((nb_docker+1))
 
+# create IRIS docker
+# Not yet tested
+docker run -d -p 22 --name iris \
+-e CORE_URL=$CORE_URL \
+-e IS_LOCAL=$IS_LOCAL \
+-e IRIS_URL=$IRIS_URL \
+cytomine/iris
+nb_docker=$((nb_docker+1))
+
 CORE_ALIAS=core
 IMS_ALIAS=ims
 

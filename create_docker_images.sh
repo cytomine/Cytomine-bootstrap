@@ -24,6 +24,7 @@ cd ../java8 && docker build -t="cytomine/java8" .
 cd ../software_router && docker build -t="cytomine/software_router" .
 cd ../tomcat7 && docker build -t="cytomine/tomcat7" .
 cd ../core && docker build -t="cytomine/core" .
+cd ../iris && docker build -t="cytomine/iris" .
 cd ../postgres && docker build -t="cytomine/postgres" .
 cd ../postgis && docker build -t="cytomine/postgis" .
 cd ../retrieval && docker build -t="cytomine/retrieval" .

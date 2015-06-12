@@ -22,6 +22,7 @@ IIP_OFF_URL=localhost-iip-base
 IIP_VENT_URL=localhost-iip-ventana
 IIP_CYTO_URL=localhost-iip-cyto
 IIP_JP2_URL=localhost-iip-jp2000
+IRIS_URL=localhost-iris
 
 HAS_GLUSTER=false
 GLUSTER_SERVER=
