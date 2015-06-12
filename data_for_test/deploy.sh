@@ -29,9 +29,10 @@ sed -i "s/CORE_URL/$CORE_URL/g" /tmp/script.groovy
 if [ ! -z "$JAVA_CLIENT_JAR" ]
 then
 	cd /tmp/  && wget -q $JAVA_CLIENT_JAR -O Cytomine-client-java.jar
-	mkdir /tmp/images && cd /tmp/images/ && wget -q "http://cytomine.be/images/test.tif" -O test.tiff
 
-	cd /tmp/ && groovy -cp 'Cytomine-client-java.jar'  script.groovy
+	cd /tmp/ && wget "http://cytomine.be/release/demo_script.zip" -O demo_script.zip && unzip demo_script.zip
+
+	cd /tmp/script/ && groovy -cp '../Cytomine-client-java.jar' injectdata.groovy ./ http://$CORE_URL http://$UPLOAD_URL $PUBLIC_KEY $PRIVATE_KEY
 fi
 
 

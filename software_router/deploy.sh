@@ -42,6 +42,12 @@ mv algo/lib .
 wget -q $SOFTWARE_ROUTER_JAR -O Cytomine-software-router.jar
 wget -q $JAVA_CLIENT_JAR -O cytomine-java-client.jar
 mv cytomine-java-client.jar lib/jars/Cytomine-client-java.jar
+mv /tmp/injectSoftware.groovy .
+
+# horrible hack for groovy with dash
+PATH="$PATH:$GROOVY_HOME/bin:/root/anaconda/bin"
+
+groovy -cp 'lib/jars/Cytomine-client-java.jar' injectSoftware.groovy http://$CORE_URL $RABBITMQ_PUB_KEY $RABBITMQ_PRIV_KEY
 
 
 ### transform the ims urls for the config file ###
@@ -59,9 +65,6 @@ if [ $IS_LOCAL = true ]; then
 fi
 
 touch /tmp/test.out
-
-# horrible hack for groovy with dash
-PATH="$PATH:$GROOVY_HOME/bin:/root/anaconda/bin"
 
 java -jar Cytomine-software-router.jar
 

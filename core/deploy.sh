@@ -55,6 +55,8 @@ then
 	echo "grails.adminPassword='$ADMIN_PWD'" >> cytomineconfig.groovy
 	echo "grails.adminPrivateKey='$ADMIN_PRIV_KEY'" >> cytomineconfig.groovy
 	echo "grails.adminPublicKey='$ADMIN_PUB_KEY'" >> cytomineconfig.groovy
+	echo "grails.superAdminPrivateKey='$SUPERADMIN_PRIV_KEY'" >> cytomineconfig.groovy
+	echo "grails.superAdminPublicKey='$SUPERADMIN_PUB_KEY'" >> cytomineconfig.groovy
 	echo "grails.ImageServerPrivateKey='$IMS_PRIV_KEY'" >> cytomineconfig.groovy
 	echo "grails.ImageServerPublicKey='$IMS_PUB_KEY'" >> cytomineconfig.groovy
         echo "grails.rabbitMQPrivateKey='$RABBITMQ_PRIV_KEY'" >> cytomineconfig.groovy

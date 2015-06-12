@@ -192,6 +192,8 @@ fi
 
 ADMIN_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
 ADMIN_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
+SUPERADMIN_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
+SUPERADMIN_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 RABBITMQ_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
 RABBITMQ_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 
@@ -209,6 +211,8 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e ADMIN_PWD=$admin_pwd \
 -e ADMIN_PUB_KEY=$ADMIN_PUB_KEY \
 -e ADMIN_PRIV_KEY=$ADMIN_PRIV_KEY \
+-e SUPERADMIN_PUB_KEY=$SUPERADMIN_PUB_KEY \
+-e SUPERADMIN_PRIV_KEY=$SUPERADMIN_PRIV_KEY \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e IMS_PUB_KEY=$IMS_PUB_KEY \
@@ -270,7 +274,7 @@ COUNTER_CYTOMINE=0
 while [ "${OUTPUT_CORE_CYTOMINE#*Server startup}" = "$OUTPUT_CORE_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 60 ]
 do
    OUTPUT_CORE_CYTOMINE=$(docker logs core)
-   OUTPUT_CORE_CYTOMINE=$(echo "$OUTPUT_CORE_CYTOMINE" | tail -n 50)
+   OUTPUT_CORE_CYTOMINE=$(echo "$OUTPUT_CORE_CYTOMINE" | tail -n 100)
    COUNTER_CYTOMINE=$((COUNTER_CYTOMINE+1))
    sleep 5
 done
@@ -318,8 +322,8 @@ then
 	-e IS_LOCAL=$IS_LOCAL \
 	-e CORE_URL=$CORE_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
-	-e PUBLIC_KEY=$ADMIN_PUB_KEY \
-	-e PRIVATE_KEY=$ADMIN_PRIV_KEY \
+	-e PUBLIC_KEY=$SUPERADMIN_PUB_KEY \
+	-e PRIVATE_KEY=$SUPERADMIN_PRIV_KEY \
 	-e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
 	cytomine/data_test
 	nb_docker=$((nb_docker+1))

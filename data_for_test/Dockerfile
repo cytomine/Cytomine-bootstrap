@@ -21,6 +21,7 @@ MAINTAINER Cytomine Team "support@cytomine.be"
 RUN apt-get update
 
 RUN apt-get install -y groovy
+RUN apt-get install -y unzip
 
 ADD script.groovy /tmp/script.groovy
 

@@ -52,6 +52,8 @@ EXPOSE 8080
 
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
+ADD injectSoftware.groovy /tmp/injectSoftware.groovy
+RUN chmod +x /tmp/injectSoftware.groovy
 
 # Fix path
 ENV GROOVY_HOME /root/.gvm/groovy/current
