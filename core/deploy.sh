@@ -75,6 +75,8 @@ then
 	if [ ! -z "$DOC_URL" ]
 	then
 		cd /var/lib/tomcat7/  && wget -q $DOC_URL -O restapidoc.json
+		#update the basePath
+		sed -i "/basePath/c\   \"basePath\": \"http://$CORE_URL\"," restapidoc.json
 	fi
 fi
 
