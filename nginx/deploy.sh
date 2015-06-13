@@ -33,6 +33,7 @@ sed -i "s/IIP_JP2_URL/$IIP_JP2_URL/g" /tmp/nginx.conf.sample
 
 sed -i "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/nginx.conf.sample
 
+sed -i "s/IRIS_URL/$IRIS_URL/g" /tmp/nginx.conf.sample
 
 IMS_URLS_CONFIG=""
 ### transform the ims urls for the config file ###

@@ -253,6 +253,7 @@ docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS
 --volumes-from ims --link retrieval:retrieval \
 --link iipOff:iip_officiel --link iipVent:iip_ventana \
 --link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
+--link iris:iris \
 --name nginx \
 -e CORE_URL=$CORE_URL \
 -e CORE_ALIAS=$CORE_ALIAS \
@@ -265,6 +266,7 @@ docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS
 -e IIP_CYTO_URL=$IIP_CYTO_URL \
 -e IIP_JP2_URL=$IIP_JP2_URL \
 -e UPLOAD_URL=$UPLOAD_URL \
+-e IRIS_URL=$IRIS_URL \
 cytomine/nginx
 nb_docker=$((nb_docker+1))
 
