@@ -29,6 +29,8 @@ sed -i "s/CORE_URL/$CORE_URL/g" /tmp/iris-config.groovy
 
 cp /tmp/iris-* ~/.grails
 
+# horrible hack for groovy with dash
+PATH="$PATH:$GRAILS_HOME/bin"
 
 ## compile
 cd ~/Cytomine-IRIS
