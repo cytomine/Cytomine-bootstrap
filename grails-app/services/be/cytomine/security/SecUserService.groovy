@@ -136,10 +136,22 @@ class SecUserService extends ModelService {
         data
     }
 
-    def listUsers(Project project) {
+    def listUsers(Project project, boolean showUserJob = false) {
         securityACLService.check(project,READ)
         List<SecUser> users = SecUser.executeQuery("select distinct secUser from AclObjectIdentity as aclObjectId, AclEntry as aclEntry, AclSid as aclSid, SecUser as secUser "+
                 "where aclObjectId.objectId = "+project.id+" and aclEntry.aclObjectIdentity = aclObjectId.id and aclEntry.sid = aclSid.id and aclSid.sid = secUser.username and secUser.class = 'be.cytomine.security.User'")
+        if(showUserJob) {
+            //TODO:: should be optim (see method head comment)
+            List<Job> allJobs = Job.findAllByProject(project, [sort: 'created', order: 'desc'])
+
+            allJobs.each { job ->
+                def userJob = UserJob.findByJob(job);
+                if (userJob) {
+                    userJob.username = job.software.name + " " + job.created
+                }
+                users << userJob
+            }
+        }
         return users
     }
 
