@@ -240,6 +240,7 @@ nb_docker=$((nb_docker+1))
 # Not yet tested
 docker run -d -p 22 --name iris \
 -e CORE_URL=$CORE_URL \
+-e IMS_URLS=$IMS_URLS \
 -e IS_LOCAL=$IS_LOCAL \
 -e IRIS_URL=$IRIS_URL \
 cytomine/iris

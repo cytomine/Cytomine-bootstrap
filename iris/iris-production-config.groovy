@@ -7,12 +7,12 @@ grails.logging.jul.usebridge = false
 
 grails.host = "IRIS_URL"
 grails.port = ""
-grails.protocol = "https"
+grails.protocol = "http"
 grails.serverURL = grails.protocol + "://" + grails.host + ((grails.port=="")?"":":" + grails.port)
 grails.cytomine.apps.iris.host = grails.serverURL + "/iris"
 
 // set some synchronization settings
-grails.cytomine.apps.iris.sync.clientIdentifier = "IRIS_GRAZ_PROD"
+grails.cytomine.apps.iris.sync.clientIdentifier = "DEMO_CYTOMINE_IRIS"
 grails.cytomine.apps.iris.sync.irisHost = grails.host
 
 // Job configuration

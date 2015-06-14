@@ -21,15 +21,15 @@
 cd ~
 git clone https://github.com/cytomine/Cytomine-IRIS.git # doesn't work. Not yet OS.
 
-mkdir ~/.grails #(make directory for externalized config in the home of the user which will run the tomcat server)
+mkdir /usr/share/tomcat7/.grails #(make directory for externalized config in the home of the user which will run the tomcat server)
 
 #—> alter the configs according to your deployment environment, server name, port, Cytomine core server connection etc.
 sed -i "s/IRIS_URL/$IRIS_URL/g" /tmp/iris-production-config.groovy
 sed -i "s/CORE_URL/$CORE_URL/g" /tmp/iris-config.groovy
 
-cp /tmp/iris-* ~/.grails
+cp /tmp/iris-* /usr/share/tomcat7/.grails
 
-# horrible hack for groovy with dash
+# horrible hack for grails with dash
 PATH="$PATH:$GRAILS_HOME/bin"
 
 ## compile
@@ -43,9 +43,18 @@ cp target/iris.war /var/lib/tomcat7/webapps/
 
 chmod -R 777 /var/lib/tomcat7/ # can create /var/lib/tomcat7/db. Find a more elegant solution later
 
+### transform the ims urls for the config file ###
+arr=$(echo $IMS_URLS | tr "," "\n")
+arr=$(echo $arr | tr "[" "\n")
+arr=$(echo $arr | tr "]" "\n")
+
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
+	for x in $arr
+	do
+	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
+	done
 fi
 
 service tomcat7 start
