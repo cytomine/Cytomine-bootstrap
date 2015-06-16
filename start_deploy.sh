@@ -237,8 +237,8 @@ cytomine/retrieval
 nb_docker=$((nb_docker+1))
 
 # create IRIS docker
-# Not yet tested
 docker run -d -p 22 --name iris \
+-v $IRIS_DB_PATH:/var/lib/tomcat7/db \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
 -e IS_LOCAL=$IS_LOCAL \

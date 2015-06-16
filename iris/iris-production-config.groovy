@@ -21,13 +21,17 @@ PingCytomineHostJob.disabled = true
 SynchronizeUserProgressJob.disabled = false
 
 // MAIL SERVER CONFIGURATION
-grails.mail.default.from=("cytomine-iris@"+grails.host)
-grails.mail.host = "relay.medunigraz.at"
-grails.mail.port = 25
+grails.mail.default.from="cytomine.ulg@gmail.com"
+grails.mail.username = "cytomine.ulg@gmail.com"
+grails.mail.password = MAIL_PWD #TODO
+grails.mail.host = "smtp.gmail.com"
+grails.mail.port = 465
 grails.mail.props = [
-        "mail.smtp.from":("cytomine-iris@"+grails.host),
-        "mail.smtp.timeout": 15000,
-        "mail.smtp.connectiontimeout": 15000
-		]
+        "mail.smtp.auth":"true",
+        "mail.smtp.socketFactory.port":"465",
+        "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
+        "mail.smtp.socketFactory.fallback":"false"
+                ]
+
 
 println "loaded production config."
