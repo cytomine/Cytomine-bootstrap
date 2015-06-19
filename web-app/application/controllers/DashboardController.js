@@ -64,6 +64,34 @@ var DashboardController = Backbone.Router.extend({
         }
 
     },
+    refresh: function () {
+        //get open tabs + current tab
+        var current = window.location.href;
+        var openImageTabs = window.app.status.currentImages;
+        var project = window.app.status.currentProject;
+        window.app.status.currentProject = -1;
+
+        // force change otherwise the last redirect will not be considered
+        window.location = "#tabs-dashboard-"+project;
+
+        // reload image in same order
+        // we wait than an image is loaded before loading the next.
+        var counter = 0;
+        var callback = function () {
+
+            counter++;
+            if(counter < $(openImageTabs).length) {
+                var image = $(openImageTabs)[counter];
+                window.app.controllers.browse.browse(project, image, undefined, undefined, callback);
+            } else if(counter == openImageTabs.length) {
+                window.location = current;
+            }
+        };
+        window.app.controllers.browse.browse(project, $(openImageTabs)[0], undefined, undefined, callback);
+
+        // If openImageTabs is empty, currentProject is still -1
+        window.app.status.currentProject = project;
+    },
     images: function (project) {
         this.imagesarray(project);
     },
