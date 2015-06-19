@@ -497,7 +497,7 @@ var UpdateTextFiedsModal = {
 // if a more custom dialogbox is required, check for http://bootboxjs.com/ (user CustomDialog to create our dialog box)
 var DialogModal = {
     // if needed, pass as an argument of the callback the value of a checkbox (created in a footer) "don't ask me this for the next annotations in this location ("for this layer" or "for this image" need more development)".
-    initDialogModal: function (container, id, type, text, level, callback) {
+    initDialogModal: function (container, id, type, text, level, callbackYes, callbackNo) {
 
         if (level != 'WARNING' && level != 'CONFIRMATIONWARNING' && level != 'INFO' && level != 'ERROR') {
             level = 'INFO';
@@ -523,10 +523,10 @@ var DialogModal = {
             swide: true
         });
         if(level == 'CONFIRMATIONWARNING'){
-            modal.addButtons("DialogBoxYesButton", "Yes", false, true, callback);
-            modal.addButtons("DialogBoxNoButton", "No", true, true); // do nothing
+            modal.addButtons("DialogBoxYesButton", "Yes", false, true, callbackYes);
+            modal.addButtons("DialogBoxNoButton", "No", true, true, callbackNo);
         } else {
-            modal.addButtons("DialogBoxOkButton", "Ok", true, true, callback);
+            modal.addButtons("DialogBoxOkButton", "Ok", true, true, callbackYes);
         }
         modal.render();
         $('#' + type + 'DialogModal' + id).modal();// display the dialog box

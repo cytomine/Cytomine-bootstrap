@@ -198,6 +198,7 @@ var GeneralConfigPanel = Backbone.View.extend({
         var self = this;
 
         // initialization
+        $(self.el).find("#project-edit-name").val(self.model.get('name'));
         $(self.el).find("input#blindMode-checkbox-config").attr('checked', self.model.get('blindMode'));
         $(self.el).find("input#hideUsersLayers-checkbox-config").attr('checked', self.model.get('hideUsersLayers'));
         $(self.el).find("input#hideAdminsLayers-checkbox-config").attr('checked', self.model.get('hideAdminsLayers'));
@@ -225,13 +226,27 @@ var GeneralConfigPanel = Backbone.View.extend({
             }
         });
 
-        // if the project name change !
-        /*$(self.el).find("input#project-name").change(function () {
-            console.log("change");
-            if (self.projectMultiSelectAlreadyLoad) {
-                self.createRetrievalProjectSelect();
+        $(self.el).find("#saveProjectNameButton").click(function (event) {
+            DialogModal.initDialogModal(null, null, 'RefreshProject', 'It is recommended to refresh the project to consider this modification. Do you want to reload this project ?', 'CONFIRMATIONWARNING',
+                function(){
+                    self.update(true);
+                    window.app.controllers.dashboard.refresh();
+                },
+                function(){
+                    self.update(true);
+                    $(self.el).find("#saveProjectNameButton").prop('disabled', true);
+                });
+        });
+
+        $(self.el).find("#project-edit-name").on("input", function (x) {
+            if($(x.target).val() == self.model.get('name')) {
+                $(self.el).find("#saveProjectNameButton").prop('disabled', true);
+            } else {
+                $(self.el).find("#saveProjectNameButton").prop('disabled', false);
             }
-        });*/
+        });
+
+
 
         $(self.el).on('click', '.general-checkbox-config', function() {
             self.update();
@@ -268,8 +283,6 @@ var GeneralConfigPanel = Backbone.View.extend({
             }
         });
 
-        // try to change dynamically the name
-        //$(self.el).find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + $('#login-form-edit-project').find("#project-edit-name").val() + '</option>');
         $(self.el).find("#retrievalproject").append('<option value="' + self.model.id + '" selected="selected">' + self.model.get('name') + '</option>');
 
         $(self.el).find("#retrievalproject").multiselectNext().bind("multiselectChange", function(evt, ui) {
@@ -285,7 +298,7 @@ var GeneralConfigPanel = Backbone.View.extend({
         $(self.el).find(".ui-button-icon-only .ui-icon").css("margin-top", "-8px");
         $(self.el).find("div.uix-multiselect").css("background-color", "#DDDDDD");
     },
-    update: function() {
+    update: function(changeName) {
         var self = this;
 
         var project = self.model;
@@ -302,10 +315,13 @@ var GeneralConfigPanel = Backbone.View.extend({
             self.projectRetrieval = [];
         }
 
+        var name;
+        // name is important, to change name, it MUST have the boolean at true. We don't update name "by accident"
+        name = changeName ? $(self.el).find("#project-edit-name").val() : self.model.get('name');
 
-        project.set({retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: self.projectRetrieval,
+        project.set({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: self.projectRetrieval,
             blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers});
-        project.save({retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: self.projectRetrieval,
+        project.save({name: name, retrievalDisable: retrievalDisable, retrievalAllOntology: retrievalProjectAll, retrievalProjects: self.projectRetrieval,
             blindMode:blindMode,isReadOnly:isReadOnly,hideUsersLayers:hideUsersLayers,hideAdminsLayers:hideAdminsLayers}, {
             success: function (model, response) {
                 console.log("1. Project edited!");
