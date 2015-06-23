@@ -78,17 +78,20 @@ var DashboardController = Backbone.Router.extend({
         // we wait than an image is loaded before loading the next.
         var counter = 0;
         var callback = function () {
-
-            counter++;
             if(counter < $(openImageTabs).length) {
                 var image = $(openImageTabs)[counter];
                 window.app.controllers.browse.browse(project, image, undefined, undefined, callback);
             } else if(counter == openImageTabs.length) {
                 window.location = current;
+                if(counter == 0){
+                    //force reload when no open images
+                    location.reload();
+                }
             }
+            counter++;
         };
-        window.app.controllers.browse.browse(project, $(openImageTabs)[0], undefined, undefined, callback);
 
+        callback();
         // If openImageTabs is empty, currentProject is still -1
         window.app.status.currentProject = project;
     },
