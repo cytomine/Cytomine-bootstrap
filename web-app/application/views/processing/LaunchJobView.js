@@ -70,10 +70,6 @@ var LaunchJobView = Backbone.View.extend({
                 }
                 self.templates = collection;
                 self.loadChoice();
-
-                $("#previewJobBtn").on("click", function (evt) {
-                    self.createJobFromParam(self.previewJob);
-                });
             }
         });
     },
