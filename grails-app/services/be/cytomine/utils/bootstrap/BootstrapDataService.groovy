@@ -91,10 +91,10 @@ class BootstrapDataService {
 
         SecUser superAdmin = SecUser.findByUsername("superadmin")
         if(!grailsApplication.config.grails.superAdminPrivateKey) {
-            throw new IllegalArgumentException("superadminPrivateKey must be set!")
+            throw new IllegalArgumentException("superAdminPrivateKey must be set!")
         }
         if(!grailsApplication.config.grails.superAdminPublicKey) {
-            throw new IllegalArgumentException("superadminPublicKey must be set!")
+            throw new IllegalArgumentException("superAdminPublicKey must be set!")
         }
         superAdmin.setPrivateKey((String) grailsApplication.config.grails.superAdminPrivateKey)
         superAdmin.setPublicKey((String) grailsApplication.config.grails.superAdminPublicKey)

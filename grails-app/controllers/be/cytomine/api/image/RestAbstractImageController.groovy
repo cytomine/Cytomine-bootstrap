@@ -126,7 +126,7 @@ class RestAbstractImageController extends RestController {
      * Delete a new image
      * TODO:: how to manage security here?
      */
-    @RestApiMethod(description="Delete an image sequence)")
+    @RestApiMethod(description="Delete an image instance)")
     @RestApiParams(params=[
         @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The image sequence id")
     ])
