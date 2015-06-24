@@ -3,6 +3,21 @@
 /etc/init.d/ssh start
 
 
+### transform the ims urls for the config file ###
+arr=$(echo $IMS_URLS | tr "," "\n")
+arr=$(echo $arr | tr "[" "\n")
+arr=$(echo $arr | tr "]" "\n")
+
+if [ $IS_LOCAL = true ]; then
+	echo "#Custom adding" >> /etc/hosts
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
+	for x in $arr
+	do
+	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
+	done
+fi
+
+
 # Cytomine-python-client
 cd /root/ && mkdir Cytomine/
 cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-client.git
@@ -49,20 +64,6 @@ PATH="$PATH:$GROOVY_HOME/bin:/root/anaconda/bin"
 
 groovy -cp 'lib/jars/Cytomine-client-java.jar' injectSoftware.groovy http://$CORE_URL $RABBITMQ_PUB_KEY $RABBITMQ_PRIV_KEY
 
-
-### transform the ims urls for the config file ###
-arr=$(echo $IMS_URLS | tr "," "\n")
-arr=$(echo $arr | tr "[" "\n")
-arr=$(echo $arr | tr "]" "\n")
-
-if [ $IS_LOCAL = true ]; then
-	echo "#Custom adding" >> /etc/hosts
-	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
-	for x in $arr
-	do
-	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
-	done
-fi
 
 touch /tmp/test.out
 
