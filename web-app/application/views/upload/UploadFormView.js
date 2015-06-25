@@ -659,7 +659,7 @@ var UploadFormView = Backbone.View.extend({
         return "?";//this.statusLabels.deployedLabel;
     },
     appendUploadedFile: function (model, target) {
-        var rowTpl = "<tr><td><%= originalFilename %></td><td><%= created %></td><td><%= size %></td><td><%= contentType %></td><td><%= status %></td></tr>";
+        var rowTpl = "<tr><td><%= image %></td><td><%= originalFilename %></td><td><%= created %></td><td><%= size %></td><td><%= contentType %></td><td><%= status %></td></tr>";
         model.set({status: this.getStatusLabel(model)});
         target.append(_.template(rowTpl, model.toJSON()));
     },
@@ -729,16 +729,14 @@ var UploadFormView = Backbone.View.extend({
              { "sWidth": "20%", "aTargets": [ 4 ] }
              ],*/
             "aoColumns": [
-                { "mDataProp": "originalFilename", fnRender : function (o, originalFilename) {
+                { "mDataProp": "image", fnRender : function (o, image) {
                     if (o.aData.image == null) {
-                        return originalFilename;
+                        return 'No preview available';
                     }
-                    return '<span onmouseout="$(\'#thumbcommand'+o.aData.image+'\').hide();" '+
-                        'onMouseOver="$(\'#thumbcommand'+o.aData.image+'\').css(\'display\',\'block\');"> '+
-                        '<img class="thumbcommand" id="thumbcommand'+o.aData.image+'" '+
-                        'src="'+o.aData.thumbURL +'" style="display:none;position: absolute;z-index: 100;max-width: 300px;margin-top: 20px;margin-left: 30px;"/>'+originalFilename+'</span>';
-
+                    return '<img class="thumbcommand" id="thumbcommand'+o.aData.image+'" '+
+                        'src="'+o.aData.thumbURL +'" style="max-width: 128px;max-height: 45px;"/>';
                 }},
+                { "mDataProp": "originalFilename"},
                 { "mDataProp": "created", fnRender : function (o, created) {
                     return window.app.convertLongToDate(created);
                 }},
@@ -755,7 +753,7 @@ var UploadFormView = Backbone.View.extend({
                     "fnRender": function (o, val) {
                         return self.getStatusLabel(o.aData);
                     },
-                    "aTargets": [ 4 ]
+                    "aTargets": [ 5 ]
                 },
                 {
                     "fnRender": function (o, val) {
@@ -767,7 +765,7 @@ var UploadFormView = Backbone.View.extend({
                         }
                         return "<button class='btn btn-info btn-xs deleteimage' id='deleteimage-"+o.aData.id+"-"+o.aData.image+"' disabled>Delete</button>";
                     },
-                    "aTargets": [ 5 ]
+                    "aTargets": [ 6 ]
                 }
             ],
             "aaSorting": [[ 1, "desc" ]],
