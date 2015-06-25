@@ -24,8 +24,10 @@ import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
+import be.cytomine.image.server.ImageProperty
 import be.cytomine.image.server.Storage
 import be.cytomine.image.server.StorageAbstractImage
+import be.cytomine.image.server.StorageAbstractImageService
 import be.cytomine.project.Project
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
@@ -54,6 +56,7 @@ class AbstractImageService extends ModelService {
     def attachedFileService
     def currentRoleServiceProxy
     def securityACLService
+    def storageAbstractImageService
 
     def currentDomain() {
         return AbstractImage
@@ -181,7 +184,11 @@ class AbstractImageService extends ModelService {
      */
     def isUsed(def id) {
         AbstractImage domain = AbstractImage.read(id);
-        return ImageInstance.findAllByBaseImageAndDeletedIsNull(domain).size() != 0
+        boolean usedByImageInstance = ImageInstance.findAllByBaseImageAndDeletedIsNull(domain).size() != 0
+        boolean usedByNestedFile = NestedFile.findAllByAbstractImage(domain).size() != 0
+        boolean usedByImageProperty = ImageProperty.findAllByImage(domain).size() != 0
+
+        return usedByImageInstance || usedByNestedFile ||  usedByImageProperty
     }
 
     /**
@@ -209,8 +216,7 @@ class AbstractImageService extends ModelService {
         //We don't delete domain, we juste change a flag
         securityACLService.checkAtLeastOne(domain,WRITE)
 
-        def images = ImageInstance.findAllByBaseImageAndDeletedIsNull(domain);
-        if (images.size() == 0) {
+        if (!isUsed(domain.id)) {
             def jsonNewData = JSON.parse(domain.encodeAsJSON())
             jsonNewData.deleted = new Date().time
             SecUser currentUser = cytomineService.getCurrentUser()
@@ -436,7 +442,7 @@ class AbstractImageService extends ModelService {
     def deleteDependentStorageAbstractImage(AbstractImage ai, Transaction transaction,Task task=null) {
         //TODO: implement this with command (storage abst image should be create)
         StorageAbstractImage.findAllByAbstractImage(ai).each {
-            it.delete(flush: true)
+            storageAbstractImageService.delete(it,transaction,null)
         }
     }
 
