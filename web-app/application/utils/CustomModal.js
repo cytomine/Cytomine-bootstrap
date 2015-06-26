@@ -103,7 +103,7 @@ var CustomModal = Backbone.View.extend({
 
 var DescriptionModal = {
 
-    initDescriptionModal: function (container, idDescription, domainIdent, domainClassName, text, callback) {
+    initDescriptionModal: function (container, idDescription, domainIdent, domainClassName, text, editable, button, callback) {
         var width = Math.round($(window).width() * 0.58);
         var height = Math.round($(window).height() * 0.58);
         var self = this;
@@ -112,14 +112,14 @@ var DescriptionModal = {
         text = text.split('/api/attachedfile').join(window.location.protocol + "//" + window.location.host + '/api/attachedfile');
 
         var message = "Add the keyword STOP_PREVIEW where you want to delimit the preview text.";
-        if (!self.editable) {
+        if (!editable) {
             text = text.replace("STOP_PREVIEW", "");
             message = "";
         }
 
         var callBackAfterCreation = function() {
 
-            $("iframe").contents().find("body").attr('contenteditable', self.editable);
+            $("iframe").contents().find("body").attr('contenteditable', editable);
             if (window.app.status.currentProjectModel.isReadOnly(window.app.models.projectAdmin)) {
                 $("#saveDescription" + idDescription).hide();
             }
@@ -156,8 +156,8 @@ var DescriptionModal = {
         }
 
         var modal = new CustomModal({
-            idModal: "descriptionModal" + domainIdent,
-            button: container.find("a.description"),
+            idModal: "descriptionModal"+ (editable ? "" : "Preview")+ domainIdent,
+            button: button,
             header: "Description",
             body: message + '<div id="description' + domainIdent + '"><textarea style="width: ' + (width - 100) + 'px;height: ' + (height - 100) + 'px;" id="descriptionArea' + domainIdent + '" placeholder="Enter text ...">' + text + '</textarea></div>',
             wide: true,
@@ -169,7 +169,7 @@ var DescriptionModal = {
 //                </textarea>
 
 
-                if (self.editable) {
+                if (editable) {
                     CKEDITOR.replace("descriptionArea" + domainIdent,
                         {    filebrowserBrowseUrl: '/test/browse.php',
                             filebrowserImageBrowseUrl: '/browser/browse.php?type=Images',
@@ -215,20 +215,22 @@ var DescriptionModal = {
                 {success: function (description, response) {
                     container.empty();
                     var text = description.get('data');
-                    var textButton = "See full text";
-                    if(self.editable) {
-                        textButton = textButton + " and edit";
-                    }
                     text = text.split('STOP_PREVIEW')[0];
                     text = text.split('\\"').join('"');
                     if (text.replace(/<[^>]*>/g, "").length > maxPreviewCharNumber) {
                         text = text.substr(0, maxPreviewCharNumber) + "...";
                     }
                     container.append(text);
-                    container.append(' <a href="#descriptionModal' + domainIdent + '" role="button" class="description" data-toggle="modal">' + textButton + '</a>');
+                    container.append(' <a href="#descriptionModalPreview' + domainIdent + '" role="button" class="descriptionPreview" data-toggle="modal"> See full text </a>');
+                    if(self.editable) {
+                        container.append('or <a href="#descriptionModal' + domainIdent + '" role="button" class="description" data-toggle="modal"> edit </a>');
+                    }
                     callbackGet();
 
-                    self.initDescriptionModal(container, description.id, domainIdent, domainClassName, description.get('data'), callbackUpdate);
+                    self.initDescriptionModal(container, description.id, domainIdent, domainClassName, description.get('data'), false, container.find("a.descriptionPreview"), callbackUpdate);
+                    if(self.editable) {
+                        self.initDescriptionModal(container, description.id, domainIdent, domainClassName, description.get('data'), self.editable, container.find("a.description"), callbackUpdate);
+                    }
                 }, error: function (model, response) {
                     container.empty();
                     var html = "No description yet";
@@ -236,7 +238,9 @@ var DescriptionModal = {
                         html = ' <a href="#descriptionModal' + domainIdent + '" role="button" class="description" data-toggle="modal">Add description</a>';
                     }
                     container.append(html);
-                    self.initDescriptionModal(container, null, domainIdent, domainClassName, "", callbackUpdate);
+                    if(self.editable) {
+                        self.initDescriptionModal(container, null, domainIdent, domainClassName, "", self.editable, container.find("a.description"), callbackUpdate);
+                    }
 
                 }});
 
