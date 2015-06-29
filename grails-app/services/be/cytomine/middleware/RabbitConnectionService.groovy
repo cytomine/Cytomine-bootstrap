@@ -91,7 +91,7 @@ class RabbitConnectionService {
 
         Channel channel = (Channel)servletContext[channelName]
 
-        if(channel == null) {
+        if(channel == null || !channel.isOpen()) {
             channel = setRabbitChannel(queueName, mbs)
         }
 
