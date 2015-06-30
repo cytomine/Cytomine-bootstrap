@@ -131,8 +131,8 @@ var DescriptionModal = {
                 $(this).toggleClass('glyphicon-resize-small');
                 //as we don't set width and height for the description modal, it takes these parameters of this parents. So I change these.
                 $('.modal-dialog').css({
-                    'width': '80%',
-                    'max-width': '80%'
+                    'width': '90%',
+                    'max-width': '90%'
                 });
                 $('iframe').parent().css({
                     'height': function( index, value ) {
