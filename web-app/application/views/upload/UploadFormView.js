@@ -728,35 +728,51 @@ var UploadFormView = Backbone.View.extend({
              { "sWidth": "20%", "aTargets": [ 3 ] },
              { "sWidth": "20%", "aTargets": [ 4 ] }
              ],*/
-            "aoColumns": [
-                { "mDataProp": "image", fnRender : function (o, image) {
-                    if (o.aData.image == null) {
-                        return 'No preview available';
-                    }
-                    return '<img class="thumbcommand" id="thumbcommand'+o.aData.image+'" '+
-                        'src="'+o.aData.thumbURL +'" style="max-width: 128px;max-height: 45px;"/>';
-                }},
-                { "mDataProp": "originalFilename"},
-                { "mDataProp": "created", fnRender : function (o, created) {
-                    return window.app.convertLongToDate(created);
-                }},
-                { "mDataProp": "size", fnRender : function (o, size) {
-                    var mbSize = (size / (1024 * 1024)).toFixed(2);
-                    return mbSize + "Mo";
-                } },
-                { "mDataProp": "contentType" },
-                { "mDataProp": "uploaded" },
-                { "mData": null }
-            ],
             "aoColumnDefs": [
                 {
+                    "mData": "thumbURL",
+                    fnRender : function (o, thumb) {
+                        if (o.aData.image == null) {
+                            return 'No preview available';
+                        }
+                        return '<img class="thumbcommand" id="thumbcommand'+o.aData.image+'" '+
+                            'src="'+thumb +'" style="max-width: 128px;max-height: 45px;"/>';
+                    },
+                    "aTargets": [ 0 ]
+                },
+                {
+                    "mData": "originalFilename",
+                    "aTargets": [ 1 ]
+                },
+                {
+                    "mData": "created",
+                    fnRender : function (o, created) {
+                        return window.app.convertLongToDate(created);
+                    },
+                    "aTargets": [ 2 ]
+                },
+                {
+                    "mData": "size",
+                    fnRender : function (o, size) {
+                        var mbSize = (size / (1024 * 1024)).toFixed(2);
+                        return mbSize + "Mo";
+                    },
+                    "aTargets": [ 3 ]
+                },
+                {
+                    "mData": "contentType",
+                    "aTargets": [ 4 ]
+                },
+                {
+                    "mData": "uploaded",
                     "fnRender": function (o, val) {
                         return self.getStatusLabel(o.aData);
                     },
                     "aTargets": [ 5 ]
                 },
                 {
-                    "fnRender": function (o, val) {
+                    "mData": "image",
+                    fnRender: function (o, image) {
                         if(o.aData.to_deploy || o.aData.error_format || o.aData.error_convert){
                             // we allow deletion of non deployed image after a security gap of 24h.
                             if(($.now() - o.aData.updated)/3600000 > 24) {
