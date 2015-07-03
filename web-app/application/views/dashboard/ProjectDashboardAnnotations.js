@@ -600,6 +600,14 @@ var ProjectDashboardAnnotations = Backbone.View.extend({
             onExpand: function () {
             },
             children: window.app.models.projectUserJobTree.toJSON(),
+            onPostInit: function (isReloading, isError) {
+                this.visit(function (node) {
+                    if (!node.data.isFolder && $.isNumeric(node.data.date)) {
+                        node.data.title = window.app.convertLongToDate(node.data.date);
+                    }
+                });
+
+            },
             onSelect: function (select, node) {
                 //if(!self.activeEvent) return;
                 if (node.isSelected()) {
