@@ -26,6 +26,9 @@ var Component = Backbone.View.extend({
         if (options.activate != undefined) {
             this.activate = options.activate;
         }
+        if (options.onActivate != undefined) {
+            this.onActivate = options.onActivate;
+        }
         if (options.deactivate != undefined) {
             this.deactivate = options.deactivate;
         }
@@ -39,59 +42,17 @@ var Component = Backbone.View.extend({
     render: function () {
         var self = this;
         $(this.el).append(this.template);
-
-        //Init menu
-        /*$("#project-button").tooltip({
-         placement : "bottom"
-         });
-         $("#ontology-button").tooltip({
-         placement : "bottom"
-         });
-         $("#upload-button").tooltip({
-         placement : "bottom"
-         });
-         $("#explorer-button").tooltip({
-         placement : "bottom"
-         });
-         $("#activity-button").tooltip({
-         placement : "bottom"
-         });*/
         return this;
     },
-    /**
-     * Add a button to the menu which activates the components when clicked
-
-     addToMenu: function () {
-     var self = this;
-     require(["text!application/templates/MenuButton.tpl.html"], function(tpl) {
-     var button = _.template(tpl,{
-     id: self.buttonAttr.elButton,
-     route: self.buttonAttr.route,
-     text: self.buttonAttr.buttonText,
-     datacontent : self.buttonAttr.dataContent,
-     datatitle : self.buttonAttr.dataTitle
-     }, true);
-     $(self.buttonAttr.buttonWrapper).append(button);
-     //$("#" + self.buttonAttr.elButton).button({
-     // icons: {
-     // primary: self.buttonAttr.icon
-     // }
-     // });
-     if (self.buttonAttr.click) {
-     $("#" + self.buttonAttr.elButton).click(self.buttonAttr.click);
-     }
-     $("#" + self.buttonAttr.elButton).popover({
-     placement : "below"
-     });
-
-     });
-     }, */
     /**
      * Show the DOM element and disable the button associated to the component
      **/
     activate: function () {
         $("#" + this.divId).show();
         $("#" + this.buttonAttr.elButton).parent().addClass("active");
+        if (this.onActivate != undefined) {
+            this.onActivate();
+        }
     },
 
     /**
