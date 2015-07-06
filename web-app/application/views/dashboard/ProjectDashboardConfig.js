@@ -226,6 +226,10 @@ var GeneralConfigPanel = Backbone.View.extend({
             }
         });
 
+        $(self.el).find("#reloadProjectButton").click(function (event) {
+            window.app.controllers.dashboard.refresh();
+        });
+
         $(self.el).find("#saveProjectNameButton").click(function (event) {
             DialogModal.initDialogModal(null, null, 'RefreshProject', 'It is recommended to refresh the project to consider this modification. Do you want to reload this project ?', 'CONFIRMATIONWARNING',
                 function(){
