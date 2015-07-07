@@ -333,7 +333,7 @@ var ApplicationView = Backbone.View.extend({
                     buttonAttr: {
                         elButton: "project-button"
                     },
-                    divId: "project",
+                    divId: "project"/*,
                     activate: function () {
                         if(self.currentComponent != this && self.currentComponent != self.components.explorer && window.app.status.currentProject != null){
                             // go to explore component
@@ -345,7 +345,7 @@ var ApplicationView = Backbone.View.extend({
                             $("#" + this.divId).show();
                             $("#" + this.buttonAttr.elButton).parent().addClass("active");
                         }
-                    }
+                    }*/
                 });
                 self.components.ontology = new Component({
                     el: "#content",
@@ -362,7 +362,7 @@ var ApplicationView = Backbone.View.extend({
                     el: "#content",
                     template: _.template(explorerTpl, {}),
                     buttonAttr: {
-                        elButton: "project-button"
+                        elButton: "explorer-button"//"project-button"
                     },
                     divId: "explorer",
                     activate: function () {
