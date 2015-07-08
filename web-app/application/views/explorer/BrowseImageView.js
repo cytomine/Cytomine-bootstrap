@@ -53,7 +53,6 @@ BrowseImageView = Backbone.View.extend({
             this.review = options.review;
         }
         this.divPrefixId = "tabs-" + this.getMode();
-        this.addToTab = true;
         if (options.addToTab != undefined) {
             this.addToTab = options.addToTab;
         }
@@ -92,26 +91,7 @@ BrowseImageView = Backbone.View.extend({
             "</li>";
 
         if (this.addToTab) {
-            var tabs = $('#explorer-tab');
-            var isAdmin = window.app.status.currentProjectModel.isAdmin(window.app.models.projectAdmin);
-            var name = this.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'), isAdmin);
-            if(isAdmin) {
-                if(window.app.status.currentProjectModel.get('blindMode')) {
-                    name = name[1] +" | "+ name[0];
-                } else {
-                    name = name[0];
-                }
-            }
-
-            tabs.append(_.template(tabTpl, {
-                    idProject: window.app.status.currentProject, idImage: this.model.get('id'),
-                    filename: name,
-                    shortOriginalFilename: shortOriginalFilename
-                })
-            );
-            var dropdownTpl = '<li class="dropdown"><a href="#" id="' + self.divPrefixId + '-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab" id="closeTab' + self.divPrefixId + '-<%= idImage %>"><i class="icon-remove" /> Close</a></li></ul></li>';
-            tabs.append(_.template(dropdownTpl, { idProject: window.app.status.currentProject, idImage: this.model.get('id'), filename: this.model.get('filename')}));
-
+            this.addToTab();
         }
 
         if (this.review && this.model.get('reviewed')) {
@@ -457,9 +437,10 @@ BrowseImageView = Backbone.View.extend({
             }
 
 
-        } else { //            if (_.isFunction(self.initCallback)) {
-//                self.initCallback.call();
-//            }
+        } else {
+            if (_.isFunction(self.initCallback)) {
+                self.initCallback.call();
+            }
         }
     },
     /**

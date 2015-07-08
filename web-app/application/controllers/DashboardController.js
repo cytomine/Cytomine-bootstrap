@@ -79,8 +79,12 @@ var DashboardController = Backbone.Router.extend({
         var counter = 0;
         var callback = function () {
             if(counter < $(openImageTabs).length) {
-                var image = $(openImageTabs)[counter];
-                window.app.controllers.browse.browse(project, image, undefined, undefined, callback);
+                var image = $(openImageTabs)[counter].image;
+                if(openImageTabs[counter].review) {
+                    window.app.controllers.browse.review(project, image, undefined, callback);
+                } else {
+                    window.app.controllers.browse.browse(project, image, undefined, undefined, callback);
+                }
             } else if(counter == openImageTabs.length) {
                 window.location = current;
                 if(counter == 0){

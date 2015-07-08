@@ -275,6 +275,7 @@ var ImageReviewAction = Backbone.View.extend({
                             success: function (model, response) {
                                 window.app.view.message("Image", response.message, "success");
                                 self.container.refresh();
+                                window.app.controllers.browse.refreshImage(model.id);
                             }
                         });
                     });

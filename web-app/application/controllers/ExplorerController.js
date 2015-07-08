@@ -76,8 +76,8 @@ var ExplorerController = Backbone.Router.extend({
             self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions,merge,callback);
             self.showView();
 
-            if($.inArray(idImage, window.app.status.currentImages)<0) {
-                window.app.status.currentImages.push(idImage);
+            if($.inArray(idImage, $.map(window.app.status.currentImages, function(a) {return a.image}))<0) {
+                window.app.status.currentImages.push({image: idImage, review:false});
             }
         };
 
@@ -89,13 +89,20 @@ var ExplorerController = Backbone.Router.extend({
         createBrowseImageViewTab();
     },
 
+    refreshImage: function (idImage){
+        var self = this;
+        if($.inArray(idImage, $.map(window.app.status.currentImages, function(a) {return a.id}))>=0) {
+            self.tabs.refreshBrowseImageView(idImage);
+        }
+    },
+
     reviewSimple: function (idProject, idImage) {
         this.review(idProject,idImage,undefined);
     },
     reviewChannel: function (idProject, idImage) {
         this.review(idProject,idImage,"channel");
     },
-    review: function (idProject, idImage,merge) {
+    review: function (idProject, idImage,merge, callback) {
         $(window).scrollTop(0);
 
         var self = this;
@@ -107,12 +114,16 @@ var ExplorerController = Backbone.Router.extend({
         var createReviewImageViewTab = function () {
             console.log("createReviewImageViewTab");
             var reviewImageViewInitOptions = {};
-            self.tabs.addReviewImageView(idImage, reviewImageViewInitOptions,merge);
+            self.tabs.addReviewImageView(idImage, reviewImageViewInitOptions,merge,callback);
             //$('#tabs-image-'+idImage).tab('show');
             // window.app.view.showComponent(self.tabs.container);
             console.log("showView");
 
             self.showView();
+
+            if($.inArray(idImage, $.map(window.app.status.currentImages, function(a) {return a.image}))<0) {
+                window.app.status.currentImages.push({image: idImage, review:true});
+            }
         };
 
         if (window.app.status.currentProject == undefined || window.app.status.currentProject != idProject) {//direct access -> create dashboard

@@ -91,6 +91,9 @@ var ExplorerTabs = Backbone.View.extend({
         var tabs = $("#explorer-tab-content");
         console.log("BrowseImageView");
         var view = new BrowseImageView({
+            addToTab: function () {
+                self.addImageTab(view, false)
+            },
             initCallback: function () {
                 view.show(options);
                 if(callback) {
@@ -109,12 +112,6 @@ var ExplorerTabs = Backbone.View.extend({
                 view.position = {x:model.x,y:model.y,zoom:model.zoom}
             }
 
-            $("#closeTabtabs-image-" + idImage).on("click", function (e) {
-                var idImage = $(this).attr("data-image");
-                self.removeTab(idImage, "image");
-                self.showLastTab(idImage);
-                window.app.status.currentImages.splice($.inArray(idImage));
-            });
             self.showTab(idImage, "image");
         }
 
@@ -129,7 +126,88 @@ var ExplorerTabs = Backbone.View.extend({
             });
         }
     },
-    addReviewImageView: function (idImage, options,merge) {
+    /**
+     *  Reload a Tab containing a BrowseImageView instance
+     *  @idImage : the id of the Image we want to display
+     */
+    refreshBrowseImageView: function (idImage) {
+        var self = this;
+        var tab = this.getImageView(idImage);
+        var isReview = tab == null;
+        tab = (tab == null ? this.getImageView("review-"+idImage): tab);
+        if (tab != null) {
+            //refresh only opened tab
+
+            var tabs = $("#explorer-tab-content");
+            var view;
+            for(var i=0;i<self.tabs.length;i++) {
+                if(self.tabs[i].idImage == idImage || (isReview && self.tabs[i].idImage == "review-"+idImage)){
+                    view = self.tabs[i].view;
+                    break;
+                }
+            }
+
+            new ImageInstanceModel({id: idImage}).fetch({
+                success: function (model, response) {
+                    view = new BrowseImageView({
+                        addToTab: function () {
+                            self.refreshTab(view.model.id, view.divPrefixId, model);
+                        },
+                        el: tabs,
+                        review: view.review,
+                        merge : view.merge
+                    });
+                    view.model = model;
+                    view.render();
+                    if(view.model.position) {
+                        view.position = {x:model.x,y:model.y,zoom:model.zoom}
+                    }
+
+                }
+            });
+        }
+    },
+    addImageTab: function (browseImageView, review) {
+
+        var self = this;
+
+        var tabs = $('#explorer-tab');
+
+        var tabTpl =
+            "<li>" +
+            "<a style='float: left;' id='" + browseImageView.divPrefixId + "-<%= idImage %>' rel='tooltip' title='<%= filename %>' href='#" + browseImageView.divPrefixId + "-<%= idProject %>-<%= idImage %>-' data-toggle='tab'>" +
+            "<i class='icon-search'></i><span> <%= shortOriginalFilename %> </span>" +
+            "</a>" +
+            "</li>";
+
+        var tmpName = browseImageView.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
+
+        tabs.append(_.template(tabTpl, {
+                idProject: window.app.status.currentProject, idImage: browseImageView.model.get('id'),
+                filename: tmpName,
+                shortOriginalFilename: tmpName
+            })
+        );
+        self.refreshTab(browseImageView.model.get('id'), browseImageView.divPrefixId, browseImageView.model)
+        var dropdownTpl = '<li class="dropdown"><a href="#" id="' + browseImageView.divPrefixId + '-<%= idImage %>-dropdown" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a><ul class="dropdown-menu"><li><a href="#tabs-dashboard-<%= idProject %>" data-toggle="tab" data-image="<%= idImage %>" class="closeTab" id="closeTab' + browseImageView.divPrefixId + '-<%= idImage %>"><i class="icon-remove" /> Close</a></li></ul></li>';
+        tabs.append(_.template(dropdownTpl, { idProject: window.app.status.currentProject, idImage: browseImageView.model.get('id'), filename: browseImageView.model.get('filename')}));
+
+        if(review) {
+            $("#closeTabtabs-review-" + browseImageView.model.id).on("click", function (e) {
+                var idImage = $(this).attr("data-image");
+                self.removeTab(idImage, "review");
+                self.showLastTab(idImage);
+            });
+        } else {
+            $("#closeTabtabs-image-" + browseImageView.model.id).on("click", function (e) {
+                var idImage = $(this).attr("data-image");
+                self.removeTab(idImage, "image");
+                self.showLastTab(idImage);
+                window.app.status.currentImages.splice($.inArray(idImage));
+            });
+        }
+    },
+    addReviewImageView: function (idImage, options,merge, callback) {
         var self = this;
         var tab = this.getImageView("review-" + idImage);
         if (tab != null) {
@@ -146,8 +224,14 @@ var ExplorerTabs = Backbone.View.extend({
 
         var tabs = $("#explorer-tab-content");
         var view = new BrowseImageView({
+            addToTab: function () {
+                self.addImageTab(view, true)
+            },
             initCallback: function () {
                 view.show(options)
+                if(callback) {
+                    callback();
+                }
             },
             el: tabs,
             review: true,
@@ -158,11 +242,6 @@ var ExplorerTabs = Backbone.View.extend({
             view.model = model.image;
             console.log(view.model);
             view.render();
-            $("#closeTabtabs-review-" + idImage).on("click", function (e) {
-                var idImage = $(this).attr("data-image");
-                self.removeTab(idImage, "review");
-                self.showLastTab(idImage);
-            });
             self.showTab(idImage, "review");
 
             if (model.image.get("inReview") == false && model.image.get("reviewed") == false) {
@@ -223,6 +302,32 @@ var ExplorerTabs = Backbone.View.extend({
         $('#tabs-' + prefix + '-' + idImage + "-dropdown").parent().remove();
         //Remove content
         $('#tabs-' + prefix + '-' + window.app.status.currentProject + '-' + idImage + '-').remove();
+    },
+    /**
+     * Reload a Tab
+     * @param index the identifier of the Tab
+     */
+    refreshTab: function (idImage, divPrefixId, model) {
+
+        var isAdmin = window.app.status.currentProjectModel.isAdmin(window.app.models.projectAdmin);
+        var name = model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'), isAdmin);
+        if(isAdmin) {
+            if(window.app.status.currentProjectModel.get('blindMode')) {
+                name = name[1] +" | "+ name[0];
+            } else {
+                name = name[0];
+            }
+        }
+
+        var shortOriginalFilename = model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
+        if (shortOriginalFilename.length > 25) {
+            shortOriginalFilename = shortOriginalFilename.substring(0, 23) + "...";
+        }
+
+        //Change title
+        $('#' + divPrefixId + '-' + idImage).attr("title", name);
+        //Change content
+        $('#' + divPrefixId + '-' + idImage+' span').html(shortOriginalFilename);
     },
     /**
      * Show a tab
