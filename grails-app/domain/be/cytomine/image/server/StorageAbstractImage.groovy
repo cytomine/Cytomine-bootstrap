@@ -41,6 +41,7 @@ class StorageAbstractImage extends CytomineDomain {
         domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
         domain.storage = JSONUtils.getJSONAttrDomain(json, 'storage', new Storage(), true)
         domain.abstractImage = JSONUtils.getJSONAttrDomain(json, 'abstractimage', new AbstractImage(), true)
+        domain.deleted = JSONUtils.getJSONAttrDate(json, "deleted")
         return domain
     }
 

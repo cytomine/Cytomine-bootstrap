@@ -42,7 +42,6 @@ var ProjectPanelView = Backbone.View.extend({
     },
     events: {
         "click .seeSlide": "showSlidesPanel",
-        "click .editProject": "editProject",
         "click .deleteProject": "deleteProject",
         "click .infoProject": "infoProject"
     },
@@ -148,12 +147,6 @@ var ProjectPanelView = Backbone.View.extend({
     infoProject: function () {
         var self = this;
         new ProjectInfoDialog({el: "#dialogs", model: self.model}).render();
-    },
-    editProject: function () {
-
-        var self = this;
-        $('#editproject').remove();
-        self.editProjectDialog = new EditProjectDialog({projectPanel: self, el: self.el, model: self.model}).render();
     },
     deleteProject: function () {
         var self = this;

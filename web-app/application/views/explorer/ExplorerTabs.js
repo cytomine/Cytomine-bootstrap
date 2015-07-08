@@ -73,7 +73,7 @@ var ExplorerTabs = Backbone.View.extend({
      *  @idImage : the id of the Image we want to display
      *  @options : some init options we want to pass the the BrowseImageView Instance
      */
-    addBrowseImageView: function (idImage, options,merge) {
+    addBrowseImageView: function (idImage, options,merge, callback) {
         var self = this;
         var tab = this.getImageView(idImage);
         if (tab != null) {
@@ -92,7 +92,10 @@ var ExplorerTabs = Backbone.View.extend({
         console.log("BrowseImageView");
         var view = new BrowseImageView({
             initCallback: function () {
-                view.show(options)
+                view.show(options);
+                if(callback) {
+                    callback();
+                }
             },
             el: tabs,
             merge : merge
@@ -110,6 +113,7 @@ var ExplorerTabs = Backbone.View.extend({
                 var idImage = $(this).attr("data-image");
                 self.removeTab(idImage, "image");
                 self.showLastTab(idImage);
+                window.app.status.currentImages.splice($.inArray(idImage));
             });
             self.showTab(idImage, "image");
         }

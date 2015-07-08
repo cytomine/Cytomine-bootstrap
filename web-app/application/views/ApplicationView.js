@@ -176,8 +176,6 @@ var ApplicationView = Backbone.View.extend({
         });
 
         $("#a-info-cytomine").click(function () {
-            console.log("test");
-
             var body;
             require([
                     "text!application/templates/about/About.tpl.html"
@@ -280,7 +278,10 @@ var ApplicationView = Backbone.View.extend({
                     buttonAttr: {
                         elButton: "userdashboard-button"
                     },
-                    divId: "userdashboard"
+                    divId: "userdashboard",
+                    onActivate: function () {
+                        self.currentComponent = this;
+                    }
                 });
                 self.components.search = new Component({
                     el: "#content",
@@ -288,7 +289,10 @@ var ApplicationView = Backbone.View.extend({
                     buttonAttr: {
                         elButton: "search-button"
                     },
-                    divId: "search"
+                    divId: "search",
+                    onActivate: function () {
+                        self.currentComponent = this;
+                    }
                 });
                 self.components.activity = new Component({
                     el: "#content",
@@ -296,7 +300,10 @@ var ApplicationView = Backbone.View.extend({
                     buttonAttr: {
                         elButton: "activity-button"
                     },
-                    divId: "activity"
+                    divId: "activity",
+                    onActivate: function () {
+                        self.currentComponent = this;
+                    }
                 });
                 self.components.upload = new Component({
                     el: "#content",
@@ -304,7 +311,10 @@ var ApplicationView = Backbone.View.extend({
                     buttonAttr: {
                         elButton: "upload-button"
                     },
-                    divId: "upload"
+                    divId: "upload",
+                    onActivate: function () {
+                        self.currentComponent = this;
+                    }
                 });
                 self.components.account = new Component({
                     el: "#content",
@@ -312,7 +322,10 @@ var ApplicationView = Backbone.View.extend({
                     buttonAttr: {
                         elButton: "upload-button"
                     },
-                    divId: "account"
+                    divId: "account",
+                    onActivate: function () {
+                        self.currentComponent = this;
+                    }
                 });
                 self.components.project = new Component({
                     el: "#content",
@@ -320,7 +333,19 @@ var ApplicationView = Backbone.View.extend({
                     buttonAttr: {
                         elButton: "project-button"
                     },
-                    divId: "project"
+                    divId: "project"/*,
+                    activate: function () {
+                        if(self.currentComponent != this && self.currentComponent != self.components.explorer && window.app.status.currentProject != null){
+                            // go to explore component
+                            window.location="#explorer"
+                        } else {
+                            // if we are already in project panel, explore panel or if currentProject is null, go to project panel
+                            self.currentComponent = self.components.project;
+
+                            $("#" + this.divId).show();
+                            $("#" + this.buttonAttr.elButton).parent().addClass("active");
+                        }
+                    }*/
                 });
                 self.components.ontology = new Component({
                     el: "#content",
@@ -328,13 +353,16 @@ var ApplicationView = Backbone.View.extend({
                     buttonAttr: {
                         elButton: "ontology-button"
                     },
-                    divId: "ontology"
+                    divId: "ontology",
+                    onActivate: function () {
+                        self.currentComponent = this;
+                    }
                 });
                 self.components.explorer = new Component({
                     el: "#content",
                     template: _.template(explorerTpl, {}),
                     buttonAttr: {
-                        elButton: "explorer-button"
+                        elButton: "explorer-button"//"project-button"
                     },
                     divId: "explorer",
                     activate: function () {
@@ -344,38 +372,11 @@ var ApplicationView = Backbone.View.extend({
                         else {
                             $("#explorer > .noProject").hide();
                         }
+                        self.currentComponent = this;
                         $("#" + this.divId).show();
                         $("#" + this.buttonAttr.elButton).parent().addClass("active");
                     }
                 });
-                /*self.components.admin = new Component({
-                 el : "#content",
-                 template : _.template(adminTpl, {}),
-                 buttonAttr : {
-                 elButton : "admin-button",
-                 buttonText : "Admin",
-                 buttonWrapper : "#menu",
-                 icon : "ui-icon-wrench",
-                 route : "#admin/users"
-                 },
-                 divId : "admin"
-                 });*/
-
-                /*self.components.logout = new Component({
-                 el : "#content",
-                 template : "",
-                 buttonAttr : {
-                 elButton : "user-button",
-                 buttonText :,
-                 buttonWrapper : "#menu",
-                 dataContent : "we have to delete this popover for logout",
-                 dataTitle : "huhu",
-                 icon : "ui-icon-power",
-                 route : "#",
-                 click :
-                 },
-                 divId : "logout"
-                 });*/
             });
     },
     /**

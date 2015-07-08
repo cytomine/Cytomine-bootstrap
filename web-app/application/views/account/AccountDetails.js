@@ -109,7 +109,8 @@ var AccountDetails = Backbone.View.extend({
             contentType:"application/json; charset=utf-8",
             dataType:"json",
             success: function(response) {
-                if(response.result == true) {
+                self.isInLDAP = response.result;
+                if(self.isInLDAP == true) {
                     $("#password_panel").remove();
                 }
             }
@@ -171,20 +172,12 @@ var AccountDetails = Backbone.View.extend({
         });
         $("#edit_password_form").submit(function (e) {
             if (self.validatePassword()) {
-
                 // check if not ldap
-                $.ajax({
-                    type: "GET",
-                    url: "/api/ldap/"+this.model.toJSON().username+"/user.json",
-                    contentType:"application/json; charset=utf-8",
-                    dataType:"json",
-                    success: function(response) {
-
-                        if(response.result == false) {
-                            self.editPassword();
-                        }
-                    }
-                });
+                if(!self.isInLDAP) {
+                    self.editPassword();
+                } else {
+                    window.app.view.message("Change Password", "You have been identified by LDAP. You can't change your password.", "error");
+                }
             } else {
                 window.app.view.message("Change Password", "Confirmation password is not equal to the new password!", "error");
             }

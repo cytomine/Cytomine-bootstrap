@@ -659,7 +659,7 @@ var UploadFormView = Backbone.View.extend({
         return "?";//this.statusLabels.deployedLabel;
     },
     appendUploadedFile: function (model, target) {
-        var rowTpl = "<tr><td><%= originalFilename %></td><td><%= created %></td><td><%= size %></td><td><%= contentType %></td><td><%= status %></td></tr>";
+        var rowTpl = "<tr><td><%= image %></td><td><%= originalFilename %></td><td><%= created %></td><td><%= size %></td><td><%= contentType %></td><td><%= status %></td></tr>";
         model.set({status: this.getStatusLabel(model)});
         target.append(_.template(rowTpl, model.toJSON()));
     },
@@ -728,40 +728,60 @@ var UploadFormView = Backbone.View.extend({
              { "sWidth": "20%", "aTargets": [ 3 ] },
              { "sWidth": "20%", "aTargets": [ 4 ] }
              ],*/
-            "aoColumns": [
-                { "mDataProp": "originalFilename", fnRender : function (o, originalFilename) {
-                    if (o.aData.image == null) {
-                        return originalFilename;
-                    }
-                    return '<span onmouseout="$(\'#thumbcommand'+o.aData.image+'\').hide();" '+
-                        'onMouseOver="$(\'#thumbcommand'+o.aData.image+'\').css(\'display\',\'block\');"> '+
-                        '<img class="thumbcommand" id="thumbcommand'+o.aData.image+'" '+
-                        'src="'+o.aData.thumbURL +'" style="display:none;position: absolute;z-index: 100;max-width: 300px;margin-top: 20px;margin-left: 30px;"/>'+originalFilename+'</span>';
-
-                }},
-                { "mDataProp": "created", fnRender : function (o, created) {
-                    return window.app.convertLongToDate(created);
-                }},
-                { "mDataProp": "size", fnRender : function (o, size) {
-                    var mbSize = (size / (1024 * 1024)).toFixed(2);
-                    return mbSize + "Mo";
-                } },
-                { "mDataProp": "contentType" },
-                { "mDataProp": "uploaded" },
-                { "mData": null }
-            ],
             "aoColumnDefs": [
                 {
-                    "fnRender": function (o, val) {
-                        return self.getStatusLabel(o.aData);
+                    "mData": "thumbURL",
+                    fnRender : function (o, thumb) {
+                        if (o.aData.image == null) {
+                            return 'No preview available';
+                        }
+                        return '<img class="thumbcommand" id="thumbcommand'+o.aData.image+'" '+
+                            'src="'+thumb +'" style="max-width: 128px;max-height: 45px;"/>';
                     },
+                    "aTargets": [ 0 ]
+                },
+                {
+                    "mData": "originalFilename",
+                    "aTargets": [ 1 ]
+                },
+                {
+                    "mData": "created",
+                    fnRender : function (o, created) {
+                        return window.app.convertLongToDate(created);
+                    },
+                    "aTargets": [ 2 ]
+                },
+                {
+                    "mData": "size",
+                    fnRender : function (o, size) {
+                        var mbSize = (size / (1024 * 1024)).toFixed(2);
+                        return mbSize + "Mo";
+                    },
+                    "aTargets": [ 3 ]
+                },
+                {
+                    "mData": "contentType",
                     "aTargets": [ 4 ]
                 },
                 {
+                    "mData": "uploaded",
                     "fnRender": function (o, val) {
-                        return "<button class='btn btn-info btn-xs deleteimage' id='deleteimage"+o.aData.image+"' disabled>Delete</button>";
+                        return self.getStatusLabel(o.aData);
                     },
                     "aTargets": [ 5 ]
+                },
+                {
+                    "mData": "image",
+                    fnRender: function (o, image) {
+                        if(o.aData.to_deploy || o.aData.error_format || o.aData.error_convert){
+                            // we allow deletion of non deployed image after a security gap of 24h.
+                            if(($.now() - o.aData.updated)/3600000 > 24) {
+                                return "<button class='btn btn-info btn-xs deleteimage' id='deleteimage-"+o.aData.id+"-"+o.aData.image+"'>Delete</button>";
+                            }
+                        }
+                        return "<button class='btn btn-info btn-xs deleteimage' id='deleteimage-"+o.aData.id+"-"+o.aData.image+"' disabled>Delete</button>";
+                    },
+                    "aTargets": [ 6 ]
                 }
             ],
             "aaSorting": [[ 1, "desc" ]],
@@ -772,7 +792,7 @@ var UploadFormView = Backbone.View.extend({
 
                         $.get( "/api/abstractimage/unused.json", function( data ) {
                             for(var i = 0; i<data.collection.length;i++) {
-                                $("#deleteimage"+data.collection[i].id).prop("disabled",false);
+                                $('button[id^=deleteimage-][id$=-'+data.collection[i].id+']').prop("disabled",false);
                             }
                         });
                     }
@@ -787,39 +807,38 @@ var UploadFormView = Backbone.View.extend({
             self.uploadDataTables.fnReloadAjax();
         });
         $(document).on('click', ".deleteimage", function (e) {
-            var id = e.currentTarget.id;
-            id = id.replace("deleteimage", "");
+            var ids = e.currentTarget.id;
+            ids = ids.replace("deleteimage-", "").split("-");
+            var idUpload = ids[0];
+            var idImage = ids[1];
 
-             DialogModal.initDialogModal(null, id, 'AbstractImage', 'Do you want to delete this image ?', 'CONFIRMATIONWARNING', function(){
-                 var uploadFile = new UploadedFileModel({image: id});
+             DialogModal.initDialogModal(null, idUpload, 'UploadFile', 'Do you want to delete this image ?', 'CONFIRMATIONWARNING', function(){
+                 var deleteUploadFile = function() {
+                     new UploadedFileModel({id: idUpload}).destroy({
+                         success: function (model, response) {
+                             window.app.view.message("Uploaded file", "deleted", "success");
+                             self.uploadDataTables.fnReloadAjax();
+                         },
+                         error: function (model, response) {
+                             var json = $.parseJSON(response.responseText);
+                             window.app.view.message("Delete failed", json.errors, "error");
+                         }
+                     });
+                 };
 
-                 uploadFile.fetch({
-                     success: function (model, response) {
-
-                         var up = response.id;
-
-                         new ImageModel({id: id}).destroy({
-                             success: function(model, response){
-
-                                 new UploadedFileModel({id: up}).destroy({
-                                     success: function (model, response) {
-                                         window.app.view.message("Uploaded file", "deleted", "success");
-                                         self.uploadDataTables.fnReloadAjax();
-                                     },
-                                     error: function (model, response) {
-                                         var json = $.parseJSON(response.responseText);
-                                         window.app.view.message("Delete failed", json.errors, "error");
-                                     }
-                                 });
-
-                             },
-                             error: function(model, response){
-                                 var json = $.parseJSON(response.responseText);
-                                 window.app.view.message("Delete failed", json.errors, "error");
-                             }
-                         });
-                     }
-                 });
+                 if(idImage == null || idImage == 'null') {
+                     deleteUploadFile();
+                 } else {
+                     new ImageModel({id: idImage}).destroy({
+                         success: function(model, response){
+                             deleteUploadFile();
+                         },
+                         error: function(model, response){
+                             var json = $.parseJSON(response.responseText);
+                             window.app.view.message("Delete failed", json.errors, "error");
+                         }
+                     });
+                 }
              });
         });
     },

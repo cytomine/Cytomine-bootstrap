@@ -19,11 +19,15 @@ package be.cytomine.image.server
 import be.cytomine.command.AddCommand
 import be.cytomine.command.Command
 import be.cytomine.command.DeleteCommand
+import be.cytomine.command.EditCommand
 import be.cytomine.command.Transaction
+import be.cytomine.security.SecUser
 import be.cytomine.utils.ModelService
 import be.cytomine.utils.Task
+import grails.converters.JSON
 
 import static org.springframework.security.acls.domain.BasePermission.WRITE
+import static org.springframework.security.acls.domain.BasePermission.READ
 
 class StorageAbstractImageService extends ModelService {
 
@@ -40,10 +44,17 @@ class StorageAbstractImageService extends ModelService {
         executeCommand(c,null,json)
     }
 
-    def delete(StorageAbstractImage sai, Transaction transaction = null, Task task = null, boolean printMessage = true) {
-        securityACLService.check(sai.container(),WRITE)
-        Command c = new DeleteCommand(user: cytomineService.getCurrentUser(),transaction:transaction)
-        return executeCommand(c,sai,null)
+    def delete(StorageAbstractImage sai, Transaction transaction = null, Task task = null) {
+        //We don't delete domain, we juste change a flag
+        // TODO : current container is storage but only admin can modify it.
+        securityACLService.check(sai.container(),READ)
+
+        def jsonNewData = JSON.parse(sai.encodeAsJSON())
+        jsonNewData.deleted = new Date().time
+        SecUser currentUser = cytomineService.getCurrentUser()
+        Command c = new EditCommand(user: currentUser)
+        c.delete = true
+        return executeCommand(c,sai,jsonNewData)
     }
 
     def getStringParamsI18n(def domain) {

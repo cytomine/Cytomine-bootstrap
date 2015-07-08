@@ -38,7 +38,7 @@ var ProjectDashboardStats = Backbone.View.extend({
             var statsCollection = new StatsTermCollection({project: self.model.get('id')});
             statsCollection.fetch({
                 success: function (collection, response) {
-                    self.drawColumnChart(collection, response, "#projectColumnChart");
+                    self.drawColumnChart(collection, response, "#projectColumnChart", true);
                 }
             });
 
@@ -160,8 +160,9 @@ var ProjectDashboardStats = Backbone.View.extend({
             });
         }
     },
-    drawColumnChart: function (collection, response, el) {
+    drawColumnChart: function (collection, response, el, withColor) {
         $(el).html("<svg></svg>");
+        var colors = [];
         var chartData = [{
             key : "Number of annotations by terms",
             bar : true,
@@ -172,6 +173,7 @@ var ProjectDashboardStats = Backbone.View.extend({
                 label : stat.get("key"),
                 value : stat.get("value")
             });
+            colors.push(stat.get("color"));
         });
 
         if(BrowserSupport.isTooOld()) {
@@ -185,6 +187,9 @@ var ProjectDashboardStats = Backbone.View.extend({
                 .showValues(true);
 
 
+            if(withColor) {
+                chart.color(colors);
+            }
             chart.margin({bottom: 125});
             chart.xAxis.rotateLabels(-45);
 

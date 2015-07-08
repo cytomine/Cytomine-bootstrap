@@ -169,11 +169,13 @@ class CustomUITests {
         Project project = BasicInstanceBuilder.getProjectNotExist(true)
         User projectGuest = BasicInstanceBuilder.getGhest("testCustomUIProjectFlagGuest","password")
         User projectUser = BasicInstanceBuilder.getUser("testCustomUIProjectFlagUser","password")
-        User projectAdmin = BasicInstanceBuilder.getSuperAdmin("testCustomUIProjectFlagAdmin","password")
+        User projectAdmin = BasicInstanceBuilder.getUser("testCustomUIProjectFlagAdmin","password")
+        User superAdmin = BasicInstanceBuilder.getSuperAdmin("testCustomUIProjectFlagSuperAdmin","password")
 
         ProjectAPI.addUserProject(project.id,projectGuest.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         ProjectAPI.addUserProject(project.id,projectUser.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
         ProjectAPI.addAdminProject(project.id,projectAdmin.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
+        ProjectAPI.addUserProject(project.id,superAdmin.id,Infos.SUPERADMINLOGIN,Infos.SUPERADMINPASSWORD)
 
 
         Holders.getGrailsApplication().config.cytomine.customUI.project = [
@@ -186,6 +188,14 @@ class CustomUITests {
         //no config by now, check if default config is ok
         def json
         def result
+        result = UserAPI.retrieveCustomUI(project.id,superAdmin.username,"password")
+        assert 200==result.code
+        json = JSON.parse(result.data)
+        assert true == json["project-annotations-tab"]
+        assert true == json["project-properties-tab"]
+        assert true == json["project-jobs-tab"]
+        assert true == json["project-configuration-tab"]
+
         result = UserAPI.retrieveCustomUI(project.id,projectAdmin.username,"password")
         assert 200==result.code
         json = JSON.parse(result.data)
@@ -222,6 +232,14 @@ class CustomUITests {
 
         result = UserAPI.setCustomUIProject(project.id,(jsonConfig as JSON).toString(),Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200==result.code
+
+        result = UserAPI.retrieveCustomUI(project.id,superAdmin.username,"password")
+        assert 200==result.code
+        json = JSON.parse(result.data)
+        assert true == json["project-annotations-tab"]
+        assert true == json["project-properties-tab"]
+        assert true == json["project-jobs-tab"]
+        assert true == json["project-configuration-tab"]
 
         result = UserAPI.retrieveCustomUI(project.id,projectAdmin.username,"password")
         assert 200==result.code

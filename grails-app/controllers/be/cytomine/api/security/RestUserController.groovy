@@ -56,13 +56,15 @@ class RestUserController extends RestController {
     @RestApiMethod(description="Get all project users. Online flag may be set to get only online users", listing = true)
     @RestApiParams(params=[
         @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The project id"),
-        @RestApiParam(name="online", type="boolean", paramType = RestApiParamType.QUERY, description = "(Optional, default false) Get only online users for this project"),
+            @RestApiParam(name="online", type="boolean", paramType = RestApiParamType.QUERY, description = "(Optional, default false) Get only online users for this project"),
+            @RestApiParam(name="showJob", type="boolean", paramType = RestApiParamType.QUERY, description = "(Optional, default false) Also show the users job for this project"),
     ])
     def showByProject() {
         boolean online = params.boolean('online')
+        boolean showUserJob = params.boolean('showJob')
         Project project = projectService.read(params.long('id'))
         if (project && !online) {
-            responseSuccess(secUserService.listUsers(project))
+            responseSuccess(secUserService.listUsers(project, showUserJob))
         } else if (project && online) {
             def users = secUserService.getAllFriendsUsersOnline(cytomineService.currentUser, project)
             responseSuccess(users)

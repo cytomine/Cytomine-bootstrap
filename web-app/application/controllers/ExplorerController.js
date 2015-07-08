@@ -24,8 +24,7 @@ var ExplorerController = Backbone.Router.extend({
         "tabs-imagemergechannel-:idProject-:idImage-": "browseChannel",
         "tabs-image-:idProject-:idImage-:idAnnotation": "browse",
         "tabs-review-:idProject-:idImage-": "reviewSimple",
-        "tabs-reviewmergechannel-:idProject-:idImage-": "reviewChannel",
-        "close": "close"
+        "tabs-reviewmergechannel-:idProject-:idImage-": "reviewChannel"
     },
 
     initialize: function () {
@@ -36,6 +35,7 @@ var ExplorerController = Backbone.Router.extend({
             el: $("#explorer > .browser"),
             container: window.app.view.components.explorer
         }).render();
+        window.app.status.currentImages = [];
     },
 
     browseAnnotation: function (idAnnotation) {
@@ -55,7 +55,7 @@ var ExplorerController = Backbone.Router.extend({
     browseChannel: function (idProject, idImage, idAnnotation) {
         this.browse(idProject,idImage,idAnnotation,"channel");
     },
-    browse: function (idProject, idImage, idAnnotation,merge) {
+    browse: function (idProject, idImage, idAnnotation,merge, callback) {
         $(window).scrollTop(0);
         /*
          if (window.app.secondaryWindow) {
@@ -73,8 +73,12 @@ var ExplorerController = Backbone.Router.extend({
                 browseImageViewInitOptions.goToAnnotation = {value: idAnnotation};
             }
             console.log("addBrowseImageView");
-            self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions,merge);
+            self.tabs.addBrowseImageView(idImage, browseImageViewInitOptions,merge,callback);
             self.showView();
+
+            if($.inArray(idImage, window.app.status.currentImages)<0) {
+                window.app.status.currentImages.push(idImage);
+            }
         };
 
         if (window.app.status.currentProject == undefined || window.app.status.currentProject != idProject) {//direct access -> create dashboard

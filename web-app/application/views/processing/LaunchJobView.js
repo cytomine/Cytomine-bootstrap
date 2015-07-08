@@ -70,10 +70,6 @@ var LaunchJobView = Backbone.View.extend({
                 }
                 self.templates = collection;
                 self.loadChoice();
-
-                $("#previewJobBtn").on("click", function (evt) {
-                    self.createJobFromParam(self.previewJob);
-                });
             }
         });
     },
@@ -131,9 +127,6 @@ var LaunchJobView = Backbone.View.extend({
 
         var defaultValue = param.defaultParamValue;
 
-
-        console.log(self.jobTemplate);
-
         if(self.jobTemplate!=null) {
 
             var paramsTemplate = self.jobTemplate.get("jobParameters");
@@ -174,8 +167,6 @@ var LaunchJobView = Backbone.View.extend({
         if (param.type == "String") {
             return new InputTextView({param: param, container:this});
         }
-        console.log("##########################");
-        console.log(param);
         if (param.type == "Number" || (param.type == "Domain" && !param.uri)) {
             return new InputNumberView({param: param, container:this});
         }
@@ -623,7 +614,10 @@ var InputListDomainView = Backbone.View.extend({
         self.collection = new SoftwareParameterModelCollection({uri: window.app.replaceVariable(self.param.uri), sortAttribut: self.param.uriSortAttribut});
 
         //Check if collection data are still loaded in "currentCollection" (cache objet)
-        if (window.app.getFromCache(window.app.replaceVariable(self.param.uri)) == undefined) {
+        var currentCollection = window.app.getFromCache(window.app.replaceVariable(self.param.uri));
+        // if the currentCollection is empty or is a job, we will not use the cache.
+        var toReload = currentCollection == undefined || currentCollection.length == 0 || currentCollection.uri.indexOf("/api/job") >=0;
+        if (toReload) {
             if (self.collection == undefined || (self.collection.length > 0 && self.collection.at(0).id == undefined)) {
                 self.trElem.find("td#" + self.param.id).append('<div class="alert alert-info" style="margin-left : 10px;margin-right: 10px;"><i class="icon-refresh" /> Loading...</div>');
                 if (self.param.required) {

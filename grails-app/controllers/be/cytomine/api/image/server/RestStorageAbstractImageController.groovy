@@ -1,5 +1,7 @@
 package be.cytomine.api.image.server
 
+import be.cytomine.Exception.CytomineException
+
 /*
 * Copyright (c) 2009-2015. Authors: see NOTICE file.
 *
@@ -17,6 +19,8 @@ package be.cytomine.api.image.server
 */
 
 import be.cytomine.api.RestController
+import be.cytomine.utils.Task
+import grails.converters.JSON
 import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
@@ -27,6 +31,7 @@ import org.restapidoc.pojo.RestApiParamType
 class RestStorageAbstractImageController extends RestController {
 
     def storageAbstractImageService
+    def taskService
 
     /**
      * Add a new storage to an abstract image
@@ -44,6 +49,16 @@ class RestStorageAbstractImageController extends RestController {
         @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH,description = "The abstractimage-storage id")
     ])
     def delete() {
-        delete(storageAbstractImageService,[id : params.id], null)
+        try {
+            Task task = taskService.read(params.getLong("task"))
+            log.info "task ${task} is find for id = ${params.getLong("task")}"
+            def domain = storageAbstractImageService.retrieve(JSON.parse("{id : $params.id}"))
+            def result = storageAbstractImageService.delete(domain,transactionService.start(),task)
+            //delete container in retrieval
+            responseResult(result)
+        } catch (CytomineException e) {
+            log.error(e)
+            response([success: false, errors: e.msg], e.code)
+        }
     }
 }

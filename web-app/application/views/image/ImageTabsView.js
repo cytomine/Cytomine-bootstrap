@@ -174,6 +174,7 @@ var ImageTabsView = Backbone.View.extend({
                     action.configureAction();
                 });
 
+                $(".dropdown-menu").css("left", "-140px");
 
                 self.images = [];
             },

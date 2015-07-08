@@ -19,6 +19,9 @@ resized automatically on paste.
  3. Enable the plugin by using the extraPlugins configuration setting.
 	Example: CKEDITOR.config.extraPlugins = "imageresize";
 
+ 4. Config:
+	CKEDITOR.config.imageResize.maxWidth = 800;
+	CKEDITOR.config.imageResize.maxHeight = 800;
 
 ## Documentation
 

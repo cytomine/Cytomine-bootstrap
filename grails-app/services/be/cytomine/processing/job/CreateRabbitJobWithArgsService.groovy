@@ -74,7 +74,7 @@ class CreateRabbitJobWithArgsService extends AbstractJobService{
                 def ids = ((String) jobParam.value).split(",")
                 def paths = []
                 ids.each {
-                    Job previousJob = Job.read(ids)
+                    Job previousJob = Job.read(it)
                     paths << previousJob.software.name+"/"+previousJob.id
                 }
                 paths =  paths.join(",")

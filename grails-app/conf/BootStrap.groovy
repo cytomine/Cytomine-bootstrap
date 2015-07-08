@@ -15,22 +15,14 @@
 */
 
 
-import be.cytomine.image.UploadedFile
 import be.cytomine.integration.NotifyAuroraUploadJob
-import be.cytomine.middleware.AmqpQueue
-import be.cytomine.middleware.MessageBrokerServer
-import be.cytomine.ontology.Relation
-import be.cytomine.ontology.RelationTerm
-import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
-import be.cytomine.security.SecUserSecRole
 import be.cytomine.test.Infos
 import be.cytomine.utils.Version
 import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.util.Environment
 import grails.util.Holders
-import org.apache.commons.lang.RandomStringUtils
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 
 import java.lang.management.ManagementFactory
@@ -61,9 +53,6 @@ class BootStrap {
     def dataSource
     def sessionFactory
 
-    def amqpQueueService
-    def amqpQueueConfigService
-    def rabbitConnectionService
 
 
     def init = { servletContext ->
@@ -138,9 +127,6 @@ class BootStrap {
         log.info "init term service..."
         termService.initialize() //term service needs userservice and userservice needs termservice => init manualy at bootstrap
 
-        log.info "init amqp service..."
-        amqpQueueService.initialize()
-
         log.info "init retrieve errors hack..."
         retrieveErrorsService.initMethods()
 
@@ -177,20 +163,7 @@ class BootStrap {
         }
 
         // Initialize RabbitMQ server
-        log.info "init RabbitMQ connection..."
-        MessageBrokerServer mbs = bootstrapUtilsService.createMessageBrokerServer()
-        // Initialize default configurations for amqp queues
-        amqpQueueConfigService.initAmqpQueueConfigDefaultValues()
-        // Initialize RabbitMQ queue to communicate software added
-        if(!AmqpQueue.findByName("queueCommunication")) {
-            AmqpQueue queueCommunication = new AmqpQueue(name: "queueCommunication", host: mbs.host, exchange: "exchangeCommunication")
-            queueCommunication.save(failOnError: true, flush: true)
-            amqpQueueService.createAmqpQueueDefault(queueCommunication)
-        }
-        //Inserting a MessageBrokerServer for testing purpose
-        if (Environment.getCurrent() == Environment.TEST) {
-            rabbitConnectionService.getRabbitConnection(mbs)
-        }
+        bootstrapUtilsService.initRabbitMq()
 
         log.info "create multiple IS and Retrieval..."
         bootstrapUtilsService.createMultipleIS()

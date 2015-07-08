@@ -23,12 +23,16 @@ import be.cytomine.image.ImageInstance
 import be.cytomine.image.Mime
 import be.cytomine.image.UploadedFile
 import be.cytomine.image.server.*
+import be.cytomine.middleware.AmqpQueue
 import be.cytomine.middleware.MessageBrokerServer
 import be.cytomine.ontology.Property
 import be.cytomine.ontology.Relation
 import be.cytomine.ontology.RelationTerm
+import be.cytomine.processing.Software
 import be.cytomine.security.*
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.util.Environment
+import groovy.json.JsonBuilder
 
 /**
  * Cytomine @ GIGA-ULG
@@ -43,6 +47,9 @@ class BootstrapUtilsService {
     def propertyInstanceMap = org.codehaus.groovy.grails.plugins.DomainClassGrailsPlugin.PROPERTY_INSTANCE_MAP
     def grailsApplication
     def dataSource
+    def amqpQueueService
+    def amqpQueueConfigService
+    def rabbitConnectionService
 
     public def createUsers(def usersSamples) {
 
@@ -524,6 +531,53 @@ class BootstrapUtilsService {
                 log.info "Create upload ${(index/notok.size())*100}"
                 cleanUpGorm()
             }
+        }
+    }
+
+    void initRabbitMq() {
+        log.info "init amqp service..."
+        amqpQueueService.initialize()
+
+        log.info "init RabbitMQ connection..."
+        MessageBrokerServer mbs = createMessageBrokerServer()
+        // Initialize default configurations for amqp queues
+        amqpQueueConfigService.initAmqpQueueConfigDefaultValues()
+        // Initialize RabbitMQ queue to communicate software added
+
+        if(!AmqpQueue.findByName("queueCommunication")) {
+            AmqpQueue queueCommunication = new AmqpQueue(name: "queueCommunication", host: mbs.host, exchange: "exchangeCommunication")
+            queueCommunication.save(failOnError: true, flush: true)
+            amqpQueueService.createAmqpQueueDefault(queueCommunication)
+        }
+        else if(!amqpQueueService.checkRabbitQueueExists("queueCommunication",mbs)) {
+            AmqpQueue queueCommunication = amqpQueueService.read("queueCommunication")
+            amqpQueueService.createAmqpQueueDefault(queueCommunication)
+        }
+        Software.list().each {
+            String queueName = amqpQueueService.queuePrefixSoftware + ((it as Software).name).capitalize()
+            if(!amqpQueueService.checkAmqpQueueDomainExists(queueName)) {
+                String exchangeName = amqpQueueService.exchangePrefixSoftware + ((it as Software).name).capitalize()
+                String brokerServerURL = (MessageBrokerServer.findByName("MessageBrokerServer")).host
+                AmqpQueue aq = new AmqpQueue(name: queueName, host: brokerServerURL, exchange: exchangeName)
+                aq.save(failOnError: true)
+            }
+            if(!amqpQueueService.checkRabbitQueueExists(queueName,mbs)) {
+                AmqpQueue aq = amqpQueueService.read(queueName)
+
+                // Creates the queue on the rabbit server
+                amqpQueueService.createAmqpQueueDefault(aq)
+
+                // Notify the queueCommunication that a software has been added
+                def mapInfosQueue = [name: aq.name, host: aq.host, exchange: aq.exchange]
+                JsonBuilder builder = new JsonBuilder()
+                builder(mapInfosQueue)
+                amqpQueueService.publishMessage(AmqpQueue.findByName("queueCommunication"), builder.toString())
+            }
+        }
+
+        //Inserting a MessageBrokerServer for testing purpose
+        if (Environment.getCurrent() == Environment.TEST) {
+            rabbitConnectionService.getRabbitConnection(mbs)
         }
     }
 
