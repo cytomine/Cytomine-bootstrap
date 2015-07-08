@@ -281,7 +281,7 @@ class AbstractImageService extends ModelService {
             {"location": "${params.location}"}
         """
 
-        return [url:UrlApi.getMaskURL(id, parameters), post: post]
+        return [url:UrlApi.getCropURL(id, parameters), post: post]
     }
 
 

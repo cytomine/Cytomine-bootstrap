@@ -490,9 +490,9 @@ class RestImageInstanceController extends RestController {
         ImageInstance image = imageInstanceService.read(params.id)
         AbstractImage abstractImage = image.baseImage
         params.id = abstractImage.id
-        String url = abstractImageService.window(params, request.queryString,abstractImage.width,abstractImage.height)
+        def url = abstractImageService.window(params, request.queryString,abstractImage.width,abstractImage.height)
         log.info "response $url"
-        responseSuccess([url : url])
+        responseSuccess([url : url.url])
     }
 
 

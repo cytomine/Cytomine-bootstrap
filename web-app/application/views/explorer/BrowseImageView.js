@@ -1598,6 +1598,9 @@ BrowseImageView = Backbone.View.extend({
                     magnification:  magnification,
                     drawScaleBar : true
                 };
+                console.log(window_url);
+                console.log($.param(params));
+                console.log(window_url+"&"+ $.param(params));
                 window.open(window_url+"&"+ $.param(params));
             });
         });
