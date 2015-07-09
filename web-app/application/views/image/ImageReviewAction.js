@@ -120,7 +120,8 @@ var ImageReviewAction = Backbone.View.extend({
         //el.find("#image-properties-" + self.model.id).html(_.template(tplProperties, self.model.toJSON()));
         $(self.el).on('click',"a#moreinfo" + self.model.id,function () {
             $("#image-properties").remove();
-            if(!window.app.status.currentProjectModel.get('blindMode')) {
+            var isAdmin = window.app.status.currentProjectModel.isAdmin(window.app.models.projectAdmin);
+            if(!window.app.status.currentProjectModel.get('blindMode') || isAdmin) {
                 new ImagePropertiesView({model: self.model}).render();
             } else {
                 //this protection should be done in server too!

@@ -48,13 +48,18 @@ var ImagePropertiesView = Backbone.View.extend({
         var self = this;
 
         require(["text!application/templates/image/ImageProperty.tpl.html"], function (tpl) {
-            new ImagePropertyCollection({image: self.model.get("baseImage")}).fetch({
-                success: function (collection, response) {
-                    var target = $("#image-properties-content");
-                    target.empty();
-                    collection.sort();
-                    collection.each(function (model) {
-                        target.append(_.template(tpl, {key: model.get("key"), value: model.get("value")}));
+            var target = $("#image-properties-content");
+            target.empty();
+            self.model.fetch({
+                success: function (model, response) {
+                    target.append(_.template(tpl, {key: "original name", value: self.model.get('originalFilename')}));
+                    new ImagePropertyCollection({image: self.model.get("baseImage")}).fetch({
+                        success: function (collection, response) {
+                            collection.sort();
+                            collection.each(function (model) {
+                                target.append(_.template(tpl, {key: model.get("key"), value: model.get("value")}));
+                            });
+                        }
                     });
                 }
             });
