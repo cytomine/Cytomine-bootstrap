@@ -78,18 +78,6 @@ BrowseImageView = Backbone.View.extend({
         $(this.el).append(_.template(tpl, templateData));
         CustomUI.customizeUI(function() {CustomUI.hideOrShowComponents();});
 
-        var shortOriginalFilename = this.model.getVisibleName(window.app.status.currentProjectModel.get('blindMode'));
-        if (shortOriginalFilename.length > 25) {
-            shortOriginalFilename = shortOriginalFilename.substring(0, 23) + "...";
-        }
-
-        var tabTpl =
-            "<li>" +
-            "<a style='float: left;' id='" + self.divPrefixId + "-<%= idImage %>' rel='tooltip' title='<%= filename %>' href='#" + self.divPrefixId + "-<%= idProject %>-<%= idImage %>-' data-toggle='tab'>" +
-            "<i class='icon-search' /> <%= shortOriginalFilename %> " +
-            "</a>" +
-            "</li>";
-
         if (this.addToTab) {
             this.addToTab();
         }
