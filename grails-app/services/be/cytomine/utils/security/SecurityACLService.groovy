@@ -144,7 +144,7 @@ class SecurityACLService {
             boolean readOnly = !domain.container().canUpdateContent()
             boolean containerAdmin = domain.container().hasACLPermission(domain.container(),ADMINISTRATION)
             if(readOnly && !containerAdmin) {
-                throw new ForbiddenException("The project for this data is in readonly mode! You must be project admin to add, edit or delete this resource in a readonly project.")
+                throw new ForbiddenException("The project for this data is in readonly mode! You must be project manager to add, edit or delete this resource in a readonly project.")
             }
 
         } else {

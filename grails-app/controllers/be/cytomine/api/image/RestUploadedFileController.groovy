@@ -165,7 +165,7 @@ class RestUploadedFileController extends RestController {
         redirect(url: "http://localhost:9090/upload")
     }
 
-    @RestApiMethod(description="Create an image thanks to an uploaded file domain. THis add the image in the good storage and the project (if needed). This send too an email at the end to the uploader and the project admins.")
+    @RestApiMethod(description="Create an image thanks to an uploaded file domain. THis add the image in the good storage and the project (if needed). This send too an email at the end to the uploader and the project managers.")
     @RestApiParams(params=[
     @RestApiParam(name="uploadedFile", type="long", paramType = RestApiParamType.PATH,description = "The uploaded file id")
     ])

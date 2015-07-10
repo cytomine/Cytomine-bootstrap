@@ -395,7 +395,7 @@ class SecUserService extends ModelService {
      * Add a user in project user or admin list
      * @param user User to add in project
      * @param project Project that will be accessed by user
-     * @param admin Flaf if user will become a simple user or a project admin
+     * @param admin Flaf if user will become a simple user or a project manager
      * @return Response structure
      */
     def addUserToProject(SecUser user, Project project, boolean admin) {
@@ -427,7 +427,7 @@ class SecUserService extends ModelService {
      * Delete a user from a project user or admin list
      * @param user User to remove from project
      * @param project Project that will not longer be accessed by user
-     * @param admin Flaf if user will become a simple user or a project admin
+     * @param admin Flaf if user will become a simple user or a project manager
      * @return Response structure
      */
     def deleteUserFromProject(SecUser user, Project project, boolean admin) {

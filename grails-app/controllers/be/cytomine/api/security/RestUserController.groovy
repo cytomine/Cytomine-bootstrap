@@ -74,9 +74,9 @@ class RestUserController extends RestController {
     }
 
     /**
-     * Get all project admin
+     * Get all project managers
      */
-    @RestApiMethod(description="Get all project admin", listing = true)
+    @RestApiMethod(description="Get all project managers", listing = true)
     @RestApiParams(params=[
         @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The project id")
     ])
@@ -365,9 +365,9 @@ class RestUserController extends RestController {
     }
 
     /**
-     * Add user in project admin list
+     * Add user in project manager list
      */
-    @RestApiMethod(description="Add user in project admin list")
+    @RestApiMethod(description="Add user in project manager list")
     @RestApiParams(params=[
         @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The project id"),
         @RestApiParam(name="idUser", type="long", paramType = RestApiParamType.PATH, description = "The user id")
@@ -384,9 +384,9 @@ class RestUserController extends RestController {
     }
 
     /**
-     * Delete user from project admin list
+     * Delete user from project manager list
      */
-    @RestApiMethod(description="Delete user from project admin list")
+    @RestApiMethod(description="Delete user from project manager list")
     @RestApiParams(params=[
         @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The project id"),
         @RestApiParam(name="idUser", type="long", paramType = RestApiParamType.PATH, description = "The user id")

@@ -439,7 +439,7 @@ BrowseImageView = Backbone.View.extend({
     },
     getUserLayerCanEdit: function () {
         if (this.isCurrentUserProjectAdmin()) {
-            //project admin? can all user layer
+            //project manager? can all user layer
             return this.layers;
         } else {
             var l = [this.userLayer];
@@ -447,7 +447,7 @@ BrowseImageView = Backbone.View.extend({
             if(roiLayer) {
                 l.push(roiLayer);
             }
-            //not project admin? only its layer!+
+            //not project manager? only its layer!+
             return l;
         }
 

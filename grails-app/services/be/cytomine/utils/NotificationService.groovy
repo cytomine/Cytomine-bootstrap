@@ -44,7 +44,7 @@ class NotificationService {
             recipient = userJob.getUser()
         }
 
-        // send email to uploader + all project admin
+        // send email to uploader + all project manager
         def users = [recipient]
         projects.each {
             users.addAll(secUserService.listAdmins(it))

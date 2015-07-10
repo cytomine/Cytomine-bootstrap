@@ -97,7 +97,7 @@ var CustomUI = {
     ],
 
     roles:[
-        { "authority": "ADMIN_PROJECT","name": "project admin"},
+        { "authority": "ADMIN_PROJECT","name": "project manager"},
         { "authority": "USER_PROJECT", "name": "project user" },
         {"authority": "GUEST_PROJECT","name": "project guest user"}
     ]
