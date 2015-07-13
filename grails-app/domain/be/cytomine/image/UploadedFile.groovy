@@ -19,6 +19,7 @@ package be.cytomine.image
 import be.cytomine.CytomineDomain
 import be.cytomine.Exception.CytomineException
 import be.cytomine.api.UrlApi
+import be.cytomine.image.server.StorageAbstractImage
 import be.cytomine.security.SecUser
 import be.cytomine.security.User
 import be.cytomine.utils.JSONUtils
@@ -186,7 +187,7 @@ class UploadedFile extends CytomineDomain implements Serializable{
     }
 
     def getAbsolutePath() {
-        return [ this.path, this.filename].join(File.separator)
+        return [ StorageAbstractImage.findByAbstractImage(this.getAbstractImageObject()).storage.basePath, this.filename].join(File.separator)
     }
 
     def getAbstractImage() {
@@ -195,6 +196,17 @@ class UploadedFile extends CytomineDomain implements Serializable{
             if (parent?.image) return parent.image.id
             UploadedFile son = UploadedFile.findByParent(this)
             if (son?.image) return son.image.id
+            else return null
+        } catch(Exception e) {
+            return null
+        }
+    }
+    def getAbstractImageObject() {
+        try {
+            if (image) return image
+            if (parent?.image) return parent.image
+            UploadedFile son = UploadedFile.findByParent(this)
+            if (son?.image) return son.image
             else return null
         } catch(Exception e) {
             return null
