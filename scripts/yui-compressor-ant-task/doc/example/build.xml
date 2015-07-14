@@ -181,7 +181,6 @@
 <fileset dir="${src.dir}" includes="application/views/project/ProjectPanelView.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectAddDialog.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectCommandView.js"/>
-<fileset dir="${src.dir}" includes="application/views/project/ProjectEditDialog.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectSearchPanel.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectDescriptionDialog.js"/>
 <fileset dir="${src.dir}" includes="application/views/project/ProjectInfoDialog.js"/>

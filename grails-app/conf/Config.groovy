@@ -251,15 +251,19 @@ grails.plugin.springsecurity.fii.rejectPublicInvocations = false
    def flag = readFromConfigFile()
    if(flag) grails.config.flag = true
  */
-Properties props = new Properties()
-File propsFile = new File("${userHome}/.grails/cytomineconfig.groovy")
 
-if(propsFile.exists()) {
-    props.load(propsFile.newDataInputStream())
+File configFile = new File("${userHome}/.grails/cytomineconfig.groovy")
+
+boolean cas = false
+println "${configFile.path}="+configFile.exists()
+if(configFile.exists()) {
+    config = new ConfigSlurper().parse(configFile.text)
+    println config
+    cas = config.grails.plugin.springsecurity.cas.active
 }
 
-println "cas.active="+props.getProperty("grails.plugin.springsecurity.cas.active")
-if(props.getProperty("grails.plugin.springsecurity.cas.active").toString()=="true") {
+println "cas.active="+cas
+if(cas) {
     println("enable CAS")
     grails.plugin.springsecurity.cas.useSingleSignout = true
     grails.plugin.springsecurity.cas.active = true
