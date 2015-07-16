@@ -20,7 +20,7 @@
 
 cd ~
 #git clone https://github.com/cytomine/Cytomine-IRIS.git # doesn't work. Not yet OS.
-git clone https://cytominenmeth:cytomine_nmeth2015@github.com/cytomine/Cytomine-IRIS.git
+git clone https://cytominencomms:cytomine_ncomms2015@github.com/cytomine/Cytomine-IRIS.git
 
 mkdir /usr/share/tomcat7/.grails #(make directory for externalized config in the home of the user which will run the tomcat server)
 
