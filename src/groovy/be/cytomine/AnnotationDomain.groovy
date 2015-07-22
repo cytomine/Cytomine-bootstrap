@@ -36,6 +36,8 @@ import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
 import org.restapidoc.annotation.RestApiObjectFields
 
+import java.awt.Point
+
 /**
  * User: lrollus
  * Date: 18/10/12
@@ -332,6 +334,10 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
         if (params.alphaMask) {
             boundaries.alphaMask = true
             boundaries.location = location.toText()//location.toText()
+        }
+
+        if(location instanceof com.vividsolutions.jts.geom.Point) {
+            boundaries.point = true
         }
 
 
