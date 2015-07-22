@@ -30,6 +30,7 @@ import be.cytomine.utils.GisUtils
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
+import groovy.sql.Sql
 import groovy.util.logging.Log
 import org.restapidoc.annotation.RestApiObject
 import org.restapidoc.annotation.RestApiObjectField
@@ -49,6 +50,8 @@ import org.restapidoc.annotation.RestApiObjectFields
 @Log
 @RestApiObject(name = "generic annotation")
 abstract class AnnotationDomain extends CytomineDomain implements Serializable {
+
+    def dataSource
 
 
     def simplifyGeometryService
@@ -385,6 +388,7 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
 
 
     public void makeValid() {
+        String backupLocation = this.location.toText()
         Geometry geom = new WKTReader().read(this.location.toText())
         Geometry validGeom
         String type = geom.getGeometryType().toUpperCase()
@@ -397,12 +401,41 @@ abstract class AnnotationDomain extends CytomineDomain implements Serializable {
             this.wktLocation = validGeom.toText()
             geom = new WKTReader().read(this.location.toText())
             type = geom.getGeometryType().toUpperCase()
+
+            if(!geom.isValid() || geom.isEmpty()) {
+                //if not valid after buffer(0) or empty after buffer 0
+                //user_image already filter nested image
+                def sql = new Sql(dataSource)
+                log.info "Geometry is not valid, even after a buffer(0)!"
+                log.info "SELECT ST_AsText(ST_MakeValid(ST_AsText('"+backupLocation+"')))"
+                sql.eachRow("SELECT ST_AsText(ST_MakeValid(ST_AsText('"+backupLocation+"')))") {
+                    String text = it[0]
+                    geom = new WKTReader().read(text)
+                    type = geom.getGeometryType().toUpperCase()
+
+                    if(type.equals("GEOMETRYCOLLECTION")) {
+                        geom = geom.getGeometryN(0)
+                        type = geom.getGeometryType().toUpperCase()
+                    }
+
+                    this.location = geom
+                    this.wktLocation = geom.toText()
+                }
+                sql.close()
+            }
         }
+
+
+
+
         if (geom.isEmpty()) {
             log.info "Geometry is empty"
             //empty polygon,...
             throw new WrongArgumentException("${geom.toText()} is an empty geometry!")
         }
+
+
+
 
         //for geometrycollection, we may take first collection element
         if (type.equals("LINESTRING") || type.equals("MULTILINESTRING") || type.equals("GEOMETRYCOLLECTION")) {
