@@ -62,6 +62,13 @@ class BootstrapOldVersionService {
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
     }
 
+    void init20150728(){
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN port;")
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN ip;")
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN key_file;")
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN username;")
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN password;")
+    }
     void init20150604(){
         if(!SecUser.findByUsername("rabbitmq")) {
             bootstrapUtilsService.createUsers([[username : 'rabbitmq', firstname : 'rabbitmq', lastname : 'user', email : grailsApplication.config.grails.admin.email, group : [[name : "GIGA"]], password : RandomStringUtils.random(32,  (('A'..'Z') + ('0'..'0')).join().toCharArray()), color : "#FF0000", roles : ["ROLE_USER"]]])
