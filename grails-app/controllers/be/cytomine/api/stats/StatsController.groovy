@@ -223,6 +223,7 @@ class StatsController extends RestController {
             item.id = term.id
             item.key = term.name
             item.value = 0
+            item.color = term.color
             result.put(item.id, item)
         }
 

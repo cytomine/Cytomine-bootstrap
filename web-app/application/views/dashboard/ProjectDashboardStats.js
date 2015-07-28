@@ -56,7 +56,7 @@ var ProjectDashboardStats = Backbone.View.extend({
             });
             new StatsTermSlideCollection({project: self.model.get('id')}).fetch({
                 success: function (collection, response) {
-                    self.drawColumnChart(collection, response, "#termSlideAnnotationsChart");
+                    self.drawColumnChart(collection, response, "#termSlideAnnotationsChart", true);
                 }
             });
             new StatsUserSlideCollection({project: self.model.get('id')}).fetch({
