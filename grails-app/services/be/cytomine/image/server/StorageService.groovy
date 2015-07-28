@@ -124,11 +124,6 @@ class StorageService extends ModelService {
         Storage storage = new Storage(
                 name: "$user.username storage",
                 basePath: remotePath,
-                ip: "localhost",
-                username: "storage",
-                password: "bioinfo;3u54",
-                keyFile: null,
-                port: 22,
                 user: user
         )
 

@@ -66,6 +66,7 @@ class SecUserService extends ModelService {
     def currentRoleServiceProxy
     def securityACLService
     def projectDefaultLayerService
+    def storageService
 
     def currentDomain() {
         User
@@ -355,7 +356,11 @@ class SecUserService extends ModelService {
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
         securityACLService.checkUser(currentUser)
-        return executeCommand(new AddCommand(user: currentUser),null,json)
+        def result = executeCommand(new AddCommand(user: currentUser),null,json)
+        if(currentUser instanceof User) {
+            storageService.initUserStorage(currentUser)
+        }
+        return result
     }
 
     /**

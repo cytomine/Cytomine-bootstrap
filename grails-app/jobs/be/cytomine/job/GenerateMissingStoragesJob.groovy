@@ -37,7 +37,7 @@ class GenerateMissingStoragesJob {
     def concurrent = false
 
     static triggers = {
-        simple name: 'generateMissingStoragesJob', startDelay: 25000, repeatInterval: 15000
+        /*simple name: 'generateMissingStoragesJob', startDelay: 25000, repeatInterval: 15000*/
     }
 
     def execute() {
