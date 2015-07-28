@@ -356,11 +356,7 @@ class SecUserService extends ModelService {
     def add(def json) {
         SecUser currentUser = cytomineService.getCurrentUser()
         securityACLService.checkUser(currentUser)
-        def result = executeCommand(new AddCommand(user: currentUser),null,json)
-        if(currentUser instanceof User) {
-            storageService.initUserStorage(currentUser)
-        }
-        return result
+        return executeCommand(new AddCommand(user: currentUser),null,json)
     }
 
     /**
@@ -476,6 +472,9 @@ class SecUserService extends ModelService {
 
     def afterAdd(def domain, def response) {
         SecUserSecRole.create(domain,SecRole.findByAuthority("ROLE_USER"),true)
+        if(domain instanceof User) {
+            storageService.initUserStorage(domain)
+        }
     }
 
     def getStringParamsI18n(def domain) {
