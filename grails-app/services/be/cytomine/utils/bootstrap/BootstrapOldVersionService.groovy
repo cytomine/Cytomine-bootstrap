@@ -63,11 +63,11 @@ class BootstrapOldVersionService {
     }
 
     void init20150728(){
-        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN port;")
-        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN ip;")
-        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN key_file;")
-        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN username;")
-        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN password;")
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS port;")
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS ip;")
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS key_file;")
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS username;")
+        new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS password;")
     }
     void init20150604(){
         if(!SecUser.findByUsername("rabbitmq")) {
