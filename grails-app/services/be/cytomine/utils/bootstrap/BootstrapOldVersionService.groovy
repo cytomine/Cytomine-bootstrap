@@ -17,9 +17,11 @@ package be.cytomine.utils.bootstrap
 */
 
 import be.cytomine.image.UploadedFile
+import be.cytomine.image.server.Storage
 import be.cytomine.security.SecRole
 import be.cytomine.security.SecUser
 import be.cytomine.security.SecUserSecRole
+import be.cytomine.security.User
 import be.cytomine.utils.Version
 import groovy.sql.Sql
 import org.apache.commons.lang.RandomStringUtils
@@ -43,6 +45,7 @@ class BootstrapOldVersionService {
     def grailsApplication
     def bootstrapUtilsService
     def dataSource
+    def storageService
 
     void execChangeForOldVersion() {
         def methods = this.metaClass.methods*.name.sort().unique()
@@ -68,6 +71,14 @@ class BootstrapOldVersionService {
         new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS key_file;")
         new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS username;")
         new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS password;")
+
+        log.info "generate missing storage !"
+        for (user in User.findAll()) {
+            if (!Storage.findByUser(user)) {
+                log.info "generate missing storage for $user"
+                storageService.initUserStorage(user)
+            }
+        }
     }
     void init20150604(){
         if(!SecUser.findByUsername("rabbitmq")) {
