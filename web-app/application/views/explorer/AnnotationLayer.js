@@ -522,14 +522,13 @@ AnnotationLayer.prototype = {
             },
             'sketchcomplete': function (evt) {
                 if (self.triggerUpdateOnUnselect) {
-                    self.updateAnnotation(evt.feature);
+                    self.updateAnnotation(evt,map);
                 }
             },
             'featuremodified': function (evt) {
                 //prevent to update an annotation when it is unnecessary
                 if (self.triggerUpdateOnUnselect) {
-                    self.showPopup(map, evt);
-                    self.updateAnnotation(evt.feature);
+                    self.updateAnnotation(evt,map);
                 }
             },
             'onDelete': function (feature) {
@@ -833,14 +832,14 @@ AnnotationLayer.prototype = {
     },
 
     /*Modifiy annotation on database*/
-    updateAnnotation: function (feature) {
-        if (feature.attributes.idAnnotation == undefined) {
+    updateAnnotation: function (evt,map) {
+        if (evt.feature.attributes.idAnnotation == undefined) {
             return;
         }
         var self = this;
         var format = new OpenLayers.Format.WKT();
-        var geomwkt = format.write(feature);
-        new AnnotationModel({id: feature.attributes.idAnnotation}).fetch({
+        var geomwkt = format.write(evt.feature);
+        new AnnotationModel({id: evt.feature.attributes.idAnnotation}).fetch({
             success: function (model, response) {
 
                 model.save({location: geomwkt}, {
@@ -848,6 +847,7 @@ AnnotationLayer.prototype = {
                         var message = response.message;
                         var alertMessage = _.template("<p><%=   message %></p>", { message: message});
                         window.app.view.message("Annotation edited", alertMessage, "success");
+                        self.showPopup(map, evt);
                     },
                     error: function (model, response) {
                         var json = $.parseJSON(response.responseText);
