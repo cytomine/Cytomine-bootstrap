@@ -528,6 +528,7 @@ AnnotationLayer.prototype = {
             'featuremodified': function (evt) {
                 //prevent to update an annotation when it is unnecessary
                 if (self.triggerUpdateOnUnselect) {
+                    self.showPopup(map, evt);
                     self.updateAnnotation(evt.feature);
                 }
             },

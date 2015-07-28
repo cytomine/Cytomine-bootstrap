@@ -117,6 +117,7 @@ var AnnotationPopupPanel = SideBarPanel.extend({
         if (annotation.get("nbComments") == undefined) {
             annotation.set({"nbComments": 0});
         }
+        annotation.set({"smallCropURL": annotation.get("smallCropURL")+"&time="+Date.now()});
 
         var content = _.template(tpl, annotation.toJSON());
         var elem = $("#" + self.browseImageView.divId).find("#annotationDetailPanel" + self.browseImageView.model.id);
