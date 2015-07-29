@@ -236,40 +236,67 @@ docker run -m 8g -d -p 22 --name retrieval \
 cytomine/retrieval
 nb_docker=$((nb_docker+1))
 
-# create IRIS docker
-docker run -d -p 22 --name iris \
--v $IRIS_DB_PATH:/var/lib/tomcat7/db \
--e CORE_URL=$CORE_URL \
--e IMS_URLS=$IMS_URLS \
--e IS_LOCAL=$IS_LOCAL \
--e IRIS_URL=$IRIS_URL \
-cytomine/iris
-nb_docker=$((nb_docker+1))
+if [ $IRIS_ENABLED = true ]
+then
+	# create IRIS docker
+	docker run -d -p 22 --name iris \
+	-v $IRIS_DB_PATH:/var/lib/tomcat7/db \
+	-e CORE_URL=$CORE_URL \
+	-e IMS_URLS=$IMS_URLS \
+	-e IS_LOCAL=$IS_LOCAL \
+	-e IRIS_URL=$IRIS_URL \
+	cytomine/iris
+	nb_docker=$((nb_docker+1))
+fi
 
 CORE_ALIAS=core
 IMS_ALIAS=ims
 
 # create nginx docker
-docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS \
---volumes-from ims --link retrieval:retrieval \
---link iipOff:iip_officiel --link iipVent:iip_ventana \
---link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
---link iris:iris \
---name nginx \
--e CORE_URL=$CORE_URL \
--e CORE_ALIAS=$CORE_ALIAS \
--e IMS_URLS="$IMS_URLS" \
--e IMS_ALIAS=$IMS_ALIAS \
--e RETRIEVAL_URL=$RETRIEVAL_URL \
--e RETRIEVAL_ALIAS=retrieval \
--e IIP_OFF_URL=$IIP_OFF_URL \
--e IIP_VENT_URL=$IIP_VENT_URL \
--e IIP_CYTO_URL=$IIP_CYTO_URL \
--e IIP_JP2_URL=$IIP_JP2_URL \
--e UPLOAD_URL=$UPLOAD_URL \
--e IRIS_URL=$IRIS_URL \
-cytomine/nginx
+#if iris is not linked, nginx doesn't start. No other way for a condition. :/
+if [ $IRIS_ENABLED = true ]
+then
+	docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS \
+	--volumes-from ims --link retrieval:retrieval \
+	--link iipOff:iip_officiel --link iipVent:iip_ventana \
+	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
+	--link iris:iris \
+	--name nginx \
+	-e CORE_URL=$CORE_URL \
+	-e CORE_ALIAS=$CORE_ALIAS \
+	-e IMS_URLS="$IMS_URLS" \
+	-e IMS_ALIAS=$IMS_ALIAS \
+	-e RETRIEVAL_URL=$RETRIEVAL_URL \
+	-e RETRIEVAL_ALIAS=retrieval \
+	-e IIP_OFF_URL=$IIP_OFF_URL \
+	-e IIP_VENT_URL=$IIP_VENT_URL \
+	-e IIP_CYTO_URL=$IIP_CYTO_URL \
+	-e IIP_JP2_URL=$IIP_JP2_URL \
+	-e UPLOAD_URL=$UPLOAD_URL \
+	-e IRIS_URL=$IRIS_URL \
+	-e IRIS_ENABLED=$IRIS_ENABLED \
+	cytomine/nginx
+else
+	docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS \
+	--volumes-from ims --link retrieval:retrieval \
+	--link iipOff:iip_officiel --link iipVent:iip_ventana \
+	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
+	--name nginx \
+	-e CORE_URL=$CORE_URL \
+	-e CORE_ALIAS=$CORE_ALIAS \
+	-e IMS_URLS="$IMS_URLS" \
+	-e IMS_ALIAS=$IMS_ALIAS \
+	-e RETRIEVAL_URL=$RETRIEVAL_URL \
+	-e RETRIEVAL_ALIAS=retrieval \
+	-e IIP_OFF_URL=$IIP_OFF_URL \
+	-e IIP_VENT_URL=$IIP_VENT_URL \
+	-e IIP_CYTO_URL=$IIP_CYTO_URL \
+	-e IIP_JP2_URL=$IIP_JP2_URL \
+	-e UPLOAD_URL=$UPLOAD_URL \
+	cytomine/nginx
+fi
 nb_docker=$((nb_docker+1))
+
 
 # wait for the admin password is setted by the core
 OUTPUT_CORE_CYTOMINE=$(docker logs core)

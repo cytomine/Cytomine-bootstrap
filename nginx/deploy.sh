@@ -33,7 +33,6 @@ sed -i "s/IIP_JP2_URL/$IIP_JP2_URL/g" /tmp/nginx.conf.sample
 
 sed -i "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/nginx.conf.sample
 
-sed -i "s/IRIS_URL/$IRIS_URL/g" /tmp/nginx.conf.sample
 
 IMS_URLS_CONFIG=""
 ### transform the ims urls for the config file ###
@@ -55,6 +54,23 @@ do
 	sed -i "s/IMS_URLS_CONFIG/    } \\`echo -e '\n\r'` \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 done
 sed -i "s/IMS_URLS_CONFIG//g" /tmp/nginx.conf.sample
+
+	echo "boolean at $IRIS_ENABLED"
+if [ $IRIS_ENABLED = true ]
+then
+	sed -i "s/IRIS_CONFIG/   server { \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/                client_max_body_size 0; \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/                listen       80; \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/                server_name  $IRIS_URL; \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/                location \/ { \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/                        proxy_set_header X-Forwarded-Host \$host; \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/                        proxy_set_header X-Forwarded-Server \$host; \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/                        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for; \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/                        proxy_pass http:\/\/iris:8080; \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/                } \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IRIS_CONFIG/    } \\`echo -e '\n\r'` \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
+fi
+sed -i "s/IRIS_CONFIG//g" /tmp/nginx.conf.sample
 
 ### END transform the ims urls for the config file ###
 

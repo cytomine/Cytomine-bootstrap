@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
+#get all the config values.
+. ./configuration.sh
+
 cd base && docker build -t="cytomine/base" .
 cd ../memcached && docker build -t="cytomine/memcached" .
 cd ../dnsmasq && docker build -t="cytomine/dnsmasq" .
@@ -24,7 +27,10 @@ cd ../java8 && docker build -t="cytomine/java8" .
 cd ../software_router && docker build -t="cytomine/software_router" .
 cd ../tomcat7 && docker build -t="cytomine/tomcat7" .
 cd ../core && docker build -t="cytomine/core" .
-cd ../iris && docker build -t="cytomine/iris" .
+if [ $IRIS_ENABLED = true ]
+then
+	cd ../iris && docker build -t="cytomine/iris" .
+fi
 cd ../postgres && docker build -t="cytomine/postgres" .
 cd ../postgis && docker build -t="cytomine/postgis" .
 cd ../retrieval && docker build -t="cytomine/retrieval" .

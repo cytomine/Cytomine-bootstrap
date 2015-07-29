@@ -43,6 +43,7 @@ RECEIVER_EMAIL='receiver@XXX.com'
 #possible values : memory, redis
 RETRIEVAL_ENGINE=memory
 
+IRIS_ENABLED=true
 
 IMS_STORAGE_PATH=/data
 IMS_BUFFER_PATH=/data/_buffer
