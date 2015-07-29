@@ -49,6 +49,7 @@ class JobParameter extends CytomineDomain implements Comparable {
     static belongsTo = [job: Job, softwareParameter: SoftwareParameter]
 
     static constraints = {
+        value(nullable: true, maxSize: 5000)
     }
 
     static mapping = {

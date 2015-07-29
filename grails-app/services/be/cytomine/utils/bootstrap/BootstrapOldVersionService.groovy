@@ -65,6 +65,9 @@ class BootstrapOldVersionService {
         Version.setCurrentVersion(Long.parseLong(grailsApplication.metadata.'app.version'))
     }
 
+    void init20150729(){
+        new Sql(dataSource).executeUpdate("ALTER TABLE job_parameter ALTER COLUMN value TYPE varchar(5000);")
+    }
     void init20150728(){
         new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS port;")
         new Sql(dataSource).executeUpdate("ALTER TABLE storage DROP COLUMN IF EXISTS ip;")

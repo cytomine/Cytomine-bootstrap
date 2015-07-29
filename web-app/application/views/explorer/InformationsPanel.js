@@ -87,7 +87,7 @@ var InformationsPanel = SideBarPanel.extend({
                         } else {
                             new ImageReviewModel({id: model.id}).save({}, {
                                 success: function (review, response) {
-                                    model.next = false;
+                                    model.next = false; // else, we will get the next image not reloading the image we want
                                     model.fetch({
                                         success: function (model, response2) {
                                             window.app.view.message("Image", response.message, "success");
