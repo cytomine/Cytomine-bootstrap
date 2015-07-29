@@ -87,10 +87,11 @@ var InformationsPanel = SideBarPanel.extend({
                         } else {
                             new ImageReviewModel({id: model.id}).save({}, {
                                 success: function (review, response) {
+                                    model.next = false;
                                     model.fetch({
-                                        success:function (model, response2) {
-                                           window.app.view.message("Image", response.message, "success");
-                                            window.app.controllers.browse.tabs.goToImage(model.id,model.get('project'), self.model.id, self.browseImageView.getMode(),model,null);
+                                        success: function (model, response2) {
+                                            window.app.view.message("Image", response.message, "success");
+                                            window.app.controllers.browse.tabs.goToImage(model.id, model.get('project'), self.model.id, self.browseImageView.getMode(), model, null);
                                         }
                                     });
                                 },
