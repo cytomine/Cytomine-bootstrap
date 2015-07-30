@@ -1244,128 +1244,146 @@ BrowseImageView = Backbone.View.extend({
 
         });
         toolbar.find('button[id=point' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
-            self.roi = false;
-            self.freeHandUpdateAdd = false;
-            self.freeHandUpdateRem = false;
-            self.arrow = false;
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("point");
-            self.getUserLayer().disableHightlight();
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
+                self.roi = false;
+                self.freeHandUpdateAdd = false;
+                self.freeHandUpdateRem = false;
+                self.arrow = false;
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().toggleControl("point");
+                self.getUserLayer().disableHightlight();
+            }
         });
         toolbar.find('button[id=arrow' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
-            self.roi = false;
-            self.freeHandUpdateAdd = false;
-            self.freeHandUpdateRem = false;
-            self.arrow = true;
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("point");
-            self.getUserLayer().disableHightlight();
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
+                self.roi = false;
+                self.freeHandUpdateAdd = false;
+                self.freeHandUpdateRem = false;
+                self.arrow = true;
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().toggleControl("point");
+                self.getUserLayer().disableHightlight();
+            }
         });
 
         toolbar.find('button[id=irregular4' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
-            self.roi = false;
-            self.freeHandUpdateAdd = false;
-            self.freeHandUpdateRem = false;
-            self.arrow = false;
-            if (!self.getUserLayer().irregular) {
-                self.getUserLayer().toggleIrregular();
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
+                self.roi = false;
+                self.freeHandUpdateAdd = false;
+                self.freeHandUpdateRem = false;
+                self.arrow = false;
+                if (!self.getUserLayer().irregular) {
+                    self.getUserLayer().toggleIrregular();
+                }
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().setSides(4);
+                self.getUserLayer().toggleControl("regular");
+                self.getUserLayer().disableHightlight();
             }
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().setSides(4);
-            self.getUserLayer().toggleControl("regular");
-            self.getUserLayer().disableHightlight();
         });
-
-
 
         toolbar.find('button[id=irregular30' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
 
-            self.roi = false;
-            self.freeHandUpdateAdd = false;
-            self.freeHandUpdateRem = false;
-            self.arrow = false;
-            if (!self.getUserLayer().irregular) {
-                self.getUserLayer().toggleIrregular();
+                self.roi = false;
+                self.freeHandUpdateAdd = false;
+                self.freeHandUpdateRem = false;
+                self.arrow = false;
+                if (!self.getUserLayer().irregular) {
+                    self.getUserLayer().toggleIrregular();
+                }
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().setSides(15);
+                self.getUserLayer().toggleControl("regular");
+                self.getUserLayer().disableHightlight();
             }
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().setSides(15);
-            self.getUserLayer().toggleControl("regular");
-            self.getUserLayer().disableHightlight();
         });
         toolbar.find('button[id=regular30' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
 
-            self.roi = false;
-            self.freeHandUpdateAdd = false;
-            self.freeHandUpdateRem = false;
-            self.arrow = false;
-            if (self.getUserLayer().irregular) {
-                self.getUserLayer().toggleIrregular();
+                self.roi = false;
+                self.freeHandUpdateAdd = false;
+                self.freeHandUpdateRem = false;
+                self.arrow = false;
+                if (self.getUserLayer().irregular) {
+                    self.getUserLayer().toggleIrregular();
+                }
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().setSides(15);
+                self.getUserLayer().toggleControl("regular");
+                self.getUserLayer().disableHightlight();
             }
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().setSides(15);
-            self.getUserLayer().toggleControl("regular");
-            self.getUserLayer().disableHightlight();
         });
         toolbar.find('button[id=polygon' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
 
-            self.roi = false;
-            self.freeHandUpdateAdd = false;
-            self.freeHandUpdateRem = false;
-            self.arrow = false;
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("polygon");
-            self.getUserLayer().disableHightlight();
+                self.roi = false;
+                self.freeHandUpdateAdd = false;
+                self.freeHandUpdateRem = false;
+                self.arrow = false;
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().toggleControl("polygon");
+                self.getUserLayer().disableHightlight();
+            }
         });
         toolbar.find('button[id=freehand' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
 
-            self.roi = false;
-            self.freeHandUpdateAdd = false;
-            self.freeHandUpdateRem = false;
-            self.arrow = false;
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("freehand");
-            self.getUserLayer().disableHightlight();
+                self.roi = false;
+                self.freeHandUpdateAdd = false;
+                self.freeHandUpdateRem = false;
+                self.arrow = false;
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().toggleControl("freehand");
+                self.getUserLayer().disableHightlight();
+            }
         });
         toolbar.find('button[id=freeAdd' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
 
-            self.roi = false;
-            self.freeHandUpdateAdd = true;
-            self.freeHandUpdateRem = false;
-            self.arrow = false;
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("freehand");
-            self.getUserLayer().disableHightlight();
+                self.roi = false;
+                self.freeHandUpdateAdd = true;
+                self.freeHandUpdateRem = false;
+                self.arrow = false;
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().toggleControl("freehand");
+                self.getUserLayer().disableHightlight();
+            }
         });
         toolbar.find('button[id=freeRem' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
 
-            self.roi = false;
-            self.freeHandUpdateAdd = false;
-            self.freeHandUpdateRem = true;
-            self.arrow = false;
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("freehand");
-            self.getUserLayer().disableHightlight();
+                self.roi = false;
+                self.freeHandUpdateAdd = false;
+                self.freeHandUpdateRem = true;
+                self.arrow = false;
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().toggleControl("freehand");
+                self.getUserLayer().disableHightlight();
+            }
         });
         toolbar.find('button[id=magic' + this.model.get('id') + ']').click(function () {
-            cssActivate(this);
+            if(self.getUserLayer().isVisible()){
+                cssActivate(this);
 
-            self.roi = false;
-            self.freeHandUpdateAdd = false;
-            self.freeHandUpdateRem = false;
-            self.arrow = false;
-            self.getUserLayer().controls.select.unselectAll();
-            self.getUserLayer().toggleControl("select");
-            self.getUserLayer().magicOnClick = true;
-            self.getUserLayer().disableHightlight();
+                self.roi = false;
+                self.freeHandUpdateAdd = false;
+                self.freeHandUpdateRem = false;
+                self.arrow = false;
+                self.getUserLayer().controls.select.unselectAll();
+                self.getUserLayer().toggleControl("select");
+                self.getUserLayer().magicOnClick = true;
+                self.getUserLayer().disableHightlight();
+            }
         });
         toolbar.find('button[id=modify' + this.model.get('id') + ']').click(function () {
             toolbar.find('button[id=select' + self.model.get('id') + ']').click();

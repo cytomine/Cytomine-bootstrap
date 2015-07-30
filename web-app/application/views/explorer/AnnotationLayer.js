@@ -1022,5 +1022,8 @@ AnnotationLayer.prototype = {
     termRemoved: function (idAnnotation, idTerm) {
         this.annotationRemoved(idAnnotation);
         this.annotationAdded(idAnnotation);
+    },
+    isVisible: function () {
+        return this.vectorsLayer.visibility
     }
 };
