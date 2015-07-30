@@ -14,11 +14,22 @@
 # limitations under the License.
 #
 
-docker stop ims
-docker rm -v ims
-docker stop nginx
-docker rm -v nginx
+#get all the config values.
+. ./configuration.sh
 
-sh create_docker_images.sh
-sh start_deploy.sh
+if [ ! -z "$IMS_WAR_URL" ]
+then
+	docker exec ims service tomcat7 stop
+	docker exec ims pkill -U tomcat7
+	docker exec ims rm /var/lib/tomcat7/webapps/ROOT.war
+	docker exec ims wget $IMS_WAR_URL -O /var/lib/tomcat7/webapps/ROOT.war
+
+	if [ ! -z "$IMS_DOC_URL" ]
+	then
+		docker exec ims wget $IMS_DOC_URL -O /var/lib/tomcat7/restapidoc.json
+	fi
+fi
+
+docker exec ims service tomcat7 start
+
 

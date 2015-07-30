@@ -14,15 +14,24 @@
 # limitations under the License.
 #
 
-docker stop core
-docker rm -v core
-docker stop nginx
-docker rm -v nginx
-docker stop software_router
-docker rm -v software_router
+#get all the config values.
+. ./configuration.sh
 
-sh create_docker_images.sh
-sh start_deploy.sh
+if [ ! -z "$CORE_WAR_URL" ]
+then
+	docker exec core service tomcat7 stop
+	docker exec core pkill -U tomcat7
+	docker exec core rm /var/lib/tomcat7/webapps/ROOT.war
+	docker exec core wget $CORE_WAR_URL -O /var/lib/tomcat7/webapps/ROOT.war
 
+	if [ ! -z "$CORE_DOC_URL" ]
+	then
+		docker exec core wget $CORE_DOC_URL -O /var/lib/tomcat7/restapidoc.json
+		#update the basePath
+		docker exec core sed -i "/basePath/c\   \"basePath\": \"http://$CORE_URL\"," /var/lib/tomcat7/restapidoc.json
+	fi
+fi
+
+docker exec core service tomcat7 start
 
 
