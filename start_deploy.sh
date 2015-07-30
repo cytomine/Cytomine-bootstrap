@@ -67,14 +67,15 @@ cytomine/rabbitmq && nb_docker=$((nb_docker+1)) || docker start rabbitmq
 
 # create data only containers
 docker run -d --name postgis_data cytomine/data_postgis && nb_docker=$((nb_docker+1)) || docker start postgis_data
+docker run -d --name mongodb_data cytomine/data_mongodb && nb_docker=$((nb_docker+1)) || docker start mongodb_data
 
 # create mongodb docker
-docker run -d -p 22 --name mongodb cytomine/mongodb
+docker run -d -p 22 --name mongodb --volumes-from mongodb_data cytomine/mongodb
 nb_docker=$((nb_docker+1))
 
 # create database docker
 
-docker run -p 22 -m 8g -d --name db --volumes-from postgis_data cytomine/postgis
+docker run -d -p 22 -m 8g --name db --volumes-from postgis_data cytomine/postgis
 nb_docker=$((nb_docker+1))
 
 if [ $BACKUP_BOOL = true ] 

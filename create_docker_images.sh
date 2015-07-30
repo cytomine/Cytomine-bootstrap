@@ -47,5 +47,6 @@ cd ../mongodb && docker build -t="cytomine/mongodb" .
 cd ../auto_backup && docker build -t="cytomine/backup" .
 cd ../data_containers/postgres && docker build -t="cytomine/data_postgres" .
 cd ../postgis && docker build -t="cytomine/data_postgis" .
+cd ../mongodb && docker build -t="cytomine/data_mongodb" .
 cd ../..
 echo DONE
