@@ -68,6 +68,10 @@ cytomine/rabbitmq && nb_docker=$((nb_docker+1)) || docker start rabbitmq
 # create data only containers
 docker run -d --name postgis_data cytomine/data_postgis && nb_docker=$((nb_docker+1)) || docker start postgis_data
 docker run -d --name mongodb_data cytomine/data_mongodb && nb_docker=$((nb_docker+1)) || docker start mongodb_data
+if [ $IRIS_ENABLED = true ]
+then
+	docker run -d --name iris_data cytomine/data_h2 && nb_docker=$((nb_docker+1)) || docker start iris_data
+fi
 
 # create mongodb docker
 docker run -d -p 22 --name mongodb --volumes-from mongodb_data cytomine/mongodb
@@ -241,7 +245,7 @@ if [ $IRIS_ENABLED = true ]
 then
 	# create IRIS docker
 	docker run -d -p 22 --name iris \
-	-v $IRIS_DB_PATH:/var/lib/tomcat7/db \
+	--volumes-from iris_data \
 	-e CORE_URL=$CORE_URL \
 	-e IMS_URLS=$IMS_URLS \
 	-e IS_LOCAL=$IS_LOCAL \
