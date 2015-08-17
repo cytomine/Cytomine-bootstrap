@@ -23,8 +23,6 @@ RUN apt-get update
 RUN apt-get install -y groovy
 RUN apt-get install -y unzip
 
-ADD script.groovy /tmp/script.groovy
-
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 

@@ -21,7 +21,7 @@ FROM cytomine/postgres
 MAINTAINER "Cytomine Team support@cytomine.be"
 
 RUN apt-get update
-RUN apt-get -y -q install postgresql-9.3-postgis-2.1 postgis
+RUN apt-get -y -q install postgresql-9.3-postgis-2.1
 ADD postgis--2.1.5.sql /usr/share/postgresql/9.3/extension/postgis--2.1.5.sql
 
 USER postgres
