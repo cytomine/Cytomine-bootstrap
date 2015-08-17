@@ -250,6 +250,10 @@ then
 	-e IMS_URLS=$IMS_URLS \
 	-e IS_LOCAL=$IS_LOCAL \
 	-e IRIS_URL=$IRIS_URL \
+	-e IRIS_ID=$IRIS_ID \
+	-e SENDER_EMAIL=$SENDER_EMAIL \
+	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
+	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
 	cytomine/iris
 	nb_docker=$((nb_docker+1))
 fi
@@ -364,7 +368,10 @@ then
 	nb_docker=$((nb_docker+1))
 fi
 
-nb_started_docker=$(echo "$(sudo docker ps)" | wc -l)
+
+# checking
+running_containers=$(sudo docker ps)
+nb_started_docker=$(echo "$running_containers" | wc -l)
 nb_started_docker=$((nb_started_docker-1)) # remove the header line
 #echo "number of started docker = $nb_started_docker"
 #echo "number of asked docker = $nb_docker"
@@ -372,6 +379,40 @@ if [ $nb_started_docker -eq $nb_docker ]
 then
         touch ./.cookies
 else
-        echo "A problem occurs. Please check into your docker logs."
+	if ! echo "$running_containers" | grep -q -w iris_data; then echo "iris_data container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w mongodb_data; then echo "mongodb_data container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w postgis_data; then echo "postgis_data container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w nginx; then echo "nginx container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w core; then echo "core container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w ims; then echo "ims container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w db; then echo "db container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w mongodb; then echo "mongodb container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w memcached1; then echo "memcached1 container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w memcached2; then echo "memcached2 container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w memcached3; then echo "memcached3 container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w memcached4; then echo "memcached4 container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w rabbitmq; then echo "rabbitmq container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w iipOff; then echo "iipOff container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w iipCyto; then echo "iipCyto container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w iipVent; then echo "iipVent container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w iipJ2; then echo "iipJ2 container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w retrieval; then echo "retrieval container is not running !"; fi
+	if ! echo "$running_containers" | grep -q -w software_router; then echo "software_router container is not running !"; fi
+
+	if [ $BACKUP_BOOL = true ] 
+	then
+		if ! echo "$running_containers" | grep -q -w backup_postgis; then echo "backup_postgis container is not running !"; fi
+		if ! echo "$running_containers" | grep -q -w backup_mongo; then echo "backup_mongo container is not running !"; fi
+	fi
+	if [ $BIOFORMAT_ENABLED = true ]
+	then
+		if ! echo "$running_containers" | grep -q -w bioformat; then echo "bioformat container is not running !"; fi
+	fi
+	if [ $IRIS_ENABLED = true ]
+	then
+		if ! echo "$running_containers" | grep -q -w iris; then echo "iris container is not running !"; fi
+	fi
+        echo "Please check into your docker logs."
+        #echo "A problem occurs. Please check into your docker logs."
 fi
 

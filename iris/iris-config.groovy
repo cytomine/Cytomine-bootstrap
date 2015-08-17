@@ -7,7 +7,7 @@ println "loading general config..."
 // Cytomine core settings
 grails.cytomine = [
         image : [
-                host : "http://demo-ims.cytomine.be"
+                host : "IMS_URL"
         ],
         host : "http://CORE_URL",
         web : "http://www.cytomine.be", 

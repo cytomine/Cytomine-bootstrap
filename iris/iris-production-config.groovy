@@ -12,7 +12,7 @@ grails.serverURL = grails.protocol + "://" + grails.host + ((grails.port=="")?""
 grails.cytomine.apps.iris.host = grails.serverURL + "/iris"
 
 // set some synchronization settings
-grails.cytomine.apps.iris.sync.clientIdentifier = "DEMO_CYTOMINE_IRIS"
+grails.cytomine.apps.iris.sync.clientIdentifier = IRIS_ID
 grails.cytomine.apps.iris.sync.irisHost = grails.host
 
 // Job configuration
@@ -21,10 +21,10 @@ PingCytomineHostJob.disabled = true
 SynchronizeUserProgressJob.disabled = false
 
 // MAIL SERVER CONFIGURATION
-grails.mail.default.from="cytomine.ulg@gmail.com"
-grails.mail.username = "cytomine.ulg@gmail.com"
-grails.mail.password = MAIL_PWD #TODO
-grails.mail.host = "smtp.gmail.com"
+grails.mail.default.from=SENDER_EMAIL
+grails.mail.username = SENDER_EMAIL
+grails.mail.password = SENDER_EMAIL_PASS
+grails.mail.host = SENDER_EMAIL_SMTP_HOST
 grails.mail.port = 465
 grails.mail.props = [
         "mail.smtp.auth":"true",
