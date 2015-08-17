@@ -50,6 +50,8 @@ class BootstrapUtilsService {
     def amqpQueueService
     def amqpQueueConfigService
     def rabbitConnectionService
+    def storageService
+
 
     public def createUsers(def usersSamples) {
 
@@ -88,13 +90,16 @@ class BootstrapUtilsService {
                     SecRole secRole = SecRole.findByAuthority(authority)
                     if (secRole) SecUserSecRole.create(user, secRole)
                 }
-
             } else {
                 log.info("\n\n\n Errors in account boostrap for ${item.username}!\n\n\n")
                 user.errors.each {
                     err -> log.info(err)
                 }
             }
+        }
+        usersCreated.each { user ->
+            /*Create Storage*/
+            storageService.initUserStorage(user)
         }
         return usersCreated
     }
