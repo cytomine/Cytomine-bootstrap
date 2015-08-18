@@ -94,9 +94,9 @@ var CustomModal = Backbone.View.extend({
         }// else, the owner must call render() by its own.
     },
     close: function () {
-        $('#' + this.idModal).modal('hide').remove();
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
+        $('#' + this.idModal).modal('hide');
+        //$('body').removeClass('modal-open');
+        //$('.modal-backdrop').remove();
     }
 });
 

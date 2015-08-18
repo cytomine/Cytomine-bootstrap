@@ -176,7 +176,14 @@ var ProjectDashboardAlgos = Backbone.View.extend({
             callBack: function() {launchView.render();}
         });
         modalLaunch.addButtons("closeNewJob","Close",false,true);
-        modalLaunch.addButtons("createNewJob","Create new job",true,true,function() {launchView.createJobFromParam(launchView.executeJob);});
+        modalLaunch.addButtons("createNewJob","Create new job",true,false,function() {
+            if(launchView.validate()){
+                launchView.createJobFromParam(launchView.executeJob);
+                modalLaunch.close();
+            } else {
+                window.app.view.message("Launch Job", "Some parameters are not valid !", "error",5000);
+            }
+        });
 
 
         //init modal for job compare

@@ -276,6 +276,16 @@ var LaunchJobView = Backbone.View.extend({
         });
         return jobParams;
     },
+    validate: function () {
+        var self = this;
+        var result = true;
+        _.each(self.paramsViews, function (paramView) {
+            if(!paramView.checkEntryValidation()){
+                result = false;
+            }
+        });
+        return result;
+    },
     saveJobModel: function (job, callback) {
         var self = this;
         job.save({}, {
@@ -325,13 +335,17 @@ var InputTextView = Backbone.View.extend({
     },
     checkEntryValidation: function () {
         var self = this;
+        var success;
 
         if (self.param.required && self.getValue().trim() == "") {
-            self.changeStyle(self.trElem, false, "Field required");
+            success = false;
+            self.changeStyle(self.trElem, success, "Field required");
         }
         else {
-            self.changeStyle(self.trElem, true, "");
+            success = true;
+            self.changeStyle(self.trElem, success, "");
         }
+        return success
     },
     getValue: function () {
         return this.trElem.find("input").val();
@@ -373,16 +387,21 @@ var InputNumberView = Backbone.View.extend({
     },
     checkEntryValidation: function () {
         var self = this;
+        var success;
 
         if (self.param.required && self.getValue().trim() == "") {
-            self.changeStyle(self.trElem, false, "Field required");
+            success = false;
+            self.changeStyle(self.trElem, success, "Field required");
         }
         else if (self.getValue().trim() != "" && isNaN(self.getValue())) {
-            self.changeStyle(self.trElem, false, "Not valid number");
+            success = false;
+            self.changeStyle(self.trElem, success, "Not valid number");
         }
         else {
-            self.changeStyle(self.trElem, true, "");
+            success = true;
+            self.changeStyle(self.trElem, success, "");
         }
+        return success
     },
     getValue: function () {
         return this.trElem.find("input").val();
@@ -442,14 +461,18 @@ var InputDateView = Backbone.View.extend({
     },
     checkEntryValidation: function () {
         var self = this;
+        var success;
         var date = self.trElem.find("input").datepicker("getDate");
 
         if (self.param.required && date == null) {
-            self.changeStyle(self.trElem, false, "Field required");
+            success = false;
+            self.changeStyle(self.trElem, success, "Field required");
         }
         else {
-            self.changeStyle(self.trElem, true, "");
+            success = true;
+            self.changeStyle(self.trElem, success, "");
         }
+        return success;
     },
     getValue: function () {
         var self = this;
@@ -500,6 +523,7 @@ var InputBooleanView = Backbone.View.extend({
         var self = this;
 
         self.changeStyle(self.trElem, true, "");
+        return true;
     },
     getValue: function () {
         return this.trElem.find("input").is(":checked");
@@ -567,12 +591,17 @@ var InputListView = Backbone.View.extend({
     },
     checkEntryValidation: function () {
         var self = this;
+        var success;
+
         if (self.trElem.find("select").children().length == 0) {
-            self.changeStyle(self.trElem, false, "Field required");
+            success = false;
+            self.changeStyle(self.trElem, success, "Field required");
         }
         else {
-            self.changeStyle(self.trElem, true, "");
+            success = true;
+            self.changeStyle(self.trElem, success, "");
         }
+        return success;
     },
     getValue: function () {
         var self = this;
@@ -739,15 +768,19 @@ var InputListDomainView = Backbone.View.extend({
     },
     checkEntryValidation: function () {
         var self = this;
+        var success;
 
         var values = self.getValue();
 
         if (self.param.required && values.length == 0) {
-            self.changeStyle(self.trElem, false, "Field required");
+            success = false;
+            self.changeStyle(self.trElem, success, "Field required");
         }
         else {
-            self.changeStyle(self.trElem, true, "");
+            success = true;
+            self.changeStyle(self.trElem, success, "");
         }
+        return success;
     },
     getValue: function () {
         var self = this;
