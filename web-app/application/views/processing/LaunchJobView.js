@@ -658,6 +658,7 @@ var InputListDomainView = Backbone.View.extend({
         var magicSuggestValue = self.getDefaultValue();
 
         self.elemSuggest = cell.find(".suggest").magicSuggest({
+            allowFreeEntries: false,
             data: magicSuggestData,
             selectionRenderer: function(v){
                 var displayField;
