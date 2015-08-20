@@ -17,6 +17,8 @@ package be.cytomine.processing
 */
 
 import be.cytomine.CytomineDomain
+import be.cytomine.Exception.AlreadyExistException
+import be.cytomine.utils.JSONUtils
 
 /**
  * TODOSTEVBEN: doc
@@ -26,6 +28,39 @@ class ProcessingServer extends CytomineDomain {
     String url
 
     static constraints = {
-        url nullable: false
+        url nullable: false, unique: true
     }
+
+    void checkAlreadyExist() {
+        ProcessingServer.withNewSession {
+            if(url) {
+                ProcessingServer psSameName = ProcessingServer.findByUrl(url)
+                if(psSameName&& (psSameName.id!=id))  {
+                    throw new AlreadyExistException("ProcessingServer "+psSameName.url + " already exist!")
+                }
+            }
+
+        }
+    }
+
+    static ProcessingServer insertDataIntoDomain(def json,def domain=new ProcessingServer()) {
+        domain.id = JSONUtils.getJSONAttrLong(json,'id',null)
+        domain.url = JSONUtils.getJSONAttrStr(json, 'url')
+        return domain;
+    }
+
+    static def getDataFromDomain(def domain) {
+        def returnArray = CytomineDomain.getDataFromDomain(domain)
+        returnArray['url'] = domain?.url
+        return returnArray
+    }
+
+    /**
+     * Get the container domain for this domain (usefull for security)
+     * @return Container of this domain
+     */
+    public CytomineDomain container() {
+        return this;
+    }
+
 }

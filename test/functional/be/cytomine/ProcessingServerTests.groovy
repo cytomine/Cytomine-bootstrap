@@ -1,5 +1,7 @@
 package be.cytomine
 
+import be.cytomine.processing.ProcessingServer
+
 /*
 * Copyright (c) 2009-2015. Authors: see NOTICE file.
 *
@@ -32,22 +34,66 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class ProcessingServerTests  {
 
-  void testListProcessingServerWithCredential() {
-      def result = ProcessingServerAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      assert 200 == result.code
-      def json = JSON.parse(result.data)
-      assert json.collection instanceof JSONArray
-  }
+    void testListProcessingServerWithCredential() {
+        def result = ProcessingServerAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+    }
 
-  void testShowProcessingServerWithCredential() {
-      def result = ProcessingServerAPI.show(BasicInstanceBuilder.getProcessingServer().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      assert 200 == result.code
-      def json = JSON.parse(result.data)
-      assert json instanceof JSONObject
+    void testShowProcessingServerWithCredential() {
+        def result = ProcessingServerAPI.show(BasicInstanceBuilder.getProcessingServer().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
 
-      result = ProcessingServerAPI.show(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      assert 404 == result.code
-  }
+        result = ProcessingServerAPI.show(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+    }
 
+    void testAddProcessingServerCorrect() {
+        def processingServerToAdd = BasicInstanceBuilder.getProcessingServerNotExist()
+
+        def result = ProcessingServerAPI.create(processingServerToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        int idSoftware = result.data.id
+
+        result = ProcessingServerAPI.show(idSoftware, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+    }
+
+    void testAddProcessingServerAlreadyExist() {
+        def processingServerToAdd = BasicInstanceBuilder.getProcessingServer()
+        def result = ProcessingServerAPI.create(processingServerToAdd.encodeAsJSON(), Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 409 == result.code
+    }
+
+    void testAddProcessingServerWithoutCredential() {
+        def processingServerToAdd = BasicInstanceBuilder.getProcessingServerNotExist()
+        def result = ProcessingServerAPI.create(processingServerToAdd.encodeAsJSON(), Infos.ADMINLOGIN, Infos.ADMINPASSWORD)
+        assert 403 == result.code
+    }
+
+    void testDeleteProcessingServerWithCredential() {
+        def processingServerToDelete = BasicInstanceBuilder.getProcessingServerNotExist(true)
+        def id = processingServerToDelete.id
+        def result = ProcessingServerAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+
+        def showResult = ProcessingServerAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == showResult.code
+    }
+
+    void testDeleteProcessingServerWithoutCredential() {
+        def processingServerToDelete = BasicInstanceBuilder.getProcessingServerNotExist(true)
+        def id = processingServerToDelete.id
+        def result = ProcessingServerAPI.delete(id, Infos.ADMINLOGIN, Infos.ADMINPASSWORD)
+        assert 403 == result.code
+    }
+
+    void testDeleteSoftwareNotExist() {
+        def result = ProcessingServerAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+    }
 
 }

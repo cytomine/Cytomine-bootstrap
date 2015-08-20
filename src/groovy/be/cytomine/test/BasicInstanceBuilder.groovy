@@ -751,6 +751,16 @@ class BasicInstanceBuilder {
         ps
     }
 
+    static ProcessingServer getProcessingServerNotExist (boolean save = false) {
+        ProcessingServer ps = new ProcessingServer(url: getRandomString())
+        if(save) {
+            saveDomain(ps)
+        } else {
+            checkDomain(ps)
+        }
+        ps
+    }
+
     static Discipline getDiscipline() {
         def discipline = Discipline.findByName("BASICDISCIPLINE")
         if (!discipline) {
