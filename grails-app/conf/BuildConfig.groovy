@@ -26,12 +26,12 @@ grails.project.war.file = "target/${appName}.war"
 grails.project.dependency.resolver = "maven"
 
 //UNCOMMENT TO HAVE WORKING TEST
-//grails.project.fork = [
-//        test: false,
-//        run: false,
-//        war: false,
-//        console: false
-//]
+/*grails.project.fork = [
+        test: false,
+        run: false,
+        war: false,
+        console: false
+]*/
 
 //UNCOMMENT TO HAVE AUTO RELOADING
 grails.project.fork = [
