@@ -18,6 +18,7 @@ package be.cytomine.api.processing
 
 import be.cytomine.api.RestController
 import be.cytomine.processing.ImageFilter
+import grails.converters.JSON
 import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
@@ -31,7 +32,6 @@ import org.restapidoc.pojo.RestApiParamType
 class RestImageFilterController extends RestController {
 
     def imageFilterService
-    def projectService
 
     /**
      * List all image filter
@@ -58,4 +58,22 @@ class RestImageFilterController extends RestController {
     }
 
 
+    /**
+     * Add a new imageFilter to cytomine
+     */
+    @RestApiMethod(description="Add a new imageFilter to cytomine.")
+    def add() {
+        add(imageFilterService, request.JSON)
+    }
+
+    /**
+     * Delete imageFilter
+     */
+    @RestApiMethod(description="Delete an imageFilter.", listing = true)
+    @RestApiParams(params=[
+            @RestApiParam(name="id", type="long", paramType = RestApiParamType.PATH, description = "The imageFilter id")
+    ])
+    def delete() {
+        delete(imageFilterService, JSON.parse("{id : $params.id}"),null)
+    }
 }

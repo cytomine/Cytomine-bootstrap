@@ -33,26 +33,60 @@ import org.codehaus.groovy.grails.web.json.JSONObject
  */
 class ImageFilterTests  {
 
-  void testListImageFilterWithCredential() {
-      def result = ImageFilterAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      assert 200 == result.code
-      def json = JSON.parse(result.data)
-      assert json.collection instanceof JSONArray
-  }
+    void testListImageFilterWithCredential() {
+        def result = ImageFilterAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json.collection instanceof JSONArray
+    }
 
-  void testShowImageFilterWithCredential() {
-      def result = ImageFilterAPI.show(BasicInstanceBuilder.getImageFilter().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      assert 200 == result.code
-      def json = JSON.parse(result.data)
-      assert json instanceof JSONObject
+    void testShowImageFilterWithCredential() {
+        def result = ImageFilterAPI.show(BasicInstanceBuilder.getImageFilter().id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+        def json = JSON.parse(result.data)
+        assert json instanceof JSONObject
 
-      result = ImageFilterAPI.show(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
-      assert 404 == result.code
-  }
+        result = ImageFilterAPI.show(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+    }
 
-  /*
-    Image filter project
-  */
+    void testAddImageFilterWithoutCredentials() {
+        def imf = BasicInstanceBuilder.getImageFilterNotExist()
+        def result = ImageFilterAPI.create(imf.encodeAsJSON(),Infos.BADLOGIN, Infos.BADPASSWORD)
+        assert 401 == result.code
+    }
+
+    void testAddImageFilter() {
+        def imf = BasicInstanceBuilder.getImageFilterNotExist()
+        def result = ImageFilterAPI.create(imf.encodeAsJSON(),Infos.ADMINLOGIN, Infos.ADMINPASSWORD)
+        assert 200 == result.code
+    }
+
+    void testDeleteImageFilter() {
+        def imfToDelete = BasicInstanceBuilder.getImageFilterNotExist(true)
+        def id = imfToDelete.id
+        def result = ImageFilterAPI.delete(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 200 == result.code
+
+        def showResult = ImageFilterAPI.show(id, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == showResult.code
+    }
+
+    void testDeleteImageFilterWithoutCredentials() {
+        def imfToDelete = BasicInstanceBuilder.getImageFilterNotExist(true)
+        def id = imfToDelete.id
+        def result = ImageFilterAPI.delete(id, Infos.ADMINLOGIN, Infos.ADMINPASSWORD)
+        assert 403 == result.code
+    }
+
+    void testDeleteImageFilterNotExist() {
+        def result = ImageFilterAPI.delete(-99, Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
+        assert 404 == result.code
+    }
+
+    /*
+      Image filter project
+    */
     void testListImageFilterProject() {
         def result = ImageFilterProjectAPI.list(Infos.SUPERADMINLOGIN, Infos.SUPERADMINPASSWORD)
         assert 200 == result.code

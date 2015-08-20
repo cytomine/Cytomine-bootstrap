@@ -25,10 +25,10 @@ class ImageFilterUrlMappings {
     static mappings = {
         /* Image Filters */
         "/api/imagefilter.$format"(controller: "restImageFilter"){
-            action = [GET:"list"]
+            action = [GET:"list", POST : "add"]
         }
         "/api/imagefilter/$id.$format"(controller: "restImageFilter"){
-            action = [GET:"show"]
+            action = [GET:"show", DELETE : "delete"]
         }
 
         "/api/project/imagefilter.$format"(controller: "restImageFilter"){

@@ -1,5 +1,7 @@
 package be.cytomine.test.http
 
+import be.cytomine.processing.ImageFilter
+
 /*
 * Copyright (c) 2009-2015. Authors: see NOTICE file.
 *
@@ -17,6 +19,7 @@ package be.cytomine.test.http
 */
 
 import be.cytomine.test.Infos
+import grails.converters.JSON
 
 /**
  * User: lrollus
@@ -34,5 +37,17 @@ class ImageFilterAPI extends DomainAPI {
     static def list(String username, String password) {
         String URL = Infos.CYTOMINEURL + "api/imagefilter.json"
         return doGET(URL, username, password)
+    }
+
+    static def create(String json, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imagefilter.json"
+        def result = doPOST(URL,json,username,password)
+        result.data = ImageFilter.get(JSON.parse(result.data)?.imagefilter?.id)
+        return result
+    }
+
+    static def delete(def id, String username, String password) {
+        String URL = Infos.CYTOMINEURL + "api/imagefilter/" + id + ".json"
+        return doDELETE(URL, username, password)
     }
 }
