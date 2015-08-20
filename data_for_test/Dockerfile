@@ -23,6 +23,8 @@ RUN apt-get update
 RUN apt-get install -y groovy
 RUN apt-get install -y unzip
 
+ADD injectdata.groovy /tmp/injectdata.groovy
+RUN chmod +x /tmp/injectdata.groovy
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 

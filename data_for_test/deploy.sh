@@ -27,6 +27,8 @@ then
 
 	cd /tmp/ && wget "http://cytomine.be/release/demo_script.zip" -O demo_script.zip && unzip demo_script.zip
 
+	mv /tmp/injectdata.groovy /tmp/script/
+
 	cd /tmp/script/ && groovy -cp '../Cytomine-client-java.jar' injectdata.groovy ./ http://$CORE_URL http://$UPLOAD_URL $PUBLIC_KEY $PRIVATE_KEY
 fi
 
