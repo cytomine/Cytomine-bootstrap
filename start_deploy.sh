@@ -308,12 +308,11 @@ nb_docker=$((nb_docker+1))
 
 
 # wait for the admin password is setted by the core
-OUTPUT_CORE_CYTOMINE=$(docker logs core)
+OUTPUT_CORE_CYTOMINE=$(sudo docker exec -i -t core tail -n 200 /var/lib/tomcat7/logs/catalina.out)
 COUNTER_CYTOMINE=0
 while [ "${OUTPUT_CORE_CYTOMINE#*Server startup}" = "$OUTPUT_CORE_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 120 ]
 do
-   OUTPUT_CORE_CYTOMINE=$(docker logs core)
-   OUTPUT_CORE_CYTOMINE=$(echo "$OUTPUT_CORE_CYTOMINE" | tail -n 100)
+   OUTPUT_CORE_CYTOMINE=$(sudo docker exec -i -t core tail -n 200 /var/lib/tomcat7/logs/catalina.out)
    COUNTER_CYTOMINE=$((COUNTER_CYTOMINE+1))
    sleep 5
 done
@@ -430,16 +429,16 @@ if [ $DATA_INSERTION = true ]
 then
 	OUTPUT_DATA_CYTOMINE=$(docker logs data_test)
 	COUNTER_CYTOMINE=0
-	while [ "${OUTPUT_DATA_CYTOMINE#*DATA SUCCESSFULLY INJECTED}" = "$OUTPUT_DATA_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 45 ]
+	while [ "${OUTPUT_DATA_CYTOMINE#*END OF DATA INJECTION}" = "$OUTPUT_DATA_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 45 ]
 	do
 	   OUTPUT_DATA_CYTOMINE=$(docker logs data_test)
 	   OUTPUT_DATA_CYTOMINE=$(echo "$OUTPUT_DATA_CYTOMINE" | tail -n 100)
 	   COUNTER_CYTOMINE=$((COUNTER_CYTOMINE+1))
 	   sleep 60
 	done
-	if [ "${OUTPUT_DATA_CYTOMINE#*Server startup}" = "$OUTPUT_DATA_CYTOMINE" ]
+	if [ "${OUTPUT_DATA_CYTOMINE#*DATA SUCCESSFULLY INJECTED}" = "$OUTPUT_DATA_CYTOMINE" ]
 	then
-	   echo "Data are not yet injected. Please check the status with the command docker logs data_test."
+	   echo "Data are not plainfully injected. Please check the status with the command docker logs data_test."
 	else
 	   echo "Data successfully injected."
 	fi

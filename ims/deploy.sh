@@ -82,7 +82,7 @@ echo "  missingok"                      >> /etc/logrotate.d/tomcat7
 echo "  create 640 tomcat7 adm"         >> /etc/logrotate.d/tomcat7
 echo "}"                                >> /etc/logrotate.d/tomcat7
 
-mkdir /tmp/uploaded
+mkdir -p /tmp/uploaded
 chmod -R 777 /tmp/uploaded
 
 tail -F /var/lib/tomcat7/logs/catalina.out

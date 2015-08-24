@@ -211,7 +211,7 @@ void injectData(InjectedData data) {
                         connection.addAnnotationTerm(annotation.getId(),terms.list.find{it.name==injectedTerm.name}.id)
                     }
 		} catch(Exception e) {
-		    warningMessages << "Annotation cannot be added on image instance $idImageInstance "+e
+		    warningMessages << "An annotation cannot be added on image instance $injectedImage.filename "
 		}
             }
 
@@ -223,6 +223,7 @@ void injectData(InjectedData data) {
 	println "DATA INJECTED. SOME ERRORS OCCURED :"
 	println warningMessages.join("\n");
     }
+    println "END OF DATA INJECTION"
 }
 
 

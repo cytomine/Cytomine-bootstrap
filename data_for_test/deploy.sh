@@ -25,7 +25,7 @@ if [ ! -z "$JAVA_CLIENT_JAR" ]
 then
 	cd /tmp/  && wget -q $JAVA_CLIENT_JAR -O Cytomine-client-java.jar
 
-	cd /tmp/ && wget "http://cytomine.be/release/demo_script.zip" -O demo_script.zip && unzip demo_script.zip
+	cd /tmp/ && wget -q "http://cytomine.be/release/demo_script.zip" -O demo_script.zip && unzip demo_script.zip
 
 	mv /tmp/injectdata.groovy /tmp/script/
 
