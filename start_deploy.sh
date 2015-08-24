@@ -310,13 +310,19 @@ nb_docker=$((nb_docker+1))
 # wait for the admin password is setted by the core
 OUTPUT_CORE_CYTOMINE=$(docker logs core)
 COUNTER_CYTOMINE=0
-while [ "${OUTPUT_CORE_CYTOMINE#*Server startup}" = "$OUTPUT_CORE_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 60 ]
+while [ "${OUTPUT_CORE_CYTOMINE#*Server startup}" = "$OUTPUT_CORE_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 120 ]
 do
    OUTPUT_CORE_CYTOMINE=$(docker logs core)
    OUTPUT_CORE_CYTOMINE=$(echo "$OUTPUT_CORE_CYTOMINE" | tail -n 100)
    COUNTER_CYTOMINE=$((COUNTER_CYTOMINE+1))
    sleep 5
 done
+if [ "${OUTPUT_CORE_CYTOMINE#*Server startup}" = "$OUTPUT_CORE_CYTOMINE" ]
+then
+   echo "An error occured. Core Cytomine is too long to start. Please contact support for more details."
+else
+   echo "Core Cytomine launched."
+fi
 
 # delete the pwd from the files & variables
 docker exec core /bin/bash -c 'echo "ADMIN_PWD=" > /root/.bashrc'
@@ -350,7 +356,7 @@ then
 	    read -p "Do you wish to install some data test? " yn
 	    case $yn in
 	        [Yy]* ) break;;
-	        [Nn]* ) exit;;
+	        [Nn]* ) break;;
 	        * ) echo "Please answer yes or no.";;
 	    esac
 	done
@@ -366,6 +372,9 @@ then
 	-e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
 	cytomine/data_test
 	nb_docker=$((nb_docker+1))
+
+	echo "Data test in installation. It can take 45 minutes depending of your internet connexion."
+	DATA_INSERTION=true
 fi
 
 
@@ -415,4 +424,25 @@ else
         echo "Please check into your docker logs."
         #echo "A problem occurs. Please check into your docker logs."
 fi
+
+
+if [ $DATA_INSERTION = true ]
+then
+	OUTPUT_DATA_CYTOMINE=$(docker logs data_test)
+	COUNTER_CYTOMINE=0
+	while [ "${OUTPUT_DATA_CYTOMINE#*DATA SUCCESSFULLY INJECTED}" = "$OUTPUT_DATA_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 45 ]
+	do
+	   OUTPUT_DATA_CYTOMINE=$(docker logs data_test)
+	   OUTPUT_DATA_CYTOMINE=$(echo "$OUTPUT_DATA_CYTOMINE" | tail -n 100)
+	   COUNTER_CYTOMINE=$((COUNTER_CYTOMINE+1))
+	   sleep 60
+	done
+	if [ "${OUTPUT_DATA_CYTOMINE#*Server startup}" = "$OUTPUT_DATA_CYTOMINE" ]
+	then
+	   echo "Data are not yet injected. Please check the status with the command docker logs data_test."
+	else
+	   echo "Data successfully injected."
+	fi
+fi
+echo "End of the installation."
 

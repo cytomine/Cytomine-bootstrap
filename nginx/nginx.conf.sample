@@ -28,7 +28,8 @@ http {
     #tcp_nopush     on;
 
     #keepalive_timeout  0;
-    keepalive_timeout  65;
+    keepalive_timeout  120;
+    proxy_connect_timeout 75;
 
     #gzip  on;
     server {
@@ -78,6 +79,7 @@ IMS_URLS_CONFIG
 
 			# Upload form should be submitted to this location
 			location /upload {
+				proxy_read_timeout 600;
 				# Pass altered request body to this location
 				upload_pass   @test;
 
@@ -111,6 +113,7 @@ IMS_URLS_CONFIG
 			location @test {
 				add_header 'Access-Control-Allow-Origin' '*';
 				proxy_pass   http://IMS_ALIAS:8080;
+				proxy_read_timeout 600;
 			}
 			error_page   500 502 503 504  /50x.html;
 			location = /50x.html {

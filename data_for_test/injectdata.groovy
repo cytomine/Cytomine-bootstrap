@@ -116,6 +116,8 @@ injectData(data)
  */
 void injectData(InjectedData data) {
 
+    def warningMessages = [];
+
     StorageCollection storages = CYTOMINE.cytomine.getStorages();
     while(storages.size() == 0) {
         storages = CYTOMINE.cytomine.getStorages();
@@ -168,18 +170,25 @@ void injectData(InjectedData data) {
 
         //for each image: upload image + add annotation from annotation.json
         injectedProject.images.each { injectedImage ->
+            Thread.sleep(5000);
             println "UPLOAD IMAGE ${new File(injectedImage.filename).name}"
             println "uploadImage(${injectedImage.filename}, ${project.getId()}, ${storages.get(0).id}, ${CYTOMINE.cytomineCoreUrl}, null, false)"
             def json = CYTOMINE.ims.uploadImage(injectedImage.filename, project.getId(), storages.get(0).id, CYTOMINE.cytomineCoreUrl, null, false);
 
             Long idImageInstance=null
+	    Integer waitingLimit = 0;
 
-            while(idImageInstance==null) {
+            while(idImageInstance==null && waitingLimit< 60) {
                 println "Wait for ${new File(injectedImage.filename).name}"
                 def value = CYTOMINE.cytomine.getImageInstances(project.getId()).list.find{it.originalFilename==new File(injectedImage.filename).name}
+		println "value = $value"
                 idImageInstance = value?.id
+		waitingLimit++;
                 Thread.sleep(5000);
             }
+	    if (idImageInstance==null){
+		warningMessages << "The image $injectedImage.filename was not uploaded"
+	    }
 
             injectedImage.annotations.each { injectedAnnotation ->
 
@@ -190,21 +199,30 @@ void injectData(InjectedData data) {
                     connection = CYTOMINE.cytomine2
                 }
 
-                Annotation annotation =  connection.addAnnotation(injectedAnnotation.location,idImageInstance)
+		try {
+                    Annotation annotation =  connection.addAnnotation(injectedAnnotation.location,idImageInstance)
 
-                println "injectedAnnotation.terms=${injectedAnnotation.terms}"
+                    println "injectedAnnotation.terms=${injectedAnnotation.terms}"
 
-                injectedAnnotation.terms.each { injectedTerm ->
-                    //println "injectedTerm=${injectedTerm.name}"
-                    //println "terms.list=${terms.list}"
-                    println terms.list.find{it.name==injectedTerm.name}
-                    connection.addAnnotationTerm(annotation.getId(),terms.list.find{it.name==injectedTerm.name}.id)
-                }
+                    injectedAnnotation.terms.each { injectedTerm ->
+                        //println "injectedTerm=${injectedTerm.name}"
+                        //println "terms.list=${terms.list}"
+                        println terms.list.find{it.name==injectedTerm.name}
+                        connection.addAnnotationTerm(annotation.getId(),terms.list.find{it.name==injectedTerm.name}.id)
+                    }
+		} catch(Exception e) {
+		    warningMessages << "Annotation cannot be added on image instance $idImageInstance "+e
+		}
             }
 
         }
     }
-    println "DATA SUCCESSFULLY INJECTED"
+    if(warningMessages.size() == 0) {
+	println "DATA SUCCESSFULLY INJECTED"
+    } else {
+	println "DATA INJECTED. SOME ERRORS OCCURED :"
+	println warningMessages.join("\n");
+    }
 }
 
 
