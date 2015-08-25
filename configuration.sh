@@ -49,6 +49,9 @@ IRIS_ENABLED=true
 
 IMS_STORAGE_PATH=/data
 IMS_BUFFER_PATH=/data/_buffer
+BACKUP_PATH=/backup
+MODELS_PATH=/data/algo/models/
+RETRIEVAL_PATH=/data/thumb
 
 BIOFORMAT_ENABLED="false"
 

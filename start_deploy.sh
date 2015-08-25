@@ -84,11 +84,9 @@ nb_docker=$((nb_docker+1))
 
 if [ $BACKUP_BOOL = true ] 
 then
-	BACKUP_PATH=/backup # path (in the db container) for backup
-
 	# create backup docker
-	docker run -p 22 -d --name backup_postgis --link db:db -v /backup/postgis:$BACKUP_PATH \
-	-e BACKUP_PATH=$BACKUP_PATH \
+	docker run -p 22 -d --name backup_postgis --link db:db -v $BACKUP_PATH/postgis:/backup \
+	-e BACKUP_PATH=/backup \
 	-e SENDER_EMAIL=$SENDER_EMAIL \
 	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
@@ -101,9 +99,9 @@ then
 	cytomine/backup
 	nb_docker=$((nb_docker+1))
 
-	docker run -p 22 -d --name backup_mongo --link mongodb:db -v /backup/mongo:$BACKUP_PATH \
+	docker run -p 22 -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup \
 	-e SGBD='mongodb' \
-	-e BACKUP_PATH=$BACKUP_PATH \
+	-e BACKUP_PATH=/backup \
 	-e SENDER_EMAIL=$SENDER_EMAIL \
 	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
@@ -230,9 +228,8 @@ cytomine/core
 nb_docker=$((nb_docker+1))
 
 # create retrieval docker
-RETRIEVAL_FOLDER=/data/thumb
 docker run -m 8g -d -p 22 --name retrieval \
--v $RETRIEVAL_FOLDER:$RETRIEVAL_FOLDER \
+-v $RETRIEVAL_PATH:/data/thumb \
 -e IMS_URLS=$IMS_URLS \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
@@ -333,7 +330,7 @@ docker exec core /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.g
 # create software-router docker
 docker run -d -p 22 --link rabbitmq:rabbitmq \
 --name software_router \
--v /data/algo/models/:/software_router/algo/models/ \
+-v $MODELS_PATH:/software_router/algo/models/ \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
@@ -348,32 +345,38 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 cytomine/software_router
 nb_docker=$((nb_docker+1))
 
+
+DATA_INSERTION=false
 if [ ! -f ./.cookies ];
 then
 	echo 
 	while true; do
 	    read -p "Do you wish to install some data test? " yn
 	    case $yn in
-	        [Yy]* ) break;;
-	        [Nn]* ) break;;
+	        [Yy]* ) 
+			# create test docker
+			docker run -d -p 22 \
+			--name data_test \
+			-e IS_LOCAL=$IS_LOCAL \
+			-e CORE_URL=$CORE_URL \
+			-e UPLOAD_URL=$UPLOAD_URL \
+			-e PUBLIC_KEY=$SUPERADMIN_PUB_KEY \
+			-e PRIVATE_KEY=$SUPERADMIN_PRIV_KEY \
+			-e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
+			cytomine/data_test
+			nb_docker=$((nb_docker+1))
+
+			echo "Data test in installation. It can take 45 minutes depending of your internet connexion."
+			DATA_INSERTION=true
+			break
+			;;
+	        [Nn]* ) 
+			break
+			;;
 	        * ) echo "Please answer yes or no.";;
 	    esac
 	done
 
-	# create test docker
-	docker run -d -p 22 \
-	--name data_test \
-	-e IS_LOCAL=$IS_LOCAL \
-	-e CORE_URL=$CORE_URL \
-	-e UPLOAD_URL=$UPLOAD_URL \
-	-e PUBLIC_KEY=$SUPERADMIN_PUB_KEY \
-	-e PRIVATE_KEY=$SUPERADMIN_PRIV_KEY \
-	-e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
-	cytomine/data_test
-	nb_docker=$((nb_docker+1))
-
-	echo "Data test in installation. It can take 45 minutes depending of your internet connexion."
-	DATA_INSERTION=true
 fi
 
 
