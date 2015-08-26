@@ -52,6 +52,9 @@ then
 
 	echo "grails.uploadURL='http://$UPLOAD_URL'" >> cytomineconfig.groovy
 
+	echo "grails.retrievalUsername = 'cytomine'" >> cytomineconfig.groovy
+	echo "grails.retrievalPassword = '$RETRIEVAL_PASSWD'" >> cytomineconfig.groovy
+
 	echo "grails.adminPassword='$ADMIN_PWD'" >> cytomineconfig.groovy
 	echo "grails.adminPrivateKey='$ADMIN_PRIV_KEY'" >> cytomineconfig.groovy
 	echo "grails.adminPublicKey='$ADMIN_PUB_KEY'" >> cytomineconfig.groovy

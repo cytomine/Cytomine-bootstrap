@@ -43,7 +43,8 @@ SENDER_EMAIL_SMTP_PORT='587'
 RECEIVER_EMAIL='receiver@XXX.com'
 
 #possible values : memory, redis
-RETRIEVAL_ENGINE=memory
+RETRIEVAL_ENGINE=redis
+RETRIEVAL_PASSWD='retrieval_default'
 
 IRIS_ENABLED=true
 

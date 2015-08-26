@@ -62,6 +62,7 @@ ADD config /tmp/config
 
 RUN apt-get install -y procps
 
+ADD redis.conf /tmp/redis.conf
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 

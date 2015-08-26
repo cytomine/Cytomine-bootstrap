@@ -29,5 +29,4 @@ cytomine.customUI.project = [
         "project-configuration-tab":["ADMIN_PROJECT":true,"USER_PROJECT":false,"GUEST_PROJECT":false],
 ]
 
-grails.retrievalUsername = "cytomine"
-grails.retrievalPassword = "PASSWORD_AUTOGENERE"
+

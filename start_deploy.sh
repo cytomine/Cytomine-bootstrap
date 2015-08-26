@@ -220,6 +220,7 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e IMS_PUB_KEY=$IMS_PUB_KEY \
 -e IMS_PRIV_KEY=$IMS_PRIV_KEY \
+-e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
 -e SENDER_EMAIL=$SENDER_EMAIL \
 -e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 -e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
@@ -233,8 +234,9 @@ docker run -m 8g -d -p 22 --name retrieval \
 -e IMS_URLS=$IMS_URLS \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
--e RETRIEVAL_FOLDER=$RETRIEVAL_FOLDER \
+-e RETRIEVAL_FOLDER=/data/thumb \
 -e RETRIEVAL_JAR_URL=$RETRIEVAL_JAR_URL \
+-e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
 cytomine/retrieval
 nb_docker=$((nb_docker+1))
 

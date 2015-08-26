@@ -36,7 +36,7 @@ cp -r /tmp/testsvectors testsvectors
 cp -r /tmp/config config
 
 touch password.txt
-echo "cytomine:PASSWORD_AUTOGENERE" > password.txt
+echo "cytomine:$RETRIEVAL_PASSWD" > password.txt
 
 
 ### transform the ims urls for the config file ###
@@ -58,7 +58,7 @@ if [ "$ENGINE" == "memory" ]
 then
 	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=MEMORY --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
 else
-	redis-server&
+	cd $RETRIEVAL_FOLDER && redis-server /tmp/redis.conf&
 
 	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
 fi
