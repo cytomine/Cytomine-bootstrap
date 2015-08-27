@@ -301,6 +301,7 @@ else
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
 	-e IIP_JP2_URL=$IIP_JP2_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
+	-e IRIS_ENABLED=$IRIS_ENABLED \
 	cytomine/nginx
 fi
 nb_docker=$((nb_docker+1))
