@@ -15,10 +15,18 @@
 # limitations under the License.
 #
 
+arr=$(echo $IMS_URLS | tr "," "\n")
+arr=$(echo $arr | tr "[" "\n")
+arr=$(echo $arr | tr "]" "\n")
+
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $UPLOAD_URL" >> /etc/hosts
+	for x in $arr
+	do
+	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
+	done
 fi
 
 if [ ! -z "$JAVA_CLIENT_JAR" ]
@@ -29,7 +37,7 @@ then
 
 	mv /tmp/injectdata.groovy /tmp/script/
 
-	cd /tmp/script/ && groovy -cp '../Cytomine-client-java.jar' injectdata.groovy ./ http://$CORE_URL http://$UPLOAD_URL $PUBLIC_KEY $PRIVATE_KEY
+	cd /tmp/script/ && groovy -cp '../Cytomine-client-java.jar' injectdata.groovy ./ http://$CORE_URL http://$x http://$UPLOAD_URL $PUBLIC_KEY $PRIVATE_KEY
 fi
 
 

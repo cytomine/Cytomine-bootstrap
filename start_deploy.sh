@@ -171,6 +171,7 @@ docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
 -e IIP_VENT_URL=$IIP_VENT_URL \
 -e IIP_CYTO_URL=$IIP_CYTO_URL \
 -e IIP_JP2_URL=$IIP_JP2_URL \
+-e IMS_URLS=$IMS_URLS \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
 -e WAR_URL=$IMS_WAR_URL \
@@ -310,7 +311,7 @@ nb_docker=$((nb_docker+1))
 # wait for the admin password is setted by the core
 OUTPUT_CORE_CYTOMINE=$(sudo docker exec -i -t core tail -n 200 /var/lib/tomcat7/logs/catalina.out)
 COUNTER_CYTOMINE=0
-while [ "${OUTPUT_CORE_CYTOMINE#*Server startup}" = "$OUTPUT_CORE_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 120 ]
+while [ "${OUTPUT_CORE_CYTOMINE#*Server startup}" = "$OUTPUT_CORE_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 720 ]
 do
    OUTPUT_CORE_CYTOMINE=$(sudo docker exec -i -t core tail -n 200 /var/lib/tomcat7/logs/catalina.out)
    COUNTER_CYTOMINE=$((COUNTER_CYTOMINE+1))
@@ -362,6 +363,7 @@ then
 			--name data_test \
 			-e IS_LOCAL=$IS_LOCAL \
 			-e CORE_URL=$CORE_URL \
+			-e IMS_URLS=$IMS_URLS \
 			-e UPLOAD_URL=$UPLOAD_URL \
 			-e PUBLIC_KEY=$SUPERADMIN_PUB_KEY \
 			-e PRIVATE_KEY=$SUPERADMIN_PRIV_KEY \

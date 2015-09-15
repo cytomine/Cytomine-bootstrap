@@ -27,6 +27,7 @@ class CYTOMINE {
     static String publickey; //superadmin
     static String privatekey;
     static String cytomineCoreUrl;
+    static String cytomineUploadUrl;
     static String cytomineImsUrl;
 	static String prefix=""
     static String suffix=""
@@ -47,7 +48,7 @@ class CYTOMINE {
     }
 
     static Cytomine getIms() {
-        return new Cytomine(CYTOMINE.cytomineImsUrl, CYTOMINE.users["jsnow"].publicKey, CYTOMINE.users["jsnow"].privateKey);
+        return new Cytomine(CYTOMINE.cytomineUploadUrl, CYTOMINE.users["jsnow"].publicKey, CYTOMINE.users["jsnow"].privateKey);
     }
 }
 
@@ -71,10 +72,11 @@ println """
 File workingDir = new File(args[0])
 CYTOMINE.cytomineCoreUrl = args[1]
 CYTOMINE.cytomineImsUrl = args[2]
-CYTOMINE.publickey = args[3]
-CYTOMINE.privatekey = args[4]
-if(args.length>=6) CYTOMINE.prefix = args[5]
-if(args.length==7) CYTOMINE.suffix = args[6]
+CYTOMINE.cytomineUploadUrl = args[3]
+CYTOMINE.publickey = args[4]
+CYTOMINE.privatekey = args[5]
+if(args.length>=7) CYTOMINE.prefix = args[6]
+if(args.length==8) CYTOMINE.suffix = args[7]
 
 println args
 println CYTOMINE.cytomineCoreUrl
@@ -124,12 +126,12 @@ void injectData(InjectedData data) {
         Thread.sleep(1000);
     }
 
-    ProcessingServer ps = CYTOMINE.getCytomineSuperAdmin().addProcessingServer(CYTOMINE.cytomineImsUrl);
+    ProcessingServer ps = CYTOMINE.getCytomineSuperAdmin().addProcessingServer(CYTOMINE.cytomineImsUrl+'/');
     //for each imagefilter
     data.imagefilters.each { injectedImagefilter ->
         println injectedImagefilter
         println "add imagefilter ${injectedImagefilter.name}"
-        ImageFilter project = CYTOMINE.getCytomineSuperAdmin().addImageFilter(injectedImagefilter.name, injectedImagefilter.baseUrl, CYTOMINE.cytomineImsUrl)
+        ImageFilter project = CYTOMINE.getCytomineSuperAdmin().addImageFilter(injectedImagefilter.name, injectedImagefilter.baseUrl, CYTOMINE.cytomineImsUrl+'/')
     }
     //for each project
     data.projects.each { injectedProject ->

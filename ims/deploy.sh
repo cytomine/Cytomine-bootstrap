@@ -23,6 +23,10 @@ if [ $HAS_GLUSTER = true ]; then
 	mount -t glusterfs $GLUSTER_SERVER:$VOLUME $IMS_STORAGE_PATH
 fi
 
+arr=$(echo $IMS_URLS | tr "," "\n")
+arr=$(echo $arr | tr "[" "\n")
+arr=$(echo $arr | tr "]" "\n")
+
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
@@ -30,6 +34,10 @@ if [ $IS_LOCAL = true ]; then
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_VENT_URL" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_CYTO_URL" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_JP2_URL" >> /etc/hosts
+	for x in $arr
+	do
+	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
+	done
 fi
 
 
