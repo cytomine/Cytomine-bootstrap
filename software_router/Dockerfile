@@ -56,7 +56,7 @@ ADD injectSoftware.groovy /tmp/injectSoftware.groovy
 RUN chmod +x /tmp/injectSoftware.groovy
 
 # Fix path
-ENV GROOVY_HOME /root/.gvm/groovy/current
+ENV GROOVY_HOME /root/.sdkman/groovy/current
 
 ENTRYPOINT ["/tmp/deploy.sh"]
 
