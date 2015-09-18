@@ -25,7 +25,7 @@ RUN apt-get install -y git
 
 # Grails Installation
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-RUN cd /tmp/ && curl http://api.gvmtool.net -o install-gvm.sh && bash install-gvm.sh && source "/root/.gvm/bin/gvm-init.sh" && gvm install grails 2.3.11 --yes
+RUN cd /tmp/ && curl http://api.gvmtool.net -o install-gvm.sh && bash install-gvm.sh && source "/root/.sdkman/bin/sdkman-init.sh" && sdk install grails 2.3.11 --yes
 
 ADD iris-config.groovy /tmp/iris-config.groovy
 ADD iris-production-config.groovy /tmp/iris-production-config.groovy

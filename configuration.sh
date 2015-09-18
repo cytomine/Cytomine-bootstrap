@@ -68,9 +68,9 @@ CORE_DOC_URL="http://cytomine.be/release/core/restapidoc.json"
 IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 IMS_DOC_URL="http://cytomine.be/release/ims/restapidoc.json"
 RETRIEVAL_JAR_URL="http://cytomine.be/release/retrieval/CBIRest-0.2.1.zip"
-JAVA_CLIENT_JAR="http://cytomine.be/release/java/cytomine-java-client.jar"
+JAVA_CLIENT_JAR="https://github.com/cytomine/Cytomine-java-client/releases/download/v1.1/cytomine-java-client-1.1.jar"
 ALGO_TAR="http://cytomine.be/release/algo/algo.tar.gz"
-SOFTWARE_ROUTER_JAR="http://cytomine.be/release/algo/cytomine-software-router.jar"
+SOFTWARE_ROUTER_JAR="https://github.com/cytomine/Cytomine-software-router/releases/download/v1/cytomine-software-router.jar"
 
 MEMCACHED_PASS="mypass"
 
