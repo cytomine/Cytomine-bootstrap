@@ -34,8 +34,8 @@ ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 
 # Fix path
-ENV GROOVY_HOME /root/.gvm/groovy/current
-ENV GRAILS_HOME /root/.gvm/grails/current
+ENV GROOVY_HOME /root/.sdkman/groovy/current
+ENV GRAILS_HOME /root/.sdkman/grails/current
 ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 
 ENTRYPOINT ["/tmp/deploy.sh"]
