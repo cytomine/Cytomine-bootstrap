@@ -31,7 +31,7 @@ RUN cd /root/Cytomine/ && unzip Cytomine-python-datamining.zip
 RUN mv /root/Cytomine/Cytomine-python-datamining-master /root/Cytomine/Cytomine-python-datamining
 RUN rm /root/Cytomine/Cytomine-python-datamining.zip
 
-RUN cd /root/anaconda/lib/python2.7/site-packages/ && git clone https://github.com/scikit-learn/scikit-learn.git
+RUN cd /root/anaconda/lib/python2.7/site-packages/ && git clone https://github.com/scikit-learn/scikit-learn.git && cd scikit-learn && git checkout e2f3aab4839ef77268ec328ba96f3cdcfcfd78f6 && cd ..
 RUN apt-get install -y make
 RUN apt-get install -y g++
 RUN cd /root/anaconda/lib/python2.7/site-packages/scikit-learn/ && make && python setup.py build && python setup.py install

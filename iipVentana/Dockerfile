@@ -21,11 +21,12 @@ MAINTAINER Cytomine Team "support@cytomine.be"
 RUN apt-get -y update
 
 #openslide
-RUN cd /tmp && git clone https://github.com/cytomine/openslide && cd /tmp/openslide && autoreconf -i && ./configure && make && make install
+RUN cd /tmp && git clone https://github.com/openslide/openslide && cd /tmp/openslide && git checkout 4cd4b83c3ffff0382126d0618c85407f2c469b28 && autoreconf -i && ./configure && make && make install
 
 #IIP Image Server
 RUN apt-get install -y unzip
-RUN cd /tmp && git clone https://github.com/cytomine/iipsrv && cd /tmp/iipsrv && sh autogen.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide" ./configure && make 
+
+RUN cd /tmp && git clone https://github.com/cytomine/iipsrv && cd /tmp/iipsrv && git checkout f23e36dc2ebaff0d42163a1aa6b2e4b2133e2f9a && sh autogen.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide" ./configure && make 
 RUN mkdir -p /usr/local/httpd/fcgi-bin && cp /tmp/iipsrv/src/iipsrv.fcgi /usr/local/httpd/fcgi-bin/iipsrv.fcgi
 
 ADD nginx.conf.sample /tmp/nginx.conf.sample

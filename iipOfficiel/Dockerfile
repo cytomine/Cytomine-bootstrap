@@ -20,9 +20,6 @@ MAINTAINER Cytomine Team "support@cytomine.be"
 
 RUN apt-get -y update
 
-#openslide
-#RUN cd /tmp && git clone https://github.com/cytomine/openslide && cd /tmp/openslide && autoreconf -i && ./configure && make && make install
-
 #IIP Image Server
 RUN apt-get install -y unzip
 RUN cd /tmp && git clone https://github.com/ruven/iipsrv && cd /tmp/iipsrv && git checkout 6315fe34ae0b785a548ba3637aefca06398afeb4 && sh autogen.sh && ./configure && make 

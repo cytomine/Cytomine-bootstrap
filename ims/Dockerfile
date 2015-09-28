@@ -29,7 +29,7 @@ RUN apt-get -y build-dep iipimage-server
 RUN apt-get -y build-dep libvips-dev 
 
 #openslide
-RUN cd /tmp && git clone https://github.com/cytomine/openslide --branch ventana && cd /tmp/openslide && autoreconf -i && ./configure && make && make install
+RUN cd /tmp && git clone https://github.com/openslide/openslide && cd /tmp/openslide && git checkout 4cd4b83c3ffff0382126d0618c85407f2c469b28 && autoreconf -i && ./configure && make && make install
 
 # use previous lib of lipopenjpeg-dev due to the bug https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=734238
 RUN cd /tmp && wget http://launchpadlibrarian.net/147357170/libopenjpeg2_1.3%2Bdfsg-4.6ubuntu2_amd64.deb && dpkg -i libopenjpeg2_1.3+dfsg-4.6ubuntu2_amd64.deb
@@ -43,7 +43,7 @@ RUN cd /tmp && wget http://www.vips.ecs.soton.ac.uk/supported/7.42/vips-7.42.1.t
 #openslide-java
 RUN apt-get -y install ant
 RUN update-java-alternatives -s java-7-oracle
-RUN export JAVA_HOME=/usr/lib/jvm/java-7-oracle && export CFLAGS="-I/usr/lib/jvm/java-7-oracle" && cd /tmp && git clone https://github.com/cytomine/openslide-java && cd /tmp/openslide-java && autoreconf -i && ./configure && make && make install
+RUN export JAVA_HOME=/usr/lib/jvm/java-7-oracle && export CFLAGS="-I/usr/lib/jvm/java-7-oracle" && cd /tmp && git clone https://github.com/cytomine/openslide-java && cd /tmp/openslide-java && git checkout 93af97eeca8f0b63e9f71a6916af474ecc474dc8 && autoreconf -i && ./configure && make && make install
 
 #libtiff-tools (tiffinfo) and imagemagick (identify)
 RUN apt-get install -y imagemagick libtiff-tools
