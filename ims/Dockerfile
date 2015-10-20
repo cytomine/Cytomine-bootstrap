@@ -55,6 +55,8 @@ RUN ldconfig -v
 
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
+ADD setenv.sh /tmp/setenv.sh
+RUN chmod +x /tmp/setenv.sh
 
 ENTRYPOINT ["/tmp/deploy.sh"]
 
