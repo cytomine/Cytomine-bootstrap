@@ -93,6 +93,8 @@ if [ $IS_LOCAL = true ]; then
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $RETRIEVAL_URL" >> /etc/hosts
 fi
 
+mv /tmp/setenv.sh /usr/share/tomcat7/bin/
+
 service tomcat7 start
 
 echo "/var/log/tomcat7/catalina.out {"   > /etc/logrotate.d/tomcat7

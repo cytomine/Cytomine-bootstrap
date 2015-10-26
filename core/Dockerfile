@@ -20,6 +20,8 @@ MAINTAINER Cytomine Team "support@cytomine.be"
 
 ADD cytomineconfig.groovy /tmp/cytomineconfig.groovy
 
+ADD setenv.sh /tmp/setenv.sh
+RUN chmod +x /tmp/setenv.sh
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 

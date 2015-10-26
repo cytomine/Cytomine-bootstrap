@@ -29,6 +29,6 @@ cytomine.customUI.project = [
         "project-configuration-tab":["ADMIN_PROJECT":true,"USER_PROJECT":false,"GUEST_PROJECT":false],
 ]
 
-grails.mongo.option.connectionsPerHost=10
-grails.mongo.option.threadsAllowedToBlockForConnectionMultiplier=5
+grails.mongo.options.connectionsPerHost=10
+grails.mongo.options.threadsAllowedToBlockForConnectionMultiplier=5
 
