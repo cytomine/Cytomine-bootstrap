@@ -1,6 +1,6 @@
 FROM cytomine/java7
 
-MAINTAINER BS "support@cytomine.be"
+MAINTAINER Cytomine Team "support@cytomine.be"
 
 # Anaconda Python environment
 RUN wget http://09c8d0b2229f813c1b93-c95ac804525aac4b6dba79b00b39d1d3.r79.cf1.rackcdn.com/Anaconda-2.1.0-Linux-x86_64.sh
@@ -31,7 +31,7 @@ RUN cd /root/Cytomine/ && unzip Cytomine-python-datamining.zip
 RUN mv /root/Cytomine/Cytomine-python-datamining-master /root/Cytomine/Cytomine-python-datamining
 RUN rm /root/Cytomine/Cytomine-python-datamining.zip
 
-RUN cd /root/anaconda/lib/python2.7/site-packages/ && git clone https://github.com/scikit-learn/scikit-learn.git && cd scikit-learn && git checkout e2f3aab4839ef77268ec328ba96f3cdcfcfd78f6 && cd ..
+RUN cd /root/anaconda/lib/python2.7/site-packages/ && git clone https://github.com/scikit-learn/scikit-learn.git && cd scikit-learn && git checkout cd12906cabf3576a8c236a4128e959360037dde0 && cd ..
 RUN apt-get install -y make
 RUN apt-get install -y g++
 RUN cd /root/anaconda/lib/python2.7/site-packages/scikit-learn/ && make && python setup.py build && python setup.py install
