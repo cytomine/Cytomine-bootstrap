@@ -49,7 +49,7 @@ grails.cytomine = [
                         // configure a demo project for this IRIS instance which will always be enabled to its users
                         // if none is specified, all projects will be disabled by default
                         demoProject: [
-                                cmID: 
+                                cmID: 0
                         ],
                         // an empty synchronization object, we require in environment specific config files
                         sync       : [:]

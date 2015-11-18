@@ -54,14 +54,14 @@ fi
 
 
 
+touch /tmp/retrieval.log
 if [ "$ENGINE" == "memory" ] 
 then
 	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=MEMORY --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
 else
 	cd $RETRIEVAL_FOLDER && redis-server /tmp/redis.conf&
 
-	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
+	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search > /tmp/retrieval.log
 fi
 
-touch test.out
-tail -F /tmp/test.out
+tail -F /tmp/retrieval.log
