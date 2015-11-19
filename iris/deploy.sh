@@ -57,7 +57,7 @@ cp /tmp/iris-* /usr/share/tomcat7/.grails
 PATH="$PATH:$GRAILS_HOME/bin"
 
 ## compile
-cd ~/Cytomine-IRIS && git checkout d7e682635dafe74726b139d7df4fe6af40c39b19
+cd ~/Cytomine-IRIS && git checkout d1e0f8fdf3e4935cb2c96319f8912cd5759018b4
 rm -f target/iris.war
 grails war
 
