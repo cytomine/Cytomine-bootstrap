@@ -79,5 +79,5 @@ BIOFORMAT_ALIAS="bioformat"
 BIOFORMAT_PORT="4321"
 
 #In software_router
-GROOVY_PATH="/root/.sdkman/groovy/current/bin/groovy"
+GROOVY_PATH="/root/.sdkman/candidates/groovy/current/bin/groovy"
 

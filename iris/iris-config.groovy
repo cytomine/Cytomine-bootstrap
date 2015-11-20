@@ -29,7 +29,7 @@ grails.cytomine = [
         // parallel image tile fetching from random server ids (0-10)
         // if there is no {serverID} present, all requests are sent to one server
         image: [
-                host : "IMS_URL"
+                host : "http://IMS_URL"
         ],
         // the Cytomine-Core host (where the projects are managed)
         host : "http://CORE_URL",
