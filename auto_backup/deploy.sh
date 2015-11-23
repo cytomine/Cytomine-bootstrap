@@ -35,9 +35,29 @@ then
 fi
 chmod +x /var/cytomine/script_backup.sh
 
-echo "mailhub=$SENDER_EMAIL_SMTP_HOST:$SENDER_EMAIL_SMTP_PORT" >> /etc/ssmtp/ssmtp.conf
-echo "AuthUser=$SENDER_EMAIL" >> /etc/ssmtp/ssmtp.conf
-echo "AuthPass=$SENDER_EMAIL_PASS" >> /etc/ssmtp/ssmtp.conf
+
+echo "[$SENDER_EMAIL_SMTP_HOST]:$SENDER_EMAIL_SMTP_PORT $SENDER_EMAIL:$SENDER_EMAIL_PASS" > /etc/postfix/sasl_passwd
+postmap /etc/postfix/sasl_passwd
+
+
+sed -i "/relayhost =/c\relayhost = [$SENDER_EMAIL_SMTP_HOST]:$SENDER_EMAIL_SMTP_PORT" /etc/postfix/main.cf
+sed -i "/mynetworks =/c\mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128" /etc/postfix/main.cf
+sed -i "/mydestination =/c\mydestination = localhost.localdomain, localhost" /etc/postfix/main.cf
+
+echo "# enable SASL authentication " >> /etc/postfix/main.cf
+echo "smtp_sasl_auth_enable = yes" >> /etc/postfix/main.cf
+echo "# disallow methods that allow anonymous authentication. " >> /etc/postfix/main.cf
+echo "smtp_sasl_security_options = noanonymous" >> /etc/postfix/main.cf
+echo "# where to find sasl_passwd" >> /etc/postfix/main.cf
+echo "smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd" >> /etc/postfix/main.cf
+echo "# Enable STARTTLS encryption " >> /etc/postfix/main.cf
+echo "smtp_use_tls = yes" >> /etc/postfix/main.cf
+echo "# where to find CA certificates" >> /etc/postfix/main.cf
+echo "smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt" >> /etc/postfix/main.cf
+
+service postfix start
+
+
 
 #hostname:port:database:username:password
 echo "db:*:$DATABASE:$USER:$PASSWD" > /root/.pgpass
@@ -58,7 +78,6 @@ echo "CONTAINER=db" >> /tmp/crontab
 echo "#End setting env var" >> /tmp/crontab
 
 echo "30 23 * * * /var/cytomine/script_backup.sh $BACKUP_PATH $RECEIVER_EMAIL" >> /tmp/crontab
-#echo "* * * * * /var/cytomine/script_backup.sh $BACKUP_PATH $RECEIVER_EMAIL" >> /tmp/crontab
 crontab /tmp/crontab
 rm /tmp/crontab
 

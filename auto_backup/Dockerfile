@@ -35,10 +35,9 @@ ADD script_backup_postgres.sh /tmp/script_backup_postgres.sh
 ADD crontab /tmp/crontab
 
 # Add the mail features
-RUN apt-get -y install ssmtp
-RUN apt-get install -y mailutils
-
-ADD ssmtp.conf /etc/ssmtp/ssmtp.conf
+RUN export DEBIAN_FRONTEND=noninteractive
+RUN apt-get update
+RUN apt-get install -y bsd-mailx
 
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh

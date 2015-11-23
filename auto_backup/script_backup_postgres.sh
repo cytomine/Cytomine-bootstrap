@@ -54,8 +54,8 @@ ls -1t ${BackupOutDir} | sed -e "s/^PROD/  PROD/g"                              
 
 if [ $PGDumpRC -gt 0 ]
   then
-   cat ${Backuplog} | mail -s "`hostname -s` (pg_dump) : ERROR Backup of ${BackupDatabase}" -c ${BackupEmail}
+   cat ${Backuplog} | mail -s "`hostname -s` (pg_dump) : ERROR Backup of ${BackupDatabase}" ${BackupEmail}
  else
-   cat ${Backuplog} | mail -s "`hostname -s` : Backup of ${BackupDatabase} DB" ${BackupEmail}
+   cat ${Backuplog} | mail -s "`hostname -s` (pg_dump) : Backup of ${BackupDatabase} DB" ${BackupEmail}
 fi
 

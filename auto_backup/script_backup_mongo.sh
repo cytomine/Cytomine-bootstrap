@@ -54,8 +54,8 @@ ls -1t ${BackupOutDir} | sed -e "s/^PROD/  PROD/g"                              
 
 if [ $MGDumpRC -gt 0 ]
   then
-   cat ${Backuplog} | mail -s "`hostname -s` (mongodump) : ERROR Backup of ${BackupDatabase}" -c ${BackupEmail}
+   cat ${Backuplog} | mail -s "`hostname -s` (mongodump) : ERROR Backup of ${BackupDatabase}" ${BackupEmail}
  else
-   cat ${Backuplog} | mail -s "`hostname -s` : Backup of ${BackupDatabase} DB" ${BackupEmail}
+   cat ${Backuplog} | mail -s "`hostname -s` (mongodump) : Backup of ${BackupDatabase} DB" ${BackupEmail}
 fi
 
