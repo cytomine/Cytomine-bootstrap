@@ -46,7 +46,6 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 RUN cd /tmp/ && curl http://api.gvmtool.net -o install-gvm.sh && bash install-gvm.sh && source "/root/.sdkman/bin/sdkman-init.sh" && sdk install groovy 2.4.4 --yes
 
 ADD config.groovy /tmp/config.groovy
-ADD cytomine-java-client-1.0-SNAPSHOT-jar-with-dependencies.jar /tmp/cytomine-java-client-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 EXPOSE 8080
 

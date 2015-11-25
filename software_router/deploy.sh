@@ -28,7 +28,6 @@ cd /root/Cytomine/Cytomine-python-client/utilities/ &&  python setup.py build &&
 mkdir /software_router
 cd /software_router/
 mv /tmp/config.groovy .
-mv /tmp/cytomine-java-client-1.0-SNAPSHOT-jar-with-dependencies.jar .
 
 echo "cytomineCoreURL='http://$CORE_URL'" >> config.groovy
 echo "rabbitUsername='$RABBITMQ_LOGIN'" >> config.groovy
