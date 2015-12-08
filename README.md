@@ -12,3 +12,10 @@ This repository contains Dockerfile's in order to bootstrap the Cytomine Platfor
 Documentation : http://docker.io
 
 Cytomine website : http://www.cytomine.be
+
+## How to install it
+
+Run 
+```
+sh restart_keep_data.sh
+```
