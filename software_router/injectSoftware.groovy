@@ -27,6 +27,8 @@ println "Launch :"
 Cytomine cytomine = new Cytomine(cytomineCoreUrl, publickey, privatekey);
  
 println "Softwares :"+cytomine.getSoftwares();
+SoftwareExample.addSoftwareComputeTermArea(cytomine);
+println "ComputeTermArea added"
 SoftwareExample.addSoftwareTissueDetect(cytomine);
 println "TissueDetect added"
 SoftwareExample.addSoftwareTissueSegmentBuilder(cytomine);
