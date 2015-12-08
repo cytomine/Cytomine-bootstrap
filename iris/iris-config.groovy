@@ -41,9 +41,9 @@ grails.cytomine = [
                         server     : [
                                 admin: [
                                         // CHANGE THIS INFORMATION TO YOUR ADMIN'S INFORMATION
-                                        name        : "Ian Admin",
-                                        organization: "University of Somewhere, Department of Whatever",
-                                        email       : "ian.admin@somewhere.edu"
+                                        name        : "IRIS_ADMIN_NAME",
+                                        organization: "IRIS_ADMIN_ORGANIZATION_NAME",
+                                        email       : "IRIS_ADMIN_EMAIL"
                                 ]
                         ],
                         // configure a demo project for this IRIS instance which will always be enabled to its users

@@ -50,6 +50,10 @@ sed -i "s/SENDER_EMAIL/$SENDER_EMAIL/g" /tmp/iris-production-config.groovy
 
 sed -i "s/CORE_URL/$CORE_URL/g" /tmp/iris-config.groovy
 sed -i "s/IMS_URL/$x/g" /tmp/iris-config.groovy
+sed -i "s/IRIS_ADMIN_NAME/$IRIS_ADMIN_NAME/g" /tmp/iris-config.groovy
+sed -i "s/IRIS_ADMIN_ORGANIZATION_NAME/$IRIS_ADMIN_ORGANIZATION_NAME/g" /tmp/iris-config.groovy
+sed -i "s/IRIS_ADMIN_EMAIL/$IRIS_ADMIN_EMAIL/g" /tmp/iris-config.groovy
+
 
 cp /tmp/iris-* /usr/share/tomcat7/.grails
 

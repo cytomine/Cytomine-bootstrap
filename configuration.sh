@@ -22,9 +22,6 @@ IIP_OFF_URL=localhost-iip-base
 IIP_VENT_URL=localhost-iip-ventana
 IIP_CYTO_URL=localhost-iip-cyto
 IIP_JP2_URL=localhost-iip-jp2000
-IRIS_URL=localhost-iris
-
-IRIS_ID="LOCAL_CYTOMINE_IRIS"
 
 HAS_GLUSTER=false
 GLUSTER_SERVER=
@@ -60,6 +57,16 @@ BIOFORMAT_ENABLED="false"
 RABBITMQ_LOGIN="router"
 RABBITMQ_PASSWORD="router"
 
+
+#IRIS
+# -----
+IRIS_ENABLED=true
+IRIS_URL=localhost-iris
+IRIS_ID="LOCAL_CYTOMINE_IRIS"
+IRIS_ADMIN_NAME="Ian Admin"
+IRIS_ADMIN_ORGANIZATION_NAME="University of Somewhere, Department of Whatever"
+IRIS_ADMIN_EMAIL="ian.admin@somewhere.edu"
+
 # You don't to change the datas below this line instead of advanced customization
 # ---------------------------
 
@@ -68,7 +75,8 @@ CORE_DOC_URL="http://cytomine.be/release/core/restapidoc.json"
 IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
 IMS_DOC_URL="http://cytomine.be/release/ims/restapidoc.json"
 RETRIEVAL_JAR_URL="http://cytomine.be/release/retrieval/CBIRest-0.2.1.zip"
-JAVA_CLIENT_JAR="https://github.com/cytomine/Cytomine-java-client/releases/download/v1.1/cytomine-java-client-1.1.jar"
+#JAVA_CLIENT_JAR="https://github.com/cytomine/Cytomine-java-client/releases/download/v1.1/cytomine-java-client-1.1.jar"
+JAVA_CLIENT_JAR="http://cytomine.be/release/java/cytomine-java-client.jar"
 ALGO_TAR="http://cytomine.be/release/algo/algo.tar.gz"
 SOFTWARE_ROUTER_JAR="https://github.com/cytomine/Cytomine-software-router/releases/download/v1/cytomine-software-router.jar"
 
