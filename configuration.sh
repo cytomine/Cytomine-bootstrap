@@ -43,8 +43,6 @@ RECEIVER_EMAIL='receiver@XXX.com'
 RETRIEVAL_ENGINE=redis
 RETRIEVAL_PASSWD='retrieval_default'
 
-IRIS_ENABLED=true
-
 IMS_STORAGE_PATH=/data
 IMS_BUFFER_PATH=/data/_buffer
 BACKUP_PATH=/backup
