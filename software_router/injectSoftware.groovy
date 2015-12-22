@@ -42,6 +42,8 @@ println "CellClassifier added"
 SoftwareExample.addSoftwareLandMarkBuilder(cytomine);
 SoftwareExample.addSoftwareLandMarkPredict(cytomine);
 println "LandMark added"
+SoftwareExample.addSoftwareExportLandmark(cytomine);
+println "Export LandMark added"
 
 
 println "DONE"
