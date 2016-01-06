@@ -8,9 +8,9 @@ Raphaël Marée, Loïc Rollus, Benjamin Stévens, Renaud Hoyoux, Gilles Louppe, 
 
 
 
+
 This is the starting point to install Cytomine.
 This repository contains Dockerfile's in order to bootstrap the Cytomine Platform
-Cytomine website : http://www.cytomine.be
 
 ## How to install it
 See our installation instructions: http://doc.cytomine.be/x/goCj
