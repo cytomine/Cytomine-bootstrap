@@ -13,4 +13,4 @@ Cytomine website : http://www.cytomine.be
 
 ## How to install it
 
-See our installation instructions: http://confluence.cytomine.be/x/goCj
+See our installation instructions: http://doc.cytomine.be/x/goCj
