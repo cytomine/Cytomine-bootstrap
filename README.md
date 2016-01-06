@@ -4,18 +4,13 @@
 If you use Cytomine in scientific publications, please cite it properly with both its URL and scientific paper:
 - URL: http://www.cytomine.be/
 - Scientific paper:
-Marée et al., Collaborative analysis of multi-gigapixel images using Cytomine, Submitted, 2015.
+Raphaël Marée, Loïc Rollus, Benjamin Stévens, Renaud Hoyoux, Gilles Louppe, Rémy Vandaele, Jean-Michel Begon, Philipp Kainz, Pierre Geurts and Louis Wehenkel. Collaborative analysis of multi-gigapixel imaging data using Cytomine, Bioinformatics, 2016.
 
 
 This repository contains Dockerfile's in order to bootstrap the Cytomine Platform
-
-Documentation : http://docker.io
 
 Cytomine website : http://www.cytomine.be
 
 ## How to install it
 
-Run 
-```
-sh restart_keep_data.sh
-```
+See our installation instructions: http://confluence.cytomine.be/x/goCj
