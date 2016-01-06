@@ -68,13 +68,12 @@ IRIS_ADMIN_EMAIL="ian.admin@somewhere.edu"
 # You don't to change the datas below this line instead of advanced customization
 # ---------------------------
 
-CORE_WAR_URL="http://cytomine.be/release/core/ROOT.war"
-CORE_DOC_URL="http://cytomine.be/release/core/restapidoc.json"
-IMS_WAR_URL="http://cytomine.be/release/ims/ROOT.war"
-IMS_DOC_URL="http://cytomine.be/release/ims/restapidoc.json"
+CORE_WAR_URL="https://github.com/cytomine/Cytomine-core/releases/download/v1.0/Core.war"
+CORE_DOC_URL="https://github.com/cytomine/Cytomine-core/releases/download/v1.0/restapidoc.json"
+IMS_WAR_URL="https://github.com/cytomine/Cytomine-IMS/releases/download/v1.0/IMS.war"
+IMS_DOC_URL="https://github.com/cytomine/Cytomine-IMS/releases/download/v1.0/restapidoc.json"
 RETRIEVAL_JAR_URL="http://cytomine.be/release/retrieval/CBIRest-0.2.1.zip"
-#JAVA_CLIENT_JAR="https://github.com/cytomine/Cytomine-java-client/releases/download/v1.1/cytomine-java-client-1.1.jar"
-JAVA_CLIENT_JAR="http://cytomine.be/release/java/cytomine-java-client.jar"
+JAVA_CLIENT_JAR="https://github.com/cytomine/Cytomine-java-client/releases/download/v1.1.1/cytomine-java-client-1.1.1.jar"
 ALGO_TAR="http://cytomine.be/release/algo/algo.tar.gz"
 SOFTWARE_ROUTER_JAR="https://github.com/cytomine/Cytomine-software-router/releases/download/v1/cytomine-software-router.jar"
 
