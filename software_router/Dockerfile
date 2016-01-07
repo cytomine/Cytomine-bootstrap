@@ -39,13 +39,9 @@ RUN dpkg-reconfigure locales
 RUN apt-get -y update
 RUN apt-get -y install git
 
-# Uncomment when datamining will be open source and comment next line (with the .zip archive)
-# RUN cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-datamining
-ADD Cytomine-python-datamining.zip /root/Cytomine/Cytomine-python-datamining.zip
+RUN mkdir -p /root/Cytomine/ && cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-datamining.git && cd Cytomine-python-datamining/ && git checkout tags/v1.0
+
 RUN apt-get install -y unzip
-RUN cd /root/Cytomine/ && unzip Cytomine-python-datamining.zip
-RUN mv /root/Cytomine/Cytomine-python-datamining-master /root/Cytomine/Cytomine-python-datamining
-RUN rm /root/Cytomine/Cytomine-python-datamining.zip
 
 RUN cd /root/anaconda/lib/python2.7/site-packages/ && git clone https://github.com/scikit-learn/scikit-learn.git && cd scikit-learn && git checkout cd12906cabf3576a8c236a4128e959360037dde0 && cd ..
 RUN apt-get install -y make
