@@ -24,9 +24,9 @@ cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-clie
 cd /root/Cytomine/Cytomine-python-client/client/ && python setup.py build && python setup.py install
 cd /root/Cytomine/Cytomine-python-client/utilities/ &&  python setup.py build && python setup.py install
 
-cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-datamining.git && git checkout tags/v1.0
+cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-datamining.git && cd Cytomine-python-datamining/ && git checkout tags/v1.0
 
-cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-tools.git && git checkout tags/v1.0
+cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-tools.git && cd Cytomine-tools/ && git checkout tags/v1.0
 
 
 mkdir /software_router
