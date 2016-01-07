@@ -74,7 +74,6 @@ IMS_WAR_URL="https://github.com/cytomine/Cytomine-IMS/releases/download/v1.0/IMS
 IMS_DOC_URL="https://github.com/cytomine/Cytomine-IMS/releases/download/v1.0/restapidoc.json"
 RETRIEVAL_JAR_URL="http://cytomine.be/release/retrieval/CBIRest-0.2.1.zip"
 JAVA_CLIENT_JAR="https://github.com/cytomine/Cytomine-java-client/releases/download/v1.1.1/cytomine-java-client-1.1.1.jar"
-ALGO_TAR="http://cytomine.be/release/algo/algo.tar.gz"
 SOFTWARE_ROUTER_JAR="https://github.com/cytomine/Cytomine-software-router/releases/download/v1/cytomine-software-router.jar"
 
 MEMCACHED_PASS="mypass"

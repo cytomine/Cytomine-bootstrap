@@ -24,6 +24,10 @@ cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-clie
 cd /root/Cytomine/Cytomine-python-client/client/ && python setup.py build && python setup.py install
 cd /root/Cytomine/Cytomine-python-client/utilities/ &&  python setup.py build && python setup.py install
 
+cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-datamining.git && git checkout tags/v1.0
+
+cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-tools.git && git checkout tags/v1.0
+
 
 mkdir /software_router
 cd /software_router/
@@ -37,20 +41,25 @@ echo "publicKey='$RABBITMQ_PUB_KEY'" >> config.groovy
 echo "privateKey='$RABBITMQ_PRIV_KEY'" >> config.groovy
 
 
-wget -q $ALGO_TAR -O algo.tar.gz
-tar -xvf algo.tar.gz algo
-rm algo.tar.gz
-mv algo/lib .
+cd algo/
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/classification_model_builder .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/classification_prediction .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/classification_validation .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-datamining .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/detect_sample .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/export_landmark .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/landmark_model_builder .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/landmark_prediction .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/object_finder .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/segmentation_model_builder .
+mv /root/Cytomine/Cytomine-python-datamining/cytomine-applications/segmentation_prediction .
 
-#mkdir algo
-#cd algo/ && git clone https://github.com/cytomine/Cytomine-python-datamining.git
-#mv Cytomine-python-datamining/cytomine-applications/segmentation_prediction .
-#mv Cytomine-python-datamining/cytomine-applications/segmentation_model_builder .
-#mv Cytomine-python-datamining/cytomine-applications/object_finder .
-#mv Cytomine-python-datamining/cytomine-applications/detect_sample .
-#mv Cytomine-python-datamining/cytomine-applications/classification_validation .
-#mv Cytomine-python-datamining/cytomine-applications/classification_prediction .
-#mv Cytomine-python-datamining/cytomine-applications/classification_model_builder .
+
+mv /root/Cytomine/Cytomine-tools/computeAnnotationStats .
+mv /root/Cytomine/Cytomine-tools/computeTermArea.jar .
+mkdir ../lib
+mv /root/Cytomine/Cytomine-tools/jars ../lib
+mv /root/Cytomine/Cytomine-tools/union4.groovy ../lib
 
 
 wget -q $SOFTWARE_ROUTER_JAR -O Cytomine-software-router.jar
