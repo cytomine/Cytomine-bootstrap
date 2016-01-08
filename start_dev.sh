@@ -60,8 +60,8 @@ then
 	BACKUP_PATH=/backup # path (in the db container) for backup
 
 	# create backup docker
-	docker run -p 22 -d --name backup_postgis --link db:db -v /backup/postgis:$BACKUP_PATH \
-	-e BACKUP_PATH=$BACKUP_PATH \
+	docker run -p 22 -d --name backup_postgis --link db:db -v $BACKUP_PATH/postgis:/backup \
+	-e BACKUP_PATH=/backup \
 	-e SENDER_EMAIL=$SENDER_EMAIL \
 	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
@@ -74,9 +74,9 @@ then
 	cytomine/backup
 	nb_docker=$((nb_docker+1))
 
-	docker run -p 22 -d --name backup_mongo --link mongodb:db -v /backup/mongo:$BACKUP_PATH \
+	docker run -p 22 -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup \
 	-e SGBD='mongodb' \
-	-e BACKUP_PATH=$BACKUP_PATH \
+	-e BACKUP_PATH=/backup \
 	-e SENDER_EMAIL=$SENDER_EMAIL \
 	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
@@ -146,14 +146,14 @@ RABBITMQ_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
 RABBITMQ_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 
 # create retrieval docker
-RETRIEVAL_FOLDER=/data/thumb
 docker run -m 8g -d -p 22 --name retrieval \
--v $RETRIEVAL_FOLDER:$RETRIEVAL_FOLDER \
+-v $RETRIEVAL_PATH:/data/thumb \
 -e IMS_URLS=$IMS_URLS \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
--e RETRIEVAL_FOLDER=$RETRIEVAL_FOLDER \
+-e RETRIEVAL_FOLDER=/data/thumb \
 -e RETRIEVAL_JAR_URL=$RETRIEVAL_JAR_URL \
+-e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
 cytomine/retrieval
 nb_docker=$((nb_docker+1))
 
@@ -218,6 +218,7 @@ else
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
 	-e IIP_JP2_URL=$IIP_JP2_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
+	-e IRIS_ENABLED=$IRIS_ENABLED \
 	cytomine/nginx
 fi
 nb_docker=$((nb_docker+1))
@@ -226,11 +227,10 @@ nb_docker=$((nb_docker+1))
 # create software-router docker
 docker run -d -p 22 --link rabbitmq:rabbitmq \
 --name software_router \
--v /data/algo/models/:/software_router/algo/models/ \
+-v $MODELS_PATH:/software_router/algo/models/ \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
--e ALGO_TAR=$ALGO_TAR \
 -e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
 -e SOFTWARE_ROUTER_JAR=$SOFTWARE_ROUTER_JAR \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
