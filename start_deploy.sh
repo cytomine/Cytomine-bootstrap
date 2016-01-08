@@ -354,7 +354,7 @@ if [ ! -f ./.cookies ];
 then
 	echo 
 	while true; do
-	    read -p "Do you wish to install some data test? " yn
+	    read -p "Do you wish to install some data test? y/n (It can take 45 minutes depending of your internet connexion.) " yn
 	    case $yn in
 	        [Yy]* ) 
 			# create test docker
@@ -370,7 +370,7 @@ then
 			cytomine/data_test
 			nb_docker=$((nb_docker+1))
 
-			echo "Data test in installation. It can take 45 minutes depending of your internet connexion."
+			echo "Data test in installation."
 			DATA_INSERTION=true
 			break
 			;;

@@ -78,7 +78,7 @@ SOFTWARE_ROUTER_JAR="https://github.com/cytomine/Cytomine-software-router/releas
 
 MEMCACHED_PASS="mypass"
 
-BIOFORMAT_JAR_URL="http://cytomine.be/release/bioformat/BioFormatStandAlone.tar.gz"
+BIOFORMAT_JAR_URL="https://github.com/cytomine/Cytomine-tools/releases/download/v1.0/BioFormatStandAlone.tar.gz"
 BIOFORMAT_ALIAS="bioformat"
 BIOFORMAT_PORT="4321"
 
