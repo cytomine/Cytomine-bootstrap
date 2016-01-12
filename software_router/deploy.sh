@@ -20,7 +20,7 @@ fi
 
 # Cytomine-python-client
 cd /root/ && mkdir Cytomine/
-cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-client.git && cd Cytomine-python-client/ && git checkout 4345df259fca63545763a9c7f16d7feda6fa1820
+cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-client.git && cd Cytomine-python-client/ && git checkout tags/v1.0
 cd /root/Cytomine/Cytomine-python-client/client/ && python setup.py build && python setup.py install
 cd /root/Cytomine/Cytomine-python-client/utilities/ &&  python setup.py build && python setup.py install
 
