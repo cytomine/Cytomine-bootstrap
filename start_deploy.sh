@@ -248,6 +248,7 @@ then
 	--volumes-from iris_data \
 	-e CORE_URL=$CORE_URL \
 	-e IMS_URLS=$IMS_URLS \
+	-e IRIS_WAR_URL=$IRIS_WAR_URL \
 	-e IS_LOCAL=$IS_LOCAL \
 	-e IRIS_URL=$IRIS_URL \
 	-e IRIS_ID=$IRIS_ID \

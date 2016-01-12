@@ -18,10 +18,14 @@
 
 /etc/init.d/ssh start
 
-cd ~
-git clone https://github.com/cytomine/Cytomine-IRIS.git
+#Copy the war file from mounted directory to tomcat webapps directory
+if [ ! -z "$IRIS_WAR_URL" ]
+then
+	mkdir -p /usr/share/tomcat7/.grails #(make directory for externalized config in the home of the user which will run the tomcat server)
 
-mkdir /usr/share/tomcat7/.grails #(make directory for externalized config in the home of the user which will run the tomcat server)
+	rm -r /var/lib/tomcat7/webapps/*
+	cd /var/lib/tomcat7/webapps/  && wget -q $IRIS_WAR_URL -O iris.war
+fi
 
 
 ### transform the ims urls for the config file ###
@@ -56,17 +60,6 @@ sed -i "s/IRIS_ADMIN_EMAIL/$IRIS_ADMIN_EMAIL/g" /tmp/iris-config.groovy
 
 cp /tmp/iris-* /usr/share/tomcat7/.grails
 
-# horrible hack for grails with dash
-PATH="$PATH:$GRAILS_HOME/bin"
-
-## compile
-cd ~/Cytomine-IRIS && git checkout d1e0f8fdf3e4935cb2c96319f8912cd5759018b4
-rm -f target/iris.war
-grails war
-
-## deploy into a configured apache tomcat instance
-mv target/iris-*.war target/iris.war #(rename for auto-deploy with context server.domain.com/iris in tomcat)
-cp target/iris.war /var/lib/tomcat7/webapps/
 
 chmod -R 777 /var/lib/tomcat7/ # can create /var/lib/tomcat7/db. Find a more elegant solution later
 

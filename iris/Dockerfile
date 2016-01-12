@@ -19,13 +19,7 @@ FROM cytomine/tomcat7
 MAINTAINER Cytomine Team "support@cytomine.be"
 
 RUN apt-get update -y
-RUN apt-get install -y curl
 RUN apt-get install -y unzip
-RUN apt-get install -y git
-
-# Grails Installation
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-RUN cd /tmp/ && curl http://get.sdkman.io -o install-gvm.sh && bash install-gvm.sh && source "/root/.sdkman/bin/sdkman-init.sh" && sdk install grails 2.3.11 --yes
 
 ADD iris-config.groovy /tmp/iris-config.groovy
 ADD iris-production-config.groovy /tmp/iris-production-config.groovy
@@ -34,8 +28,6 @@ ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 
 # Fix path
-ENV GROOVY_HOME /root/.sdkman/candidates/groovy/current
-ENV GRAILS_HOME /root/.sdkman/candidates/grails/current
 ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 
 ENTRYPOINT ["/tmp/deploy.sh"]
