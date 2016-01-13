@@ -49,7 +49,7 @@ BACKUP_PATH=/backup
 MODELS_PATH=/data/algo/models/
 RETRIEVAL_PATH=/data/thumb
 
-BIOFORMAT_ENABLED="false"
+BIOFORMAT_ENABLED="true"
 
 #RabbitMQ Software Router
 RABBITMQ_LOGIN="router"
