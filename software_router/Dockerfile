@@ -29,7 +29,9 @@ RUN conda install pillow --yes
 RUN conda install scikit-learn --yes
 RUN conda install shapely --yes
 RUN conda install opencv --yes
+RUN conda install scipy=0.16.1 --yes
 
+RUN apt-get -y update
 # libs and locales for our scripts
 RUN apt-get install -y libglib2.0-0
 RUN apt-get install -y language-pack-en-base
