@@ -54,7 +54,7 @@ cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/segmentati
 
 
 cp -R /root/Cytomine/Cytomine-tools/computeAnnotationStats .
-cp /root/Cytomine/Cytomine-tools/computeTermArea.jar .
+cp /root/Cytomine/Cytomine-tools/computeTermArea.groovy .
 mkdir ../lib
 cp -R /root/Cytomine/Cytomine-tools/jars ../lib
 cp /root/Cytomine/Cytomine-tools/union4.groovy ../lib
