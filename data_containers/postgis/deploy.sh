@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (c) 2009-2016. Authors: see NOTICE file.
 #
@@ -14,13 +15,6 @@
 # limitations under the License.
 #
 
-FROM cytomine/postgis
+touch /tmp/x
+tail -f /tmp/x
 
-MAINTAINER Cytomine Team "support@cytomine.be"
-
-VOLUME ["/var/lib/postgresql"]
-
-ADD deploy.sh /tmp/deploy.sh
-RUN chmod +x /tmp/deploy.sh
-
-ENTRYPOINT ["/tmp/deploy.sh"]
