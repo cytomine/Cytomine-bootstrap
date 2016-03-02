@@ -17,12 +17,6 @@
 
 service ssh start
 
-if [ $HAS_GLUSTER = true ]; then
-	#gluster mount
-	mkdir /mnt/$VOLUME
-	mount -t glusterfs $GLUSTER_SERVER:$VOLUME $IMS_STORAGE_PATH
-fi
-
 #nginx conf gen
 sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/nginx.conf.sample  > /usr/local/nginx/conf/nginx.conf
 

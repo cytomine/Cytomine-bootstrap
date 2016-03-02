@@ -17,12 +17,6 @@
 
 /etc/init.d/ssh start
 
-if [ $HAS_GLUSTER = true ]; then
-	#gluster mount
-	mkdir /mnt/$VOLUME
-	mount -t glusterfs $GLUSTER_SERVER:$VOLUME $IMS_STORAGE_PATH
-fi
-
 arr=$(echo $IMS_URLS | tr "," "\n")
 arr=$(echo $arr | tr "[" "\n")
 arr=$(echo $arr | tr "]" "\n")

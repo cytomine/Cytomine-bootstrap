@@ -90,40 +90,28 @@ fi
 docker run -p 22 --privileged -d --name iipOff -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --link memcached1:memcached \
 -e IIP_ALIAS="iip_officiel" \
--e GLUSTER_SERVER=$GLUSTER_SERVER \
--e VOLUME=$VOLUME \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
--e HAS_GLUSTER=$HAS_GLUSTER \
 cytomine/iipofficiel
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipCyto -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --link memcached2:memcached \
 -e IIP_ALIAS="iip_cyto" \
--e GLUSTER_SERVER=$GLUSTER_SERVER \
--e VOLUME=$VOLUME \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
--e HAS_GLUSTER=$HAS_GLUSTER \
 cytomine/iipcyto
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipVent -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --link memcached3:memcached \
 -e IIP_ALIAS="iip_ventana" \
--e GLUSTER_SERVER=$GLUSTER_SERVER \
--e VOLUME=$VOLUME \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
--e HAS_GLUSTER=$HAS_GLUSTER \
 cytomine/iipventana
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --link memcached4:memcached \
 -e IIP_ALIAS="iip_jpeg2000" \
--e GLUSTER_SERVER=$GLUSTER_SERVER \
--e VOLUME=$VOLUME \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
--e HAS_GLUSTER=$HAS_GLUSTER \
 cytomine/iipjpeg2000
 nb_docker=$((nb_docker+1))
 
