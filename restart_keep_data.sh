@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (c) 2009-2016. Authors: see NOTICE file.
 #
@@ -13,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+path=$( cd "$(dirname "${BASH_SOURCE}")" ; pwd -P )
+cd $path
 
 sh create_docker_images.sh
 sh clean_docker_keep_data.sh

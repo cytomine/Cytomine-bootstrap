@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (c) 2009-2016. Authors: see NOTICE file.
 #
