@@ -26,7 +26,7 @@ ENV PATH /root/anaconda/bin:$PATH
 
 RUN conda remove PIL --yes
 RUN conda install pillow --yes
-RUN conda install scikit-learn --yes
+RUN conda install numpy=1.10.4 --yes
 RUN conda install shapely --yes
 RUN conda install opencv --yes
 RUN conda install scipy=0.16.1 --yes
