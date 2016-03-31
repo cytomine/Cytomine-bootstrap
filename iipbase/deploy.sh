@@ -52,6 +52,8 @@ chmod -R 777 /tmp/uploaded
 chmod +x /opt/cytomine/bin/start-iip.sh
 chmod +x /opt/cytomine/bin/stop-iip.sh
 
+sysctl -w net.core.somaxconn=2048
+
 crontab /tmp/crontab
 rm /tmp/crontab
 
