@@ -27,6 +27,7 @@ cytomine.customUI.project = [
         "project-properties-tab":["ADMIN_PROJECT":true,"USER_PROJECT":true,"GUEST_PROJECT":true],
         "project-jobs-tab":["ADMIN_PROJECT":false,"USER_PROJECT":false,"GUEST_PROJECT":false],
         "project-configuration-tab":["ADMIN_PROJECT":true,"USER_PROJECT":false,"GUEST_PROJECT":false],
+        "project-usersconfiguration-tab":["ADMIN_PROJECT":true,"USER_PROJECT":false,"GUEST_PROJECT":false]
 ]
 
 grails.mongo.options.connectionsPerHost=10
