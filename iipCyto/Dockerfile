@@ -29,7 +29,7 @@ RUN cd /tmp && git clone https://github.com/openslide/openslide && cd /tmp/opens
 
 #IIP Image Server
 RUN apt-get install -y unzip
-RUN cd /tmp && git clone https://github.com/cytomine/iipsrv && cd /tmp/iipsrv && git checkout 9f82ab9414406bf32beebb4f4715e9cfd336da64 && sh autogen.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide" ./configure && make 
+RUN cd /tmp && git clone https://github.com/cytomine/iipsrv && cd /tmp/iipsrv && git checkout 0a64676c20bc2cf68dcf858b6d507ee599ddbc99 && sh autogen.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide" ./configure && make 
 RUN mkdir -p /usr/local/httpd/fcgi-bin && cp /tmp/iipsrv/src/iipsrv.fcgi /usr/local/httpd/fcgi-bin/iipsrv.fcgi
 
 ADD nginx.conf.sample /tmp/nginx.conf.sample
