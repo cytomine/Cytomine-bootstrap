@@ -16,8 +16,6 @@
 # limitations under the License.
 #
 
-/etc/init.d/ssh start
-
 echo Starting "$WAR_URL" 
 #Copy the war file from mounted directory to tomcat webapps directory
 if [ ! -z "$WAR_URL" ]

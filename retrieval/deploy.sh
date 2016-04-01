@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 
-/etc/init.d/ssh start
-
 apt-get update
 apt-get install -y wget
 

@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 
-/etc/init.d/ssh start
-
 #nginx conf gen
 sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/nginx.conf.sample  > /usr/local/nginx/conf/nginx.conf
 

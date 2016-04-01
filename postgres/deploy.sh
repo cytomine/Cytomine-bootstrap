@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-/etc/init.d/ssh start
 
 echo "Beginning of the postgres deployment"
 

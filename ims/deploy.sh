@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 
-/etc/init.d/ssh start
-
 arr=$(echo $IMS_URLS | tr "," "\n")
 arr=$(echo $arr | tr "[" "\n")
 arr=$(echo $arr | tr "]" "\n")

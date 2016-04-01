@@ -1,7 +1,5 @@
 #!/bin/bash
 
-/etc/init.d/ssh start
-
 
 ### transform the ims urls for the config file ###
 arr=$(echo $IMS_URLS | tr "," "\n")

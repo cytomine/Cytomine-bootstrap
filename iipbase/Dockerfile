@@ -27,7 +27,6 @@ RUN apt-get install -y software-properties-common
 
 #install nginx
 RUN apt-get -y update
-RUN apt-get -y install wget unzip build-essential
 RUN apt-get -y build-dep nginx
 
 RUN cd /tmp && wget http://nginx.org/download/nginx-1.4.4.tar.gz && tar -zxvf ./nginx-1.4.4.tar.gz

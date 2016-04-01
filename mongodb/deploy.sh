@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 
-/etc/init.d/ssh start
-
 
 echo "log rotation"
 echo "/var/log/mongodb/mongo.log {"     >> /etc/logrotate.d/mongo
