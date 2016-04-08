@@ -21,11 +21,11 @@ FROM ubuntu:14.04
 MAINTAINER Cytomine Team "support@cytomine.be"
 
 RUN apt-get update
-
 RUN apt-get -y install wget unzip build-essential
 RUN apt-get install -y locate
 
 ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
 
 EXPOSE 22
 
