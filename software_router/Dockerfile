@@ -57,6 +57,7 @@ RUN cd /root/Cytomine/Cytomine-python-datamining/cytomine-datamining/algorithms/
 
 # Groovy Installation
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
 RUN cd /tmp/ && curl http://get.sdkman.io -o install-gvm.sh && bash install-gvm.sh && source "/root/.sdkman/bin/sdkman-init.sh" && sdk install groovy 2.4.4 --yes
 
 ADD config.groovy /tmp/config.groovy
