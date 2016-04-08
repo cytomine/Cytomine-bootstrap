@@ -30,7 +30,9 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > /etc/
 
 # Update the Ubuntu and PostgreSQL repository indexes
 RUN apt-get update
-RUN apt-get -y -q install postgresql-9.3 postgresql-client-9.3 postgresql-contrib-9.3
+RUN apt-get install -y unzip
+RUN apt-get install -y make
+RUN apt-get -y -q install postgresql-9.3 postgresql-client-9.3 postgresql-contrib-9.3 postgresql-server-dev-9.3
 
 # Run the rest of the commands as the ``postgres`` user created by the ``postgres-9.3`` package when it was ``apt-get installed``
 USER postgres
@@ -42,7 +44,18 @@ USER postgres
 RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE USER docker WITH SUPERUSER PASSWORD 'docker';" &&\
     createdb --encoding='utf-8' --template=template0 -O docker docker &&\
-    psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='docker'"
+    psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='docker'" &&\
+    /etc/init.d/postgresql stop
+
+USER root
+RUN cd /tmp && wget http://api.pgxn.org/dist/kmeans/1.1.0/kmeans-1.1.0.zip
+RUN cd /tmp && unzip kmeans-1.1.0.zip
+RUN cd /tmp/kmeans-1.1.0 && make && make install
+
+RUN sed -i "s/\$libdir/\/usr\/lib\/postgresql\/9.3\/lib/g" /tmp/kmeans-1.1.0/kmeans.sql
+
+USER postgres
+RUN /etc/init.d/postgresql start && psql -d docker -f /tmp/kmeans-1.1.0/kmeans.sql && /etc/init.d/postgresql stop
 
 # Adjust PostgreSQL configuration so that remote connections to the
 # database are possible. 
