@@ -63,9 +63,9 @@ IRIS_ADMIN_EMAIL="ian.admin@somewhere.edu"
 # You don't to change the datas below this line instead of advanced customization
 # ---------------------------
 
-CORE_WAR_URL="https://github.com/cytomine/Cytomine-core/releases/download/v1.0/Core.war"
+CORE_WAR_URL="http://cytomine.be/release/core/last_ROOT.war"
 CORE_DOC_URL="https://github.com/cytomine/Cytomine-core/releases/download/v1.0/restapidoc.json"
-IMS_WAR_URL="https://github.com/cytomine/Cytomine-IMS/releases/download/v1.0/IMS.war"
+IMS_WAR_URL="http://cytomine.be/release/ims/last_ROOT.war"
 IMS_DOC_URL="https://github.com/cytomine/Cytomine-IMS/releases/download/v1.0/restapidoc.json"
 IRIS_WAR_URL="https://github.com/cytomine/Cytomine-IRIS/releases/download/v1.0/iris.war"
 RETRIEVAL_JAR_URL="http://cytomine.be/release/retrieval/CBIRest-0.2.1.zip"
