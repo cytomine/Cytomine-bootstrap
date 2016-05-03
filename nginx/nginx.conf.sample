@@ -150,19 +150,6 @@ IMS_URLS_CONFIG
 
         server {
                 listen       80;
-                server_name  IIP_VENT_URL;
-
-                location / {
-                        proxy_set_header X-Forwarded-Host $host;
-			proxy_set_header Host $host;
-                        proxy_set_header X-Forwarded-Server $host;
-                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                        proxy_pass http://iip_ventana:80;
-                }
-        }
-
-        server {
-                listen       80;
                 server_name  IIP_JP2_URL;
 
                 location / {

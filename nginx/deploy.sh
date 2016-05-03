@@ -16,9 +16,6 @@
 #
 
 echo "Beginning of the deployment"
-/etc/init.d/ssh start
-
-echo "SSH started"
 
 sed -i "s/CORE_URL/$CORE_URL/g" /tmp/nginx.conf.sample
 sed -i "s/CORE_ALIAS/$CORE_ALIAS/g" /tmp/nginx.conf.sample

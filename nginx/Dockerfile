@@ -23,7 +23,6 @@ RUN apt-get install -y software-properties-common
 
 # Install Nginx with upload module
 RUN apt-get -y update
-RUN apt-get -y install wget unzip build-essential
 RUN apt-get -y build-dep nginx
 
 #create tmp directories

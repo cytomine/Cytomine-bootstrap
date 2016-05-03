@@ -16,8 +16,6 @@
 # limitations under the License.
 #
 
-/etc/init.d/ssh start
-
 if [ ! -z "$BIOFORMAT_JAR_URL" ]
 then
 	cd /tmp/ && wget -q $BIOFORMAT_JAR_URL -O BioFormatStandAlone.tar.gz

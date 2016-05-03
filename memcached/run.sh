@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 
-/etc/init.d/ssh start
-
 #create admin account to memcached using SASL
 #if [ ! -f /.memcached_admin_created ]; then
 #	/create_memcached_admin_user.sh
