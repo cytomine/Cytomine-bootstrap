@@ -23,7 +23,8 @@ RUN apt-get install -y software-properties-common
 RUN add-apt-repository -y ppa:semiosis/ppa
   
 # prepare openslide + iip + vips installation 
-RUN apt-get -y install git libopenjpeg-dev libjpeg8-dev libtiff5-dev libmemcached-dev 
+RUN apt-get -y update
+RUN apt-get -y install git libopenjpeg-dev libjpeg8-dev libtiff5-dev libmemcached-dev libjpeg-turbo8-dev libgsf-1-dev 
 RUN apt-get -y build-dep openslide
 RUN apt-get -y build-dep iipimage-server
 RUN apt-get -y build-dep libvips-dev 
@@ -37,8 +38,7 @@ RUN cd /tmp && wget http://launchpadlibrarian.net/147357169/libopenjpeg-dev_1.3%
 
 # vips
 RUN apt-get -y install gtk-doc-tools swig libxml2-dev gobject-introspection libglib2.0-dev
-RUN cd /tmp && wget http://www.vips.ecs.soton.ac.uk/supported/7.42/vips-7.42.1.tar.gz && tar -zxvf ./vips-7.42.1.tar.gz && cd ./vips-7.42.1 && sh bootstrap.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide"  ./configure && make && make install
-#RUN cd /tmp && git clone git://github.com/jcupitt/libvips.git && cd /tmp/libvips && sh bootstrap.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide"  ./configure && make && make install
+RUN cd /tmp && wget http://www.vips.ecs.soton.ac.uk/supported/8.0/vips-8.0.2.tar.gz && tar -zxvf ./vips-8.0.2.tar.gz && cd ./vips-8.0.2 && sh bootstrap.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide"  ./configure && make && make install
 
 #openslide-java
 RUN apt-get -y install ant

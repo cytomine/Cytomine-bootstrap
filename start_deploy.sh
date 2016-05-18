@@ -56,8 +56,6 @@ docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 cytomine/memcached
 nb_docker=$((nb_docker+1))
 docker run -d -e MEMCACHED_PASS="mypass" --name memcached3 cytomine/memcached
 nb_docker=$((nb_docker+1))
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached4 cytomine/memcached
-nb_docker=$((nb_docker+1))
 
 RABBITMQ_PASS="mypass"
 # create rabbitmq docker
@@ -127,7 +125,7 @@ cytomine/iipcyto
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
---link memcached4:memcached \
+--link memcached3:memcached \
 -e IIP_ALIAS="iip_jpeg2000" \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 cytomine/iipjpeg2000
@@ -386,7 +384,6 @@ else
 	if ! echo "$running_containers" | grep -q -w memcached1; then echo "memcached1 container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w memcached2; then echo "memcached2 container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w memcached3; then echo "memcached3 container is not running !"; fi
-	if ! echo "$running_containers" | grep -q -w memcached4; then echo "memcached4 container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w rabbitmq; then echo "rabbitmq container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w iipOff; then echo "iipOff container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w iipCyto; then echo "iipCyto container is not running !"; fi
