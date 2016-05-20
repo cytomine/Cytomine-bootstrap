@@ -53,9 +53,6 @@ rm /tmp/crontab
 echo "run cron"
 cron
 
-echo "start sshd"
-/usr/sbin/sshd
-
 echo "start nginx"
 /usr/local/nginx/sbin/nginx
 

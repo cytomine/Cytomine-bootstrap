@@ -53,6 +53,7 @@ RUN mkdir -p /opt/cytomine/bin
 
 RUN apt-get install -y vim
 RUN apt-get install -y psmisc
+RUN apt-get install cron
 ADD start-iip.sh /opt/cytomine/bin/start-iip.sh
 ADD stop-iip.sh /opt/cytomine/bin/stop-iip.sh
 ADD check-iip-status.py /opt/cytomine/bin/check-iip-status.py
