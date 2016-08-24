@@ -14,45 +14,36 @@
 # limitations under the License.
 #
 
+#URLs
 CORE_URL=localhost-core
 IMS_URLS="[localhost-ims,localhost-ims2]"
 UPLOAD_URL=localhost-upload
-RETRIEVAL_URL=localhost-retrieval
-IIP_OFF_URL=localhost-iip-base
-IIP_CYTO_URL=localhost-iip-cyto
-IIP_JP2_URL=localhost-iip-jp2000
 
-IS_LOCAL=true
-
+#Backups
 # BACKUP_BOOL : backup active or not
 BACKUP_BOOL=false
 # SENDER_EMAIL, SENDER_EMAIL_PASS, SENDER_EMAIL_SMTP : email params of the sending account
-# RECEIVER_EMAIL : email adress of the receiver
 SENDER_EMAIL='your.email@gmail.com'
 SENDER_EMAIL_PASS='passwd'
 SENDER_EMAIL_SMTP_HOST='smtp.gmail.com'
 SENDER_EMAIL_SMTP_PORT='587'
+# RECEIVER_EMAIL : email adress of the receiver
 RECEIVER_EMAIL='receiver@XXX.com'
 
-#possible values : memory, redis
-RETRIEVAL_ENGINE=redis
-RETRIEVAL_PASSWD='retrieval_default'
-
+#Paths
 IMS_STORAGE_PATH=/data
 IMS_BUFFER_PATH=/data/_buffer
-BACKUP_PATH=/backup
+BACKUP_PATH=/data/backup
 MODELS_PATH=/data/algo/models/
 RETRIEVAL_PATH=/data/thumb
 
-BIOFORMAT_ENABLED="true"
-
-#RabbitMQ Software Router
+#middlewares
+RETRIEVAL_PASSWD='retrieval_default'
 RABBITMQ_LOGIN="router"
 RABBITMQ_PASSWORD="router"
 
 
 #IRIS
-# -----
 IRIS_ENABLED=true
 IRIS_URL=localhost-iris
 IRIS_ID="LOCAL_CYTOMINE_IRIS"
@@ -60,8 +51,20 @@ IRIS_ADMIN_NAME="Ian Admin"
 IRIS_ADMIN_ORGANIZATION_NAME="University of Somewhere, Department of Whatever"
 IRIS_ADMIN_EMAIL="ian.admin@somewhere.edu"
 
+
 # You don't to change the datas below this line instead of advanced customization
 # ---------------------------
+
+IS_LOCAL=true
+IIP_OFF_URL=localhost-iip-base
+IIP_CYTO_URL=localhost-iip-cyto
+IIP_JP2_URL=localhost-iip-jp2000
+RETRIEVAL_URL=localhost-retrieval
+
+BIOFORMAT_ENABLED="true"
+
+#possible values : memory, redis
+RETRIEVAL_ENGINE=redis
 
 CORE_WAR_URL="http://cytomine.be/release/core/last_ROOT.war"
 CORE_DOC_URL="https://github.com/cytomine/Cytomine-core/releases/download/v1.0/restapidoc.json"
