@@ -47,6 +47,7 @@ then
 	cd /usr/share/tomcat7/.grails
 	touch imageserverconfig.properties
 	echo "dataSource.url=jdbc:h2:/tmp/devDb;MVCC=TRUE;LOCK_TIMEOUT=10000" >> imageserverconfig.properties
+        echo "cytomine.storagePath=$IMS_STORAGE_PATH" >> imageserverconfig.properties
 	echo "cytomine.storageBufferPath=$IMS_BUFFER_PATH" >> imageserverconfig.properties
 	echo "cytomine.imageServerPublicKey=$IMS_PUB_KEY" >> imageserverconfig.properties
 	echo "cytomine.imageServerPrivateKey=$IMS_PRIV_KEY" >> imageserverconfig.properties
