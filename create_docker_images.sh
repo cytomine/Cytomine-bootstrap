@@ -43,12 +43,5 @@ cd ../data_for_test && docker build -t="cytomine/data_test" .
 cd ../nginx && docker build -t="cytomine/nginx" .
 cd ../mongodb && docker build -t="cytomine/mongodb" .
 cd ../auto_backup && docker build -t="cytomine/backup" .
-cd ../data_containers/postgres && docker build -t="cytomine/data_postgres" .
-cd ../postgis && docker build -t="cytomine/data_postgis" .
-cd ../mongodb && docker build -t="cytomine/data_mongodb" .
-if [ $IRIS_ENABLED = true ]
-then
-	cd ../h2 && docker build -t="cytomine/data_h2" .
-fi
-cd ../..
+cd ..
 echo DONE

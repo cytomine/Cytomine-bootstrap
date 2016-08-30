@@ -17,11 +17,13 @@
 
 rm -r ./reporting.tgz
 
+mkdir -p ./reporting
+
 docker cp core:/usr/share/tomcat7/.grails/cytomineconfig.groovy ./reporting/core
 docker cp core:/var/lib/tomcat7/logs/catalina.out ./reporting/core
 docker cp ims:/usr/share/tomcat7/.grails/imageserverconfig.properties ./reporting/ims
 docker cp ims:/var/lib/tomcat7/logs/catalina.out ./reporting/ims
-docker cp retrieval:/var/lib/tomcat7/logs/catalina.out ./reporting/retrieval
+docker cp retrieval:/tmp/retrieval.log ./reporting/retrieval
 docker cp iipOff:/tmp/iip-openslide.out ./reporting/iipOff
 docker cp iipJ2:/tmp/iip-openslide.out ./reporting/iipJ2
 docker cp iipCyto:/tmp/iip-openslide.out ./reporting/iipCyto

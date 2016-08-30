@@ -63,21 +63,21 @@ docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq --restart=unless
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
 cytomine/rabbitmq && nb_docker=$((nb_docker+1)) || docker start rabbitmq
 
-# create data only containers
-docker run -d --name postgis_data --restart=unless-stopped cytomine/data_postgis && nb_docker=$((nb_docker+1))
-docker run -d --name mongodb_data --restart=unless-stopped cytomine/data_mongodb && nb_docker=$((nb_docker+1))
+# create data volumes
+docker volume create --name postgis_data
+docker volume create --name mongodb_data
+
 if [ $IRIS_ENABLED = true ]
 then
-	docker run -d --name iris_data --restart=unless-stopped cytomine/data_h2 && nb_docker=$((nb_docker+1))
+	docker volume create --name iris_data
 fi
 
 # create mongodb docker
-docker run -d -p 22 --name mongodb --volumes-from mongodb_data --restart=unless-stopped cytomine/mongodb
+docker run -d -p 22 --name mongodb -v mongodb_data:/var/lib/mongodb --restart=unless-stopped cytomine/mongodb
 nb_docker=$((nb_docker+1))
 
 # create database docker
-
-docker run -d -p 22 -m 8g --name db --volumes-from postgis_data --restart=unless-stopped cytomine/postgis
+docker run -d -p 22 -m 8g --name db -v postgis_data:/var/lib/postgresql --restart=unless-stopped cytomine/postgis
 nb_docker=$((nb_docker+1))
 
 if [ $BACKUP_BOOL = true ] 
@@ -219,7 +219,7 @@ if [ $IRIS_ENABLED = true ]
 then
 	# create IRIS docker
 	docker run -d -p 22 --name iris --restart=unless-stopped \
-	--volumes-from iris_data \
+	-v iris_data:/var/lib/tomcat7/db \
 	-e CORE_URL=$CORE_URL \
 	-e IMS_URLS=$IMS_URLS \
 	-e IRIS_WAR_URL=$IRIS_WAR_URL \
