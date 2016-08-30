@@ -29,10 +29,12 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B97B0AFCAA
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
 # Update the Ubuntu and PostgreSQL repository indexes
-RUN apt-get update
-RUN apt-get install -y unzip
-RUN apt-get install -y make
-RUN apt-get -y -q install postgresql-9.3 postgresql-client-9.3 postgresql-contrib-9.3 postgresql-server-dev-9.3
+RUN apt-get update -y && apt-get install -y \
+      make \
+      postgresql-9.3 \
+      postgresql-client-9.3 \
+      postgresql-contrib-9.3 \
+      postgresql-server-dev-9.3
 
 # Run the rest of the commands as the ``postgres`` user created by the ``postgres-9.3`` package when it was ``apt-get installed``
 USER postgres

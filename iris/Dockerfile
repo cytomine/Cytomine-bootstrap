@@ -18,9 +18,6 @@ FROM cytomine/tomcat7
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
-RUN apt-get update -y
-RUN apt-get install -y unzip
-
 ADD iris-config.groovy /tmp/iris-config.groovy
 ADD iris-production-config.groovy /tmp/iris-production-config.groovy
 

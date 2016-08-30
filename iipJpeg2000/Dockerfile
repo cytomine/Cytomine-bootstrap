@@ -19,31 +19,34 @@ FROM ubuntu:12.04
 MAINTAINER Cytomine Team "support@cytomine.be"
 
 
-RUN apt-get update
+RUN apt-get -y update && apt-get install -y \
+      build-essential \
+      cron \
+      git \
+      libfcgi0ldbl \
+      libjpeg8-dev \
+      libmemcached-dev \
+      libopenjpeg-dev \
+      libopenslide-dev \
+      libstdc++6 \
+      libtiff4 \
+      memcached \
+      psmisc \
+      software-properties-common \
+      unzip \
+      vim \
+      wget \
+      zlib1g && \
+    apt-get -y build-dep nginx openslide
 
-#storage mount commands
-RUN apt-get -y update
-RUN apt-get install -y software-properties-common
-
-#install nginx
-RUN apt-get -y update
-RUN apt-get -y install wget unzip build-essential
-RUN apt-get -y build-dep nginx
 
 RUN cd /tmp && wget http://nginx.org/download/nginx-1.4.4.tar.gz && tar -zxvf ./nginx-1.4.4.tar.gz
 
 RUN cd /tmp/nginx-1.4.4 && ./configure && make && make install
 
 
-# prepare openslide + iip installation
-RUN apt-get -y install git libopenjpeg-dev libjpeg8-dev libmemcached-dev #libtiff5-dev 
-RUN apt-get -y build-dep openslide
-
-RUN apt-get -y install libopenslide-dev
-RUN apt-get -y install libfcgi0ldbl libjpeg8 libtiff4 zlib1g libstdc++6 libmemcached6
-RUN apt-get -y install memcached
 # Installation de la version binaire de IIPImage Server, contenant la bibliothèque KAKADU, permettant l'ouverture des images JPG2000.
-RUN cd /tmp && wget http://oldmapsonline.googlecode.com/files/iipimage-server_0.9.9-j2k-0ubuntu12.04_amd64.deb && dpkg -i iipimage-server_0.9.9-j2k-0ubuntu12.04_amd64.deb
+RUN cd /tmp && wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/oldmapsonline/iipimage-server_0.9.9-j2k-0ubuntu12.04_amd64.deb && dpkg -i iipimage-server_0.9.9-j2k-0ubuntu12.04_amd64.deb
 
 RUN mkdir -p /usr/local/httpd/fcgi-bin && cp /usr/lib/cgi-bin/iipsrv.fcgi /usr/local/httpd/fcgi-bin/iipsrv.fcgi
 
@@ -51,9 +54,6 @@ ADD nginx.conf.sample /tmp/nginx.conf.sample
 
 RUN mkdir -p /opt/cytomine/bin
 
-RUN apt-get install -y vim
-RUN apt-get install -y psmisc
-RUN apt-get install cron
 ADD start-iip.sh /opt/cytomine/bin/start-iip.sh
 ADD stop-iip.sh /opt/cytomine/bin/stop-iip.sh
 ADD check-iip-status.py /opt/cytomine/bin/check-iip-status.py

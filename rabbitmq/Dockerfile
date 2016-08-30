@@ -18,16 +18,9 @@ FROM cytomine/base
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
-# Install RabbitMQ
-# RUN apt-get update
-# RUN DEBIAN_FRONTEND=noninteractive apt-get install -y rabbitmq-server pwgen
-# RUN rabbitmq-plugins enable rabbitmq_management
-
 RUN echo "deb http://www.rabbitmq.com/debian/ testing main"  | sudo tee  /etc/apt/sources.list.d/rabbitmq.list > /dev/null
 RUN wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
-RUN apt-key add rabbitmq-signing-key-public.asc
-RUN apt-get update
-RUN apt-get install rabbitmq-server -y
+RUN apt-key add rabbitmq-signing-key-public.asc && apt-get update && apt-get install rabbitmq-server -y --force-yes
 
 
 ADD run.sh /run.sh

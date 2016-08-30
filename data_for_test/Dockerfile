@@ -18,10 +18,7 @@ FROM cytomine/java7
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
-RUN apt-get update
-
-RUN apt-get install -y groovy
-RUN apt-get install -y unzip
+RUN apt-get update -y && apt-get install -y groovy
 
 ADD injectdata.groovy /tmp/injectdata.groovy
 RUN chmod +x /tmp/injectdata.groovy

@@ -31,23 +31,20 @@ RUN conda install shapely --yes
 RUN conda install opencv --yes
 RUN conda install scipy=0.16.1 --yes
 
-RUN apt-get -y update
-# libs and locales for our scripts
-RUN apt-get install -y libglib2.0-0
-RUN apt-get install -y language-pack-en-base
+RUN apt-get -y update && apt-get install -y \
+      git \
+      g++ \
+      language-pack-en-base \
+      libglib2.0-0 \
+      make
+
 RUN dpkg-reconfigure locales
 
 # Cytomine-python-datamining
-RUN apt-get -y update
-RUN apt-get -y install git
 
 RUN mkdir -p /root/Cytomine/ && cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-datamining.git && cd Cytomine-python-datamining/ && git checkout tags/v1.0
 
-RUN apt-get install -y unzip
-
 RUN cd /root/anaconda/lib/python2.7/site-packages/ && git clone https://github.com/scikit-learn/scikit-learn.git && cd scikit-learn && git checkout cd12906cabf3576a8c236a4128e959360037dde0 && cd ..
-RUN apt-get install -y make
-RUN apt-get install -y g++
 RUN cd /root/anaconda/lib/python2.7/site-packages/scikit-learn/ && make && python setup.py build && python setup.py install
 
 RUN cd /root/anaconda/lib/python2.7/site-packages/ && mv sklearn/  sklearn-old/ &&  mv scikit-learn/sklearn/ .

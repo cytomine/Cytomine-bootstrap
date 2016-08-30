@@ -21,9 +21,9 @@
 FROM cytomine/base
 MAINTAINER "Cytomine Team support@cytomine.be"
 
-RUN apt-get update
-
-RUN apt-get -y install postgresql-client
+RUN apt-get update -y && apt-get -y install \
+      postgresql-client \
+      bsd-mailx
 
 # Add the backup script
 ADD script_backup_mongo.sh /tmp/script_backup_mongo.sh
@@ -36,8 +36,6 @@ ADD crontab /tmp/crontab
 
 # Add the mail features
 RUN export DEBIAN_FRONTEND=noninteractive
-RUN apt-get update
-RUN apt-get install -y bsd-mailx
 
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh

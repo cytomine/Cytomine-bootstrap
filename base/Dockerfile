@@ -20,9 +20,11 @@ FROM ubuntu:14.04
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
-RUN apt-get update
-RUN apt-get -y install wget unzip build-essential
-RUN apt-get install -y locate
+RUN apt-get update -y && apt-get -y install \
+      wget \
+      unzip \
+      build-essential \
+      locate
 
 ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND noninteractive

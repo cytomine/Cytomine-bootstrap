@@ -20,7 +20,6 @@
 
 cd base && docker build -t="cytomine/base" .
 cd ../memcached && docker build -t="cytomine/memcached" .
-cd ../dnsmasq && docker build -t="cytomine/dnsmasq" .
 cd ../rabbitmq && docker build -t="cytomine/rabbitmq" .
 cd ../java7 && docker build -t="cytomine/java7" .
 cd ../java8 && docker build -t="cytomine/java8" .

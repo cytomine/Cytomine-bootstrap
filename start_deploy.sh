@@ -50,40 +50,40 @@ nb_docker=$(echo "$(sudo docker ps)" | wc -l)
 nb_docker=$((nb_docker-1)) # remove the header line
 
 # create memcached docker
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 --restart=unless-stopped cytomine/memcached
 nb_docker=$((nb_docker+1))
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 --restart=unless-stopped cytomine/memcached
 nb_docker=$((nb_docker+1))
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached3 cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached3 --restart=unless-stopped cytomine/memcached
 nb_docker=$((nb_docker+1))
 
 RABBITMQ_PASS="mypass"
 # create rabbitmq docker
-docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq \
+docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq --restart=unless-stopped \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
 cytomine/rabbitmq && nb_docker=$((nb_docker+1)) || docker start rabbitmq
 
 # create data only containers
-docker run -d --name postgis_data cytomine/data_postgis && nb_docker=$((nb_docker+1)) || docker start postgis_data
-docker run -d --name mongodb_data cytomine/data_mongodb && nb_docker=$((nb_docker+1)) || docker start mongodb_data
+docker run -d --name postgis_data --restart=unless-stopped cytomine/data_postgis && nb_docker=$((nb_docker+1))
+docker run -d --name mongodb_data --restart=unless-stopped cytomine/data_mongodb && nb_docker=$((nb_docker+1))
 if [ $IRIS_ENABLED = true ]
 then
-	docker run -d --name iris_data cytomine/data_h2 && nb_docker=$((nb_docker+1)) || docker start iris_data
+	docker run -d --name iris_data --restart=unless-stopped cytomine/data_h2 && nb_docker=$((nb_docker+1))
 fi
 
 # create mongodb docker
-docker run -d -p 22 --name mongodb --volumes-from mongodb_data cytomine/mongodb
+docker run -d -p 22 --name mongodb --volumes-from mongodb_data --restart=unless-stopped cytomine/mongodb
 nb_docker=$((nb_docker+1))
 
 # create database docker
 
-docker run -d -p 22 -m 8g --name db --volumes-from postgis_data cytomine/postgis
+docker run -d -p 22 -m 8g --name db --volumes-from postgis_data --restart=unless-stopped cytomine/postgis
 nb_docker=$((nb_docker+1))
 
 if [ $BACKUP_BOOL = true ] 
 then
 	# create backup docker
-	docker run -p 22 -d --name backup_postgis --link db:db -v $BACKUP_PATH/postgis:/backup \
+	docker run -p 22 -d --name backup_postgis --link db:db -v $BACKUP_PATH/postgis:/backup --restart=unless-stopped \
 	-e BACKUP_PATH=/backup \
 	-e SENDER_EMAIL=$SENDER_EMAIL \
 	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
@@ -97,7 +97,7 @@ then
 	cytomine/backup
 	nb_docker=$((nb_docker+1))
 
-	docker run -p 22 -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup \
+	docker run -p 22 -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup --restart=unless-stopped \
 	-e SGBD='mongodb' \
 	-e BACKUP_PATH=/backup \
 	-e SENDER_EMAIL=$SENDER_EMAIL \
@@ -110,30 +110,27 @@ then
 fi
 
 # create IIP dockers
-docker run -p 22 --privileged -d --name iipOff -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+docker run -p 22 --privileged -d --name iipOff -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 --link memcached1:memcached \
--e IIP_ALIAS="iip_officiel" \
--e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
+-e NB_IIP_PROCESS=5 \
 cytomine/iipofficiel
 nb_docker=$((nb_docker+1))
 
-docker run -p 22 --privileged -d --name iipCyto -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+docker run -p 22 --privileged -d --name iipCyto -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 --link memcached2:memcached \
--e IIP_ALIAS="iip_cyto" \
--e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
+-e NB_IIP_PROCESS=50 \
 cytomine/iipcyto
 nb_docker=$((nb_docker+1))
 
-docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 --link memcached3:memcached \
--e IIP_ALIAS="iip_jpeg2000" \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 cytomine/iipjpeg2000
 nb_docker=$((nb_docker+1))
 
 if [ $BIOFORMAT_ENABLED = true ]
 then
-	docker run -p 22 -d --name bioformat -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+	docker run -p 22 -d --name bioformat -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 	-e BIOFORMAT_PORT=$BIOFORMAT_PORT \
 	-e BIOFORMAT_JAR_URL=$BIOFORMAT_JAR_URL \
 	cytomine/bioformat
@@ -144,7 +141,7 @@ IMS_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
 IMS_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 
 # create IMS docker
-docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims \
+docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims --restart=unless-stopped \
 -v /tmp/uploaded/ \
 -e IIP_OFF_URL=$IIP_OFF_URL \
 -e IIP_CYTO_URL=$IIP_CYTO_URL \
@@ -179,7 +176,7 @@ RABBITMQ_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
 RABBITMQ_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 
 # create CORE docker
-docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link mongodb:mongodb \
+docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link mongodb:mongodb --restart=unless-stopped \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
 -e RETRIEVAL_URL=$RETRIEVAL_URL \
@@ -207,7 +204,7 @@ cytomine/core
 nb_docker=$((nb_docker+1))
 
 # create retrieval docker
-docker run -m 8g -d -p 22 --name retrieval \
+docker run -m 8g -d -p 22 --name retrieval --restart=unless-stopped \
 -v $RETRIEVAL_PATH:/data/thumb \
 -e IMS_URLS=$IMS_URLS \
 -e IS_LOCAL=$IS_LOCAL \
@@ -221,7 +218,7 @@ nb_docker=$((nb_docker+1))
 if [ $IRIS_ENABLED = true ]
 then
 	# create IRIS docker
-	docker run -d -p 22 --name iris \
+	docker run -d -p 22 --name iris --restart=unless-stopped \
 	--volumes-from iris_data \
 	-e CORE_URL=$CORE_URL \
 	-e IMS_URLS=$IMS_URLS \
@@ -252,6 +249,7 @@ then
 	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
 	--link iris:iris \
 	--name nginx \
+	--restart=unless-stopped \
 	-e CORE_URL=$CORE_URL \
 	-e CORE_ALIAS=$CORE_ALIAS \
 	-e IMS_URLS="$IMS_URLS" \
@@ -271,6 +269,7 @@ else
 	--link iipOff:iip_officiel \
 	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
 	--name nginx \
+	--restart=unless-stopped \
 	-e CORE_URL=$CORE_URL \
 	-e CORE_ALIAS=$CORE_ALIAS \
 	-e IMS_URLS="$IMS_URLS" \
@@ -312,7 +311,7 @@ docker exec core /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.g
 
 # create software-router docker
 docker run -d -p 22 --link rabbitmq:rabbitmq \
---name software_router \
+--name software_router --restart=unless-stopped \
 -v $MODELS_PATH:/software_router/algo/models/ \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \

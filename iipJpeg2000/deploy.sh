@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 
-#nginx conf gen
-sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/nginx.conf.sample  > /usr/local/nginx/conf/nginx.conf
-
 export VERBOSITY=10
 export MAX_CVT=10000
 export MEMCACHED_SERVERS=memcached:11211
@@ -46,6 +43,8 @@ mkdir /tmp/uploaded
 chmod -R 777 /tmp/uploaded
 chmod +x /opt/cytomine/bin/start-iip.sh
 chmod +x /opt/cytomine/bin/stop-iip.sh
+
+mv /tmp/nginx.conf.sample /usr/local/nginx/conf/nginx.conf
 
 crontab /tmp/crontab
 rm /tmp/crontab

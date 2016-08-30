@@ -15,26 +15,6 @@
 # limitations under the License.
 #
 
-#nginx conf gen
-sed "s/IIP_ALIAS/$IIP_ALIAS/g" /tmp/nginx.conf.sample  > /usr/local/nginx/conf/nginx.conf
-
-export VERBOSITY=10
-export MAX_CVT=10000
-export MEMCACHED_SERVERS=memcached:11211
-export MEMCACHED_TIMEOUT=604800
-export LOGFILE=/tmp/iip-openslide.out
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9000 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9001 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9002 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9003 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9004 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9005 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9006 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9007 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9008 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9009 &
-/usr/local/httpd/fcgi-bin/iipsrv.fcgi --bind 127.0.0.1:9010 &
-
 echo "/tmp/iip-openslide.out {"          > /etc/logrotate.d/iip
 echo "  copytruncate"                   >> /etc/logrotate.d/iip
 echo "  daily"                          >> /etc/logrotate.d/iip
@@ -47,10 +27,36 @@ echo "}"                                >> /etc/logrotate.d/iip
 
 mkdir /tmp/uploaded
 chmod -R 777 /tmp/uploaded
+
+#fill start_iip.sh
+PORT=9000
+COUNTER=0
+while [  $COUNTER -lt $NB_IIP_PROCESS ]; do
+    sed -i "s/IIP_PROCESS/\/usr\/local\/httpd\/fcgi-bin\/iipsrv.fcgi --bind 127.0.0.1:$(($PORT+$COUNTER)) \& \nIIP_PROCESS/g" /opt/cytomine/bin/start-iip.sh
+    let COUNTER=COUNTER+1
+done
+sed -i "s/IIP_PROCESS//g" /opt/cytomine/bin/start-iip.sh
+
+#fill check-iip-status.py
+sed -i "s/NB_IIP_PROCESS/$NB_IIP_PROCESS/g" /opt/cytomine/bin/check-iip-status.py
+
+#fill nginx.conf
+COUNTER=0
+while [  $COUNTER -lt $NB_IIP_PROCESS ]; do
+    sed -i "s/IIP_PROCESS/        	server 127.0.0.1:$(($PORT+$COUNTER)); \nIIP_PROCESS/g" /tmp/nginx.conf.sample
+    let COUNTER=COUNTER+1
+done
+sed -i "s/IIP_PROCESS//g" /tmp/nginx.conf.sample
+
+mv /tmp/nginx.conf.sample /usr/local/nginx/conf/nginx.conf
+
+
+#end fill
 chmod +x /opt/cytomine/bin/start-iip.sh
 chmod +x /opt/cytomine/bin/stop-iip.sh
 
 sysctl -w net.core.somaxconn=2048
+sh /opt/cytomine/bin/start-iip.sh
 
 crontab /tmp/crontab
 rm /tmp/crontab

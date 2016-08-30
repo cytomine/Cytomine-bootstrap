@@ -18,16 +18,23 @@ FROM cytomine/tomcat7
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
-#storage mount commands
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository -y ppa:semiosis/ppa
-  
-# prepare openslide + iip + vips installation 
-RUN apt-get -y update
-RUN apt-get -y install git libopenjpeg-dev libjpeg8-dev libtiff5-dev libmemcached-dev libjpeg-turbo8-dev libgsf-1-dev 
-RUN apt-get -y build-dep openslide
-RUN apt-get -y build-dep iipimage-server
-RUN apt-get -y build-dep libvips-dev 
+RUN apt-get -y update && apt-get install -y software-properties-common && \
+    add-apt-repository -y ppa:semiosis/ppa && apt-get -y update && apt-get install -y \
+      ant \
+      git \
+      gobject-introspection \
+      gtk-doc-tools \
+      imagemagick \
+      libglib2.0-dev \
+      libgsf-1-dev \
+      libjpeg8-dev \
+      libmemcached-dev \
+      libopenjpeg-dev \
+      libtiff5-dev \
+      libtiff-tools \
+      libxml2-dev \
+      swig && \
+    apt-get -y build-dep openslide iipimage-server libvips-dev
 
 #openslide
 RUN cd /tmp && git clone https://github.com/openslide/openslide && cd /tmp/openslide && git checkout 4cd4b83c3ffff0382126d0618c85407f2c469b28 && autoreconf -i && ./configure && make && make install
@@ -37,16 +44,12 @@ RUN cd /tmp && wget http://launchpadlibrarian.net/147357170/libopenjpeg2_1.3%2Bd
 RUN cd /tmp && wget http://launchpadlibrarian.net/147357169/libopenjpeg-dev_1.3%2Bdfsg-4.6ubuntu2_amd64.deb && dpkg -i libopenjpeg-dev_1.3+dfsg-4.6ubuntu2_amd64.deb
 
 # vips
-RUN apt-get -y install gtk-doc-tools swig libxml2-dev gobject-introspection libglib2.0-dev
 RUN cd /tmp && wget http://www.vips.ecs.soton.ac.uk/supported/8.0/vips-8.0.2.tar.gz && tar -zxvf ./vips-8.0.2.tar.gz && cd ./vips-8.0.2 && sh bootstrap.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide"  ./configure && make && make install
 
 #openslide-java
-RUN apt-get -y install ant
 RUN update-java-alternatives -s java-7-oracle
 RUN export JAVA_HOME=/usr/lib/jvm/java-7-oracle && export CFLAGS="-I/usr/lib/jvm/java-7-oracle" && cd /tmp && git clone https://github.com/cytomine/openslide-java && cd /tmp/openslide-java && git checkout 93af97eeca8f0b63e9f71a6916af474ecc474dc8 && autoreconf -i && ./configure && make && make install
 
-#libtiff-tools (tiffinfo) and imagemagick (identify)
-RUN apt-get install -y imagemagick libtiff-tools
 
 EXPOSE 8081
 EXPOSE 8082
