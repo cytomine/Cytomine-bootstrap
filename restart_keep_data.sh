@@ -19,6 +19,8 @@ path=$( cd "$(dirname "${BASH_SOURCE}")" ; pwd -P )
 cd $path
 
 sh create_docker_images.sh
-sh clean_docker_keep_data.sh
+echo "clean containers"
+sh clean_docker_keep_data.sh > /dev/null
+echo "launch new containers"
 sh start_deploy.sh
 

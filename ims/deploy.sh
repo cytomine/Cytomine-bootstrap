@@ -36,39 +36,27 @@ chown -R tomcat7:tomcat7 $IMS_STORAGE_PATH
 
 export LD_LIBRARY_PATH=/usr/local/lib/openslide-java
 
-echo Starting "$WAR_URL" 
-#Copy the war file from mounted directory to tomcat webapps directory
-if [ ! -z "$WAR_URL" ]
-then
-	rm -r /var/lib/tomcat7/webapps/*
-	cd /var/lib/tomcat7/webapps/ && wget -q $WAR_URL -O ROOT.war
+mkdir -p /usr/share/tomcat7/.grails
+cd /usr/share/tomcat7/.grails
+touch imageserverconfig.properties
+echo "dataSource.url=jdbc:h2:/tmp/devDb;MVCC=TRUE;LOCK_TIMEOUT=10000" >> imageserverconfig.properties
+echo "cytomine.storagePath=$IMS_STORAGE_PATH" >> imageserverconfig.properties
+echo "cytomine.storageBufferPath=$IMS_BUFFER_PATH" >> imageserverconfig.properties
+echo "cytomine.imageServerPublicKey=$IMS_PUB_KEY" >> imageserverconfig.properties
+echo "cytomine.imageServerPrivateKey=$IMS_PRIV_KEY" >> imageserverconfig.properties
+echo "cytomine.vips=/usr/local/bin/vips" >> imageserverconfig.properties
+echo "cytomine.identify=identify" >> imageserverconfig.properties
+echo "cytomine.tiffinfo=tiffinfo" >> imageserverconfig.properties
+echo "cytomine.vipsthumbnail=/usr/local/bin/vipsthumbnail" >> imageserverconfig.properties
 
-	mkdir -p /usr/share/tomcat7/.grails
-	cd /usr/share/tomcat7/.grails
-	touch imageserverconfig.properties
-	echo "dataSource.url=jdbc:h2:/tmp/devDb;MVCC=TRUE;LOCK_TIMEOUT=10000" >> imageserverconfig.properties
-        echo "cytomine.storagePath=$IMS_STORAGE_PATH" >> imageserverconfig.properties
-	echo "cytomine.storageBufferPath=$IMS_BUFFER_PATH" >> imageserverconfig.properties
-	echo "cytomine.imageServerPublicKey=$IMS_PUB_KEY" >> imageserverconfig.properties
-	echo "cytomine.imageServerPrivateKey=$IMS_PRIV_KEY" >> imageserverconfig.properties
-	echo "cytomine.vips=/usr/local/bin/vips" >> imageserverconfig.properties
-	echo "cytomine.identify=identify" >> imageserverconfig.properties
-	echo "cytomine.tiffinfo=tiffinfo" >> imageserverconfig.properties
-	echo "cytomine.vipsthumbnail=/usr/local/bin/vipsthumbnail" >> imageserverconfig.properties
+echo "cytomine.iipImageServerBase=http://$IIP_OFF_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+echo "cytomine.iipImageServerCyto=http://$IIP_CYTO_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+echo "cytomine.iipImageServerJpeg2000=http://$IIP_JP2_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 
-	echo "cytomine.iipImageServerBase=http://$IIP_OFF_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
-	echo "cytomine.iipImageServerCyto=http://$IIP_CYTO_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
-	echo "cytomine.iipImageServerJpeg2000=http://$IIP_JP2_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+echo "bioformat.application.enabled=$BIOFORMAT_ENABLED" >> imageserverconfig.properties
+echo "bioformat.application.location=$BIOFORMAT_LOCATION" >> imageserverconfig.properties
+echo "bioformat.application.port=$BIOFORMAT_PORT" >> imageserverconfig.properties
 
-	echo "bioformat.application.enabled=$BIOFORMAT_ENABLED" >> imageserverconfig.properties
-	echo "bioformat.application.location=$BIOFORMAT_LOCATION" >> imageserverconfig.properties
-	echo "bioformat.application.port=$BIOFORMAT_PORT" >> imageserverconfig.properties
-
-	if [ ! -z "$DOC_URL" ]
-	then
-		cd /var/lib/tomcat7/  && wget -q $DOC_URL -O restapidoc.json
-	fi
-fi
 
 mv /tmp/setenv.sh /usr/share/tomcat7/bin/
 

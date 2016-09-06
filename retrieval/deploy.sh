@@ -15,14 +15,8 @@
 # limitations under the License.
 #
 
-apt-get update
-apt-get install -y wget
 
-mkdir -p /tmp/retrieval/
-cd /tmp/retrieval/  && wget --no-check-certificate $RETRIEVAL_JAR_URL -O retrieval.zip
-
-apt-get install unzip
-unzip retrieval.zip
+cd /tmp/retrieval/  && unzip retrieval.zip
 
 mkdir -p $RETRIEVAL_FOLDER
 

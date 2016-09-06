@@ -29,16 +29,9 @@ if [ $IS_LOCAL = true ]; then
 	done
 fi
 
-if [ ! -z "$JAVA_CLIENT_JAR" ]
-then
-	cd /tmp/  && wget -q $JAVA_CLIENT_JAR -O Cytomine-client-java.jar
+mv /tmp/injectdata.groovy /tmp/script/
 
-	cd /tmp/ && wget -q "http://cytomine.be/release/demo_script.zip" -O demo_script.zip && unzip demo_script.zip
-
-	mv /tmp/injectdata.groovy /tmp/script/
-
-	cd /tmp/script/ && groovy -cp '../Cytomine-client-java.jar' injectdata.groovy ./ http://$CORE_URL http://$x http://$UPLOAD_URL $PUBLIC_KEY $PRIVATE_KEY
-fi
+cd /tmp/script/ && groovy -cp '../Cytomine-client-java.jar' injectdata.groovy ./ http://$CORE_URL http://$x http://$UPLOAD_URL $PUBLIC_KEY $PRIVATE_KEY
 
 
 touch /tmp/test.out

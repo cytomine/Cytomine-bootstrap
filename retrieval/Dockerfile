@@ -57,11 +57,12 @@ RUN buildDeps='gcc libc6-dev make' \
 
 #from redis 2.8 on DockerHub : end
 
-ADD testsvectors /tmp/testsvectors
-ADD config /tmp/config
-
 RUN apt-get install -y procps
 
+RUN mkdir -p /tmp/retrieval/ && cd /tmp/retrieval/  && wget --no-check-certificate http://cytomine.be/release/retrieval/CBIRest-0.2.1.zip -O retrieval.zip
+
+ADD testsvectors /tmp/testsvectors
+ADD config /tmp/config
 ADD redis.conf /tmp/redis.conf
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh

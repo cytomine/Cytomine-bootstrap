@@ -56,6 +56,9 @@ EXPOSE 8082
 
 RUN ldconfig -v
 
+RUN rm -r /var/lib/tomcat7/webapps/* && cd /var/lib/tomcat7/webapps/ && wget -q http://cytomine.be/release/ims/last_ROOT.war -O ROOT.war
+RUN cd /var/lib/tomcat7/  && wget -q https://github.com/cytomine/Cytomine-IMS/releases/download/v1.0/restapidoc.json -O restapidoc.json
+
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 ADD setenv.sh /tmp/setenv.sh

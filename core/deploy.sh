@@ -16,70 +16,58 @@
 # limitations under the License.
 #
 
-echo Starting "$WAR_URL" 
-#Copy the war file from mounted directory to tomcat webapps directory
-if [ ! -z "$WAR_URL" ]
-then
-	mkdir -p /usr/share/tomcat7/.grails
-	cd /usr/share/tomcat7/.grails
+mkdir -p /usr/share/tomcat7/.grails
+cd /usr/share/tomcat7/.grails
 
-	cp /tmp/cytomineconfig.groovy ./
+cp /tmp/cytomineconfig.groovy ./
 
-	### transform the ims urls for the config file ###
-	arr=$(echo $IMS_URLS | tr "," "\n")
-	arr=$(echo $arr | tr "[" "\n")
-	arr=$(echo $arr | tr "]" "\n")
+### transform the ims urls for the config file ###
+arr=$(echo $IMS_URLS | tr "," "\n")
+arr=$(echo $arr | tr "[" "\n")
+arr=$(echo $arr | tr "]" "\n")
 
-	IMS_URLS="["
-	for x in $arr
-	do
-	    IMS_URLS="${IMS_URLS}'http://$x',"
-	done
-	IMS_URLS="${IMS_URLS%?}"
-	IMS_URLS="$IMS_URLS]"
+IMS_URLS="["
+for x in $arr
+do
+    IMS_URLS="${IMS_URLS}'http://$x',"
+done
+IMS_URLS="${IMS_URLS%?}"
+IMS_URLS="$IMS_URLS]"
 
-	### END transform the ims urls for the config file ###
+### END transform the ims urls for the config file ###
 
-	echo "grails.serverURL='http://$CORE_URL'" >> cytomineconfig.groovy
-	echo "storage_buffer='$IMS_BUFFER_PATH'" >> cytomineconfig.groovy
-	echo "storage_path='$IMS_STORAGE_PATH'" >> cytomineconfig.groovy
+echo "grails.serverURL='http://$CORE_URL'" >> cytomineconfig.groovy
+echo "storage_buffer='$IMS_BUFFER_PATH'" >> cytomineconfig.groovy
+echo "storage_path='$IMS_STORAGE_PATH'" >> cytomineconfig.groovy
 
-	echo "grails.imageServerURL=$IMS_URLS" >> cytomineconfig.groovy
-	echo "grails.retrievalServerURL =['http://$RETRIEVAL_URL']" >> cytomineconfig.groovy
-	echo "grails.mongo.host = 'mongodb'" >> cytomineconfig.groovy
+echo "grails.imageServerURL=$IMS_URLS" >> cytomineconfig.groovy
+echo "grails.retrievalServerURL =['http://$RETRIEVAL_URL']" >> cytomineconfig.groovy
+echo "grails.mongo.host = 'mongodb'" >> cytomineconfig.groovy
 
-	echo "grails.uploadURL='http://$UPLOAD_URL'" >> cytomineconfig.groovy
+echo "grails.uploadURL='http://$UPLOAD_URL'" >> cytomineconfig.groovy
 
-	echo "grails.retrievalUsername = 'cytomine'" >> cytomineconfig.groovy
-	echo "grails.retrievalPassword = '$RETRIEVAL_PASSWD'" >> cytomineconfig.groovy
+echo "grails.retrievalUsername = 'cytomine'" >> cytomineconfig.groovy
+echo "grails.retrievalPassword = '$RETRIEVAL_PASSWD'" >> cytomineconfig.groovy
 
-	echo "grails.adminPassword='$ADMIN_PWD'" >> cytomineconfig.groovy
-	echo "grails.adminPrivateKey='$ADMIN_PRIV_KEY'" >> cytomineconfig.groovy
-	echo "grails.adminPublicKey='$ADMIN_PUB_KEY'" >> cytomineconfig.groovy
-	echo "grails.superAdminPrivateKey='$SUPERADMIN_PRIV_KEY'" >> cytomineconfig.groovy
-	echo "grails.superAdminPublicKey='$SUPERADMIN_PUB_KEY'" >> cytomineconfig.groovy
-	echo "grails.ImageServerPrivateKey='$IMS_PRIV_KEY'" >> cytomineconfig.groovy
-	echo "grails.ImageServerPublicKey='$IMS_PUB_KEY'" >> cytomineconfig.groovy
-        echo "grails.rabbitMQPrivateKey='$RABBITMQ_PRIV_KEY'" >> cytomineconfig.groovy
-        echo "grails.rabbitMQPublicKey='$RABBITMQ_PUB_KEY'" >> cytomineconfig.groovy
+echo "grails.adminPassword='$ADMIN_PWD'" >> cytomineconfig.groovy
+echo "grails.adminPrivateKey='$ADMIN_PRIV_KEY'" >> cytomineconfig.groovy
+echo "grails.adminPublicKey='$ADMIN_PUB_KEY'" >> cytomineconfig.groovy
+echo "grails.superAdminPrivateKey='$SUPERADMIN_PRIV_KEY'" >> cytomineconfig.groovy
+echo "grails.superAdminPublicKey='$SUPERADMIN_PUB_KEY'" >> cytomineconfig.groovy
+echo "grails.ImageServerPrivateKey='$IMS_PRIV_KEY'" >> cytomineconfig.groovy
+echo "grails.ImageServerPublicKey='$IMS_PUB_KEY'" >> cytomineconfig.groovy
+echo "grails.rabbitMQPrivateKey='$RABBITMQ_PRIV_KEY'" >> cytomineconfig.groovy
+echo "grails.rabbitMQPublicKey='$RABBITMQ_PUB_KEY'" >> cytomineconfig.groovy
 
-	echo "grails.notification.email='$SENDER_EMAIL'" >> cytomineconfig.groovy
-	echo "grails.notification.password='$SENDER_EMAIL_PASS'" >> cytomineconfig.groovy
-	echo "grails.notification.smtp.host='$SENDER_EMAIL_SMTP_HOST'" >> cytomineconfig.groovy
-	echo "grails.notification.smtp.port='$SENDER_EMAIL_SMTP_PORT'" >> cytomineconfig.groovy
+echo "grails.notification.email='$SENDER_EMAIL'" >> cytomineconfig.groovy
+echo "grails.notification.password='$SENDER_EMAIL_PASS'" >> cytomineconfig.groovy
+echo "grails.notification.smtp.host='$SENDER_EMAIL_SMTP_HOST'" >> cytomineconfig.groovy
+echo "grails.notification.smtp.port='$SENDER_EMAIL_SMTP_PORT'" >> cytomineconfig.groovy
 
-	echo "grails.messageBrokerServerURL='rabbitmq:5672'" >> cytomineconfig.groovy
+echo "grails.messageBrokerServerURL='rabbitmq:5672'" >> cytomineconfig.groovy
 
-	rm -r /var/lib/tomcat7/webapps/*
-	cd /var/lib/tomcat7/webapps/  && wget -q $WAR_URL -O ROOT.war
+cd /var/lib/tomcat7/  && sed -i "/basePath/c\   \"basePath\": \"http://$CORE_URL\"," restapidoc.json
 
-	if [ ! -z "$DOC_URL" ]
-	then
-		cd /var/lib/tomcat7/  && wget -q $DOC_URL -O restapidoc.json
-		#update the basePath
-		sed -i "/basePath/c\   \"basePath\": \"http://$CORE_URL\"," restapidoc.json
-	fi
-fi
 
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts

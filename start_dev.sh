@@ -29,8 +29,6 @@ docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 cytomine/memcached
 nb_docker=$((nb_docker+1))
 docker run -d -e MEMCACHED_PASS="mypass" --name memcached3 cytomine/memcached
 nb_docker=$((nb_docker+1))
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached4 cytomine/memcached
-nb_docker=$((nb_docker+1))
 
 RABBITMQ_PASS="mypass"
 # create rabbitmq docker
@@ -38,27 +36,24 @@ docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
 cytomine/rabbitmq && nb_docker=$((nb_docker+1)) || docker start rabbitmq
 
-# create data only containers
-docker run -d --name postgis_data cytomine/data_postgis && nb_docker=$((nb_docker+1)) || docker start postgis_data
-docker run -d --name mongodb_data cytomine/data_mongodb && nb_docker=$((nb_docker+1)) || docker start mongodb_data
+# create data volumes
+docker volume create --name postgis_data
+docker volume create --name mongodb_data
 if [ $IRIS_ENABLED = true ]
 then
-	docker run -d --name iris_data cytomine/data_h2 && nb_docker=$((nb_docker+1)) || docker start iris_data
+	docker volume create --name iris_data
 fi
 
 # create mongodb docker
-docker run -d -p 22 -p 27017:27017 --name mongodb --volumes-from mongodb_data cytomine/mongodb
+docker run -d -p 22 -p 27017:27017 --name mongodb -v mongodb_data:/var/lib/mongodb cytomine/mongodb
 nb_docker=$((nb_docker+1))
 
 # create database docker
-
-docker run -d -p 22 -p 5432:5432 -m 8g --name db --volumes-from postgis_data cytomine/postgis
+docker run -d -p 22 -p 5432:5432 -m 8g --name db -v postgis_data:/var/lib/postgresql cytomine/postgis
 nb_docker=$((nb_docker+1))
 
 if [ $BACKUP_BOOL = true ] 
 then
-	BACKUP_PATH=/backup # path (in the db container) for backup
-
 	# create backup docker
 	docker run -p 22 -d --name backup_postgis --link db:db -v $BACKUP_PATH/postgis:/backup \
 	-e BACKUP_PATH=/backup \
@@ -89,21 +84,18 @@ fi
 # create IIP dockers
 docker run -p 22 --privileged -d --name iipOff -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --link memcached1:memcached \
--e IIP_ALIAS="iip_officiel" \
--e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
+-e NB_IIP_PROCESS=10 \
 cytomine/iipofficiel
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipCyto -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --link memcached2:memcached \
--e IIP_ALIAS="iip_cyto" \
--e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
+-e NB_IIP_PROCESS=10 \
 cytomine/iipcyto
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
---link memcached4:memcached \
--e IIP_ALIAS="iip_jpeg2000" \
+--link memcached3:memcached \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 cytomine/iipjpeg2000
 nb_docker=$((nb_docker+1))
@@ -112,7 +104,6 @@ if [ $BIOFORMAT_ENABLED = true ]
 then
 	docker run -p 22 -d --name bioformat -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 	-e BIOFORMAT_PORT=$BIOFORMAT_PORT \
-	-e BIOFORMAT_JAR_URL=$BIOFORMAT_JAR_URL \
 	cytomine/bioformat
 	nb_docker=$((nb_docker+1))
 fi
@@ -133,7 +124,6 @@ docker run -m 8g -d -p 22 --name retrieval \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
 -e RETRIEVAL_FOLDER=/data/thumb \
--e RETRIEVAL_JAR_URL=$RETRIEVAL_JAR_URL \
 -e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
 cytomine/retrieval
 nb_docker=$((nb_docker+1))
@@ -142,7 +132,7 @@ if [ $IRIS_ENABLED = true ]
 then
 	# create IRIS docker
 	docker run -d -p 22 --name iris \
-	--volumes-from iris_data \
+	-v iris_data:/var/lib/tomcat7/db \
 	-e CORE_URL=$CORE_URL \
 	-e IMS_URLS=$IMS_URLS \
 	-e IS_LOCAL=$IS_LOCAL \
@@ -151,12 +141,12 @@ then
 	-e SENDER_EMAIL=$SENDER_EMAIL \
 	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
+	-e IRIS_ADMIN_NAME="$IRIS_ADMIN_NAME" \
+	-e IRIS_ADMIN_ORGANIZATION_NAME="$IRIS_ADMIN_ORGANIZATION_NAME" \
+	-e IRIS_ADMIN_EMAIL="$IRIS_ADMIN_EMAIL" \
 	cytomine/iris
 	nb_docker=$((nb_docker+1))
 fi
-
-CORE_ALIAS=core
-IMS_ALIAS=ims
 
 # create nginx docker
 #if iris is not linked, nginx doesn't start. No other way for a condition. :/
@@ -169,11 +159,8 @@ then
 	--link iris:iris \
 	--name nginx \
 	-e CORE_URL=$CORE_URL \
-	-e CORE_ALIAS=$CORE_ALIAS \
 	-e IMS_URLS="$IMS_URLS" \
-	-e IMS_ALIAS=$IMS_ALIAS \
 	-e RETRIEVAL_URL=$RETRIEVAL_URL \
-	-e RETRIEVAL_ALIAS=retrieval \
 	-e IIP_OFF_URL=$IIP_OFF_URL \
 	-e IIP_VENT_URL=$IIP_VENT_URL \
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
@@ -189,11 +176,8 @@ else
 	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
 	--name nginx \
 	-e CORE_URL=$CORE_URL \
-	-e CORE_ALIAS=$CORE_ALIAS \
 	-e IMS_URLS="$IMS_URLS" \
-	-e IMS_ALIAS=$IMS_ALIAS \
 	-e RETRIEVAL_URL=$RETRIEVAL_URL \
-	-e RETRIEVAL_ALIAS=retrieval \
 	-e IIP_OFF_URL=$IIP_OFF_URL \
 	-e IIP_VENT_URL=$IIP_VENT_URL \
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
@@ -212,8 +196,6 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
--e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
--e SOFTWARE_ROUTER_JAR=$SOFTWARE_ROUTER_JAR \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e RABBITMQ_LOGIN=$RABBITMQ_LOGIN \

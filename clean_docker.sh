@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-rm -f .cookies
-docker stop $(docker ps -a -q)
-docker rm -v $(docker ps -a -q)
-#docker rmi $(docker images -q)
+sh clean_docker_keep_data.sh
+docker volume rm postgis_data
+docker volume rm mongodb_data
+docker volume rm iris_data

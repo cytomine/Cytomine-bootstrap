@@ -16,15 +16,7 @@
 # limitations under the License.
 #
 
-#Copy the war file from mounted directory to tomcat webapps directory
-if [ ! -z "$IRIS_WAR_URL" ]
-then
-	mkdir -p /usr/share/tomcat7/.grails #(make directory for externalized config in the home of the user which will run the tomcat server)
-
-	rm -r /var/lib/tomcat7/webapps/*
-	cd /var/lib/tomcat7/webapps/  && wget -q $IRIS_WAR_URL -O iris.war
-fi
-
+mkdir -p /usr/share/tomcat7/.grails #(make directory for externalized config in the home of the user which will run the tomcat server)
 
 ### transform the ims urls for the config file ###
 arr=$(echo $IMS_URLS | tr "," "\n")

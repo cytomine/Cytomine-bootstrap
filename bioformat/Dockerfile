@@ -18,6 +18,8 @@ FROM cytomine/java7
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
+RUN cd /tmp/ && wget -q https://github.com/cytomine/Cytomine-tools/releases/download/v1.0/BioFormatStandAlone.tar.gz -O BioFormatStandAlone.tar.gz && tar -zxvf BioFormatStandAlone.tar.gz
+
 ADD crontab /tmp/crontab
 ADD check_bioformat.py /tmp/check_bioformat.py
 ADD deploy.sh /tmp/deploy.sh

@@ -19,7 +19,9 @@
 #get all the config values.
 . ./configuration.sh
 
-if [ ! -f ./.cookies ];
+DATA_INSERTION=false
+docker volume inspect postgis_data > /dev/null 2> /dev/null
+if test $? -eq 1;
 then
 	VALID_PWD=false
 	while [ $VALID_PWD = false ]
@@ -42,6 +44,7 @@ then
 				echo "OK" # pas oublier de passer l'admin_pwd dans le core
 			fi
 			VALID_PWD=true
+			DATA_INSERTION=true
 		fi
 	done
 fi
@@ -50,34 +53,35 @@ nb_docker=$(echo "$(sudo docker ps)" | wc -l)
 nb_docker=$((nb_docker-1)) # remove the header line
 
 # create memcached docker
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 --restart=unless-stopped cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 --restart=unless-stopped cytomine/memcached > /dev/null
 nb_docker=$((nb_docker+1))
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 --restart=unless-stopped cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 --restart=unless-stopped cytomine/memcached > /dev/null
 nb_docker=$((nb_docker+1))
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached3 --restart=unless-stopped cytomine/memcached
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached3 --restart=unless-stopped cytomine/memcached > /dev/null
 nb_docker=$((nb_docker+1))
 
 RABBITMQ_PASS="mypass"
 # create rabbitmq docker
 docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq --restart=unless-stopped \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
-cytomine/rabbitmq && nb_docker=$((nb_docker+1)) || docker start rabbitmq
+cytomine/rabbitmq  > /dev/null
+nb_docker=$((nb_docker+1))
 
 # create data volumes
-docker volume create --name postgis_data
-docker volume create --name mongodb_data
+docker volume create --name postgis_data > /dev/null
+docker volume create --name mongodb_data > /dev/null
 
 if [ $IRIS_ENABLED = true ]
 then
-	docker volume create --name iris_data
+	docker volume create --name iris_data > /dev/null
 fi
 
 # create mongodb docker
-docker run -d -p 22 --name mongodb -v mongodb_data:/var/lib/mongodb --restart=unless-stopped cytomine/mongodb
+docker run -d -p 22 --name mongodb -v mongodb_data:/var/lib/mongodb --restart=unless-stopped cytomine/mongodb > /dev/null
 nb_docker=$((nb_docker+1))
 
 # create database docker
-docker run -d -p 22 -m 8g --name db -v postgis_data:/var/lib/postgresql --restart=unless-stopped cytomine/postgis
+docker run -d -p 22 -m 8g --name db -v postgis_data:/var/lib/postgresql --restart=unless-stopped cytomine/postgis > /dev/null
 nb_docker=$((nb_docker+1))
 
 if [ $BACKUP_BOOL = true ] 
@@ -94,7 +98,7 @@ then
 	-e DATABASE='docker' \
 	-e USER='docker' \
 	-e PASSWD='docker' \
-	cytomine/backup
+	cytomine/backup > /dev/null
 	nb_docker=$((nb_docker+1))
 
 	docker run -p 22 -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup --restart=unless-stopped \
@@ -105,35 +109,34 @@ then
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
 	-e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
 	-e RECEIVER_EMAIL=$RECEIVER_EMAIL \
-	cytomine/backup
+	cytomine/backup > /dev/null
 	nb_docker=$((nb_docker+1))
 fi
 
 # create IIP dockers
 docker run -p 22 --privileged -d --name iipOff -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 --link memcached1:memcached \
--e NB_IIP_PROCESS=5 \
-cytomine/iipofficiel
+-e NB_IIP_PROCESS=10 \
+cytomine/iipofficiel > /dev/null
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipCyto -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 --link memcached2:memcached \
--e NB_IIP_PROCESS=50 \
-cytomine/iipcyto
+-e NB_IIP_PROCESS=10 \
+cytomine/iipcyto > /dev/null
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 --link memcached3:memcached \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
-cytomine/iipjpeg2000
+cytomine/iipjpeg2000 > /dev/null
 nb_docker=$((nb_docker+1))
 
 if [ $BIOFORMAT_ENABLED = true ]
 then
 	docker run -p 22 -d --name bioformat -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 	-e BIOFORMAT_PORT=$BIOFORMAT_PORT \
-	-e BIOFORMAT_JAR_URL=$BIOFORMAT_JAR_URL \
-	cytomine/bioformat
+	cytomine/bioformat > /dev/null
 	nb_docker=$((nb_docker+1))
 fi
 
@@ -149,8 +152,6 @@ docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims --re
 -e IMS_URLS=$IMS_URLS \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
--e WAR_URL=$IMS_WAR_URL \
--e DOC_URL=$IMS_DOC_URL \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
 -e IMS_PUB_KEY=$IMS_PUB_KEY \
@@ -158,7 +159,7 @@ docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims --re
 -e BIOFORMAT_ENABLED=$BIOFORMAT_ENABLED \
 -e BIOFORMAT_LOCATION=$BIOFORMAT_ALIAS \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
-cytomine/ims
+cytomine/ims > /dev/null
 nb_docker=$((nb_docker+1))
 
 # add a dynamic link to bioformat
@@ -183,8 +184,6 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e UPLOAD_URL=$UPLOAD_URL \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
--e WAR_URL=$CORE_WAR_URL \
--e DOC_URL=$CORE_DOC_URL \
 -e IS_LOCAL=$IS_LOCAL \
 -e ADMIN_PWD=$admin_pwd \
 -e ADMIN_PUB_KEY=$ADMIN_PUB_KEY \
@@ -200,7 +199,7 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 -e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
 -e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
-cytomine/core
+cytomine/core > /dev/null
 nb_docker=$((nb_docker+1))
 
 # create retrieval docker
@@ -210,9 +209,8 @@ docker run -m 8g -d -p 22 --name retrieval --restart=unless-stopped \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
 -e RETRIEVAL_FOLDER=/data/thumb \
--e RETRIEVAL_JAR_URL=$RETRIEVAL_JAR_URL \
 -e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
-cytomine/retrieval
+cytomine/retrieval > /dev/null
 nb_docker=$((nb_docker+1))
 
 if [ $IRIS_ENABLED = true ]
@@ -222,7 +220,6 @@ then
 	-v iris_data:/var/lib/tomcat7/db \
 	-e CORE_URL=$CORE_URL \
 	-e IMS_URLS=$IMS_URLS \
-	-e IRIS_WAR_URL=$IRIS_WAR_URL \
 	-e IS_LOCAL=$IS_LOCAL \
 	-e IRIS_URL=$IRIS_URL \
 	-e IRIS_ID=$IRIS_ID \
@@ -232,18 +229,15 @@ then
 	-e IRIS_ADMIN_NAME="$IRIS_ADMIN_NAME" \
 	-e IRIS_ADMIN_ORGANIZATION_NAME="$IRIS_ADMIN_ORGANIZATION_NAME" \
 	-e IRIS_ADMIN_EMAIL="$IRIS_ADMIN_EMAIL" \
-	cytomine/iris
+	cytomine/iris > /dev/null
 	nb_docker=$((nb_docker+1))
 fi
-
-CORE_ALIAS=core
-IMS_ALIAS=ims
 
 # create nginx docker
 #if iris is not linked, nginx doesn't start. No other way for a condition. :/
 if [ $IRIS_ENABLED = true ]
 then
-	docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS \
+	docker run -m 1g -d -p 22 -p 80:80 --link core:core --link ims:ims \
 	--volumes-from ims --link retrieval:retrieval \
 	--link iipOff:iip_officiel \
 	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
@@ -251,37 +245,31 @@ then
 	--name nginx \
 	--restart=unless-stopped \
 	-e CORE_URL=$CORE_URL \
-	-e CORE_ALIAS=$CORE_ALIAS \
 	-e IMS_URLS="$IMS_URLS" \
-	-e IMS_ALIAS=$IMS_ALIAS \
 	-e RETRIEVAL_URL=$RETRIEVAL_URL \
-	-e RETRIEVAL_ALIAS=retrieval \
 	-e IIP_OFF_URL=$IIP_OFF_URL \
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
 	-e IIP_JP2_URL=$IIP_JP2_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
 	-e IRIS_URL=$IRIS_URL \
 	-e IRIS_ENABLED=$IRIS_ENABLED \
-	cytomine/nginx
+	cytomine/nginx > /dev/null
 else
-	docker run -m 1g -d -p 22 -p 80:80 --link core:$CORE_ALIAS --link ims:$IMS_ALIAS \
+	docker run -m 1g -d -p 22 -p 80:80 --link core:core --link ims:ims \
 	--volumes-from ims --link retrieval:retrieval \
 	--link iipOff:iip_officiel \
 	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
 	--name nginx \
 	--restart=unless-stopped \
 	-e CORE_URL=$CORE_URL \
-	-e CORE_ALIAS=$CORE_ALIAS \
 	-e IMS_URLS="$IMS_URLS" \
-	-e IMS_ALIAS=$IMS_ALIAS \
 	-e RETRIEVAL_URL=$RETRIEVAL_URL \
-	-e RETRIEVAL_ALIAS=retrieval \
 	-e IIP_OFF_URL=$IIP_OFF_URL \
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
 	-e IIP_JP2_URL=$IIP_JP2_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
 	-e IRIS_ENABLED=$IRIS_ENABLED \
-	cytomine/nginx
+	cytomine/nginx > /dev/null
 fi
 nb_docker=$((nb_docker+1))
 
@@ -316,19 +304,16 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
--e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
--e SOFTWARE_ROUTER_JAR=$SOFTWARE_ROUTER_JAR \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e RABBITMQ_LOGIN=$RABBITMQ_LOGIN \
 -e RABBITMQ_PASSWORD=$RABBITMQ_PASSWORD \
 -e GROOVY_PATH=$GROOVY_PATH \
-cytomine/software_router
+cytomine/software_router > /dev/null
 nb_docker=$((nb_docker+1))
 
 
-DATA_INSERTION=false
-if [ ! -f ./.cookies ];
+if [ $DATA_INSERTION = true ]
 then
 	echo 
 	while true; do
@@ -344,12 +329,10 @@ then
 			-e UPLOAD_URL=$UPLOAD_URL \
 			-e PUBLIC_KEY=$SUPERADMIN_PUB_KEY \
 			-e PRIVATE_KEY=$SUPERADMIN_PRIV_KEY \
-			-e JAVA_CLIENT_JAR=$JAVA_CLIENT_JAR \
-			cytomine/data_test
+			cytomine/data_test > /dev/null
 			nb_docker=$((nb_docker+1))
 
 			echo "Data test in installation."
-			DATA_INSERTION=true
 			break
 			;;
 	        [Nn]* ) 
@@ -368,13 +351,8 @@ nb_started_docker=$(echo "$running_containers" | wc -l)
 nb_started_docker=$((nb_started_docker-1)) # remove the header line
 #echo "number of started docker = $nb_started_docker"
 #echo "number of asked docker = $nb_docker"
-if [ $nb_started_docker -eq $nb_docker ]
+if [ ! $nb_started_docker -eq $nb_docker ]
 then
-        touch ./.cookies
-else
-	if ! echo "$running_containers" | grep -q -w iris_data; then echo "iris_data container is not running !"; fi
-	if ! echo "$running_containers" | grep -q -w mongodb_data; then echo "mongodb_data container is not running !"; fi
-	if ! echo "$running_containers" | grep -q -w postgis_data; then echo "postgis_data container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w nginx; then echo "nginx container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w core; then echo "core container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w ims; then echo "ims container is not running !"; fi

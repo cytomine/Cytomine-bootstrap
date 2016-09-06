@@ -52,10 +52,25 @@ RUN cd /root/anaconda/lib/python2.7/site-packages/ && mv sklearn/  sklearn-old/ 
 RUN cd /root/Cytomine/Cytomine-python-datamining/cytomine-datamining/algorithms/pyxit/ && cython _estimator.pyx && python setup.py build && python setup.py install
 
 
+# Cytomine-python-client
+
+RUN cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-client.git && cd Cytomine-python-client/ && git checkout tags/v1.0
+RUN cd /root/Cytomine/Cytomine-python-client/client/ && python setup.py build && python setup.py install
+RUN cd /root/Cytomine/Cytomine-python-client/utilities/ &&  python setup.py build && python setup.py install
+
+RUN cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-tools.git && cd Cytomine-tools/ && git checkout tags/v1.0
+
+
 # Groovy Installation
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
-RUN cd /tmp/ && curl http://get.sdkman.io -o install-gvm.sh && bash install-gvm.sh && source "/root/.sdkman/bin/sdkman-init.sh" && sdk install groovy 2.4.4 --yes
+RUN cd /tmp/ && curl http://get.sdkman.io | bash
+RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install groovy 2.4.4 --yes"
+
+
+RUN mkdir -p /software_router && cd /software_router && wget -q https://github.com/cytomine/Cytomine-software-router/releases/download/v1/cytomine-software-router.jar -O Cytomine-software-router.jar
+RUN cd /software_router && wget -q https://github.com/cytomine/Cytomine-java-client/releases/download/v1.1.1/cytomine-java-client-1.1.1.jar -O cytomine-java-client.jar
+
 
 ADD config.groovy /tmp/config.groovy
 

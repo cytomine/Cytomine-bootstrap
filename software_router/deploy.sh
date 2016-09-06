@@ -16,16 +16,6 @@ if [ $IS_LOCAL = true ]; then
 fi
 
 
-# Cytomine-python-client
-cd /root/ && mkdir Cytomine/
-cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-client.git && cd Cytomine-python-client/ && git checkout tags/v1.0
-cd /root/Cytomine/Cytomine-python-client/client/ && python setup.py build && python setup.py install
-cd /root/Cytomine/Cytomine-python-client/utilities/ &&  python setup.py build && python setup.py install
-
-cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-tools.git && cd Cytomine-tools/ && git checkout tags/v1.0
-
-
-mkdir /software_router
 cd /software_router/
 mv /tmp/config.groovy .
 
@@ -57,10 +47,7 @@ mkdir ../lib
 cp -R /root/Cytomine/Cytomine-tools/jars ../lib
 cp /root/Cytomine/Cytomine-tools/union4.groovy ../lib
 
-cd /software_router
-
-wget -q $SOFTWARE_ROUTER_JAR -O Cytomine-software-router.jar
-wget -q $JAVA_CLIENT_JAR -O cytomine-java-client.jar
+cd /software_router/
 mv cytomine-java-client.jar lib/jars/Cytomine-client-java.jar
 mv /tmp/injectSoftware.groovy .
 

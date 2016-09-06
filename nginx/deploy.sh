@@ -18,14 +18,12 @@
 echo "Beginning of the deployment"
 
 sed -i "s/CORE_URL/$CORE_URL/g" /tmp/nginx.conf.sample
-sed -i "s/CORE_ALIAS/$CORE_ALIAS/g" /tmp/nginx.conf.sample
-sed -i "s/IMS_ALIAS/$IMS_ALIAS/g" /tmp/nginx.conf.sample
+sed -i "s/CORE_ALIAS/core/g" /tmp/nginx.conf.sample
+sed -i "s/IMS_ALIAS/ims/g" /tmp/nginx.conf.sample
 sed -i "s/RETRIEVAL_URL/$RETRIEVAL_URL/g" /tmp/nginx.conf.sample
-sed -i "s/RETRIEVAL_ALIAS/$RETRIEVAL_ALIAS/g" /tmp/nginx.conf.sample
 
 sed -i "s/IIP_OFF_URL/$IIP_OFF_URL/g" /tmp/nginx.conf.sample
 sed -i "s/IIP_CYTO_URL/$IIP_CYTO_URL/g" /tmp/nginx.conf.sample
-sed -i "s/IIP_VENT_URL/$IIP_VENT_URL/g" /tmp/nginx.conf.sample
 sed -i "s/IIP_JP2_URL/$IIP_JP2_URL/g" /tmp/nginx.conf.sample
 
 sed -i "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/nginx.conf.sample
@@ -46,13 +44,12 @@ do
 	sed -i "s/IMS_URLS_CONFIG/                location \/ { \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 	sed -i "s/IMS_URLS_CONFIG/                        add_header Access-Control-Allow-Origin *; \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 	sed -i "s/IMS_URLS_CONFIG/			proxy_set_header Host \$host; \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
-	sed -i "s/IMS_URLS_CONFIG/                        proxy_pass http:\/\/$IMS_ALIAS:8080; \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
+	sed -i "s/IMS_URLS_CONFIG/                        proxy_pass http:\/\/ims:8080; \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 	sed -i "s/IMS_URLS_CONFIG/                } \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 	sed -i "s/IMS_URLS_CONFIG/    } \\`echo -e '\n\r'` \\`echo -e '\n\r'` IMS_URLS_CONFIG/g" /tmp/nginx.conf.sample
 done
 sed -i "s/IMS_URLS_CONFIG//g" /tmp/nginx.conf.sample
 
-	echo "boolean at $IRIS_ENABLED"
 if [ $IRIS_ENABLED = true ]
 then
 	sed -i "s/IRIS_CONFIG/   server { \\`echo -e '\n\r'` IRIS_CONFIG/g" /tmp/nginx.conf.sample
