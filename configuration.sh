@@ -71,6 +71,3 @@ MEMCACHED_PASS="mypass"
 BIOFORMAT_ALIAS="bioformat"
 BIOFORMAT_PORT="4321"
 
-#In software_router
-GROOVY_PATH="/root/.sdkman/candidates/groovy/current/bin/groovy"
-

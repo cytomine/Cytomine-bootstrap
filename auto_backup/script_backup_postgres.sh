@@ -21,8 +21,8 @@ BackupDatabase=$DATABASE
 BackupTime=`date '+%Y-%m-%d_%H-%M'`
 BackupTmpDir="/var/cytomine/backup_tmp"
 BackupFile="$BackupTmpDir/PRODbackup-$BackupDatabase-$BackupTime.sql"
-BackupOutDir="$1/cytomine_database/$BackupDatabase"
-BackupEmail="$2"
+BackupOutDir="/backup/cytomine_database/$BackupDatabase"
+BackupEmail="$1"
 
 mkdir -p ${BackupTmpDir}
 

@@ -56,7 +56,6 @@ if [ $BACKUP_BOOL = true ]
 then
 	# create backup docker
 	docker run -p 22 -d --name backup_postgis --link db:db -v $BACKUP_PATH/postgis:/backup \
-	-e BACKUP_PATH=/backup \
 	-e SENDER_EMAIL=$SENDER_EMAIL \
 	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
@@ -71,7 +70,6 @@ then
 
 	docker run -p 22 -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup \
 	-e SGBD='mongodb' \
-	-e BACKUP_PATH=/backup \
 	-e SENDER_EMAIL=$SENDER_EMAIL \
 	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
@@ -85,7 +83,7 @@ fi
 docker run -p 22 --privileged -d --name iipOff -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --link memcached1:memcached \
 -e NB_IIP_PROCESS=10 \
-cytomine/iipofficiel
+cytomine/iipofficial
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipCyto -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
@@ -123,7 +121,6 @@ docker run -m 8g -d -p 22 --name retrieval \
 -e IMS_URLS=$IMS_URLS \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
--e RETRIEVAL_FOLDER=/data/thumb \
 -e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
 cytomine/retrieval
 nb_docker=$((nb_docker+1))
@@ -154,7 +151,7 @@ if [ $IRIS_ENABLED = true ]
 then
 	docker run -m 1g -d -p 22 -p 80:80 \
 	-v /tmp/uploaded/:/tmp/uploaded/ --link retrieval:retrieval \
-	--link iipOff:iip_officiel \
+	--link iipOff:iip_official \
 	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
 	--link iris:iris \
 	--name nginx \
@@ -172,7 +169,7 @@ then
 else
 	docker run -m 1g -d -p 22 -p 80:80 \
 	-v /tmp/uploaded/:/tmp/uploaded/ --link retrieval:retrieval \
-	--link iipOff:iip_officiel \
+	--link iipOff:iip_official \
 	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
 	--name nginx \
 	-e CORE_URL=$CORE_URL \
@@ -200,7 +197,6 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e RABBITMQ_LOGIN=$RABBITMQ_LOGIN \
 -e RABBITMQ_PASSWORD=$RABBITMQ_PASSWORD \
--e GROOVY_PATH=$GROOVY_PATH \
 cytomine/software_router
 nb_docker=$((nb_docker+1))
 

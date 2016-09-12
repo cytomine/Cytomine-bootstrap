@@ -18,7 +18,7 @@
 
 cd /tmp/retrieval/  && unzip retrieval.zip
 
-mkdir -p $RETRIEVAL_FOLDER
+mkdir -p /data/thumb
 
 echo "lauch retrieval"
 
@@ -49,11 +49,11 @@ fi
 touch /tmp/retrieval.log
 if [ "$ENGINE" == "memory" ] 
 then
-	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=MEMORY --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search
+	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=MEMORY --retrieval.thumb.index=/data/thumb/index --retrieval.thumb.search=/data/thumb/search
 else
-	cd $RETRIEVAL_FOLDER && redis-server /tmp/redis.conf&
+	cd /data/thumb && redis-server /tmp/redis.conf&
 
-	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=$RETRIEVAL_FOLDER/index --retrieval.thumb.search=$RETRIEVAL_FOLDER/search > /tmp/retrieval.log
+	java -jar retrieval-0.2.1-SNAPSHOT.war --spring.profiles.active=prod --retrieval.store.name=REDIS --retrieval.thumb.index=/data/thumb/index --retrieval.thumb.search=/data/thumb/search > /tmp/retrieval.log
 fi
 
 tail -F /tmp/retrieval.log

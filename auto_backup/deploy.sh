@@ -16,8 +16,6 @@
 # limitations under the License.
 #
 
-echo "The backup path is $BACKUP_PATH"
-
 mkdir -p /var/cytomine/
 if [ "$SGBD" == "postgres" ] 
 then
@@ -77,7 +75,7 @@ fi
 echo "CONTAINER=db" >> /tmp/crontab
 echo "#End setting env var" >> /tmp/crontab
 
-echo "30 23 * * * /var/cytomine/script_backup.sh $BACKUP_PATH $RECEIVER_EMAIL" >> /tmp/crontab
+echo "30 23 * * * /var/cytomine/script_backup.sh $RECEIVER_EMAIL" >> /tmp/crontab
 crontab /tmp/crontab
 rm /tmp/crontab
 
