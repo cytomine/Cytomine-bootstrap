@@ -44,8 +44,7 @@ RUN cd /tmp && wget http://nginx.org/download/nginx-1.4.4.tar.gz && tar -zxvf ./
 
 RUN cd /tmp/nginx-1.4.4 && ./configure && make && make install
 
-
-# Installation de la version binaire de IIPImage Server, contenant la bibliothèque KAKADU, permettant l'ouverture des images JPG2000.
+# Installation of the last version of IIPImage Server, with KAKADU, for JPG2000 images.
 RUN cd /tmp && wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/oldmapsonline/iipimage-server_0.9.9-j2k-0ubuntu12.04_amd64.deb && dpkg -i iipimage-server_0.9.9-j2k-0ubuntu12.04_amd64.deb
 
 RUN mkdir -p /usr/local/httpd/fcgi-bin && cp /usr/lib/cgi-bin/iipsrv.fcgi /usr/local/httpd/fcgi-bin/iipsrv.fcgi

@@ -212,16 +212,12 @@ if [ $nb_started_docker -eq $nb_docker ]
 then
         touch ./.cookies
 else
-	if ! echo "$running_containers" | grep -q -w iris_data; then echo "iris_data container is not running !"; fi
-	if ! echo "$running_containers" | grep -q -w mongodb_data; then echo "mongodb_data container is not running !"; fi
-	if ! echo "$running_containers" | grep -q -w postgis_data; then echo "postgis_data container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w nginx; then echo "nginx container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w db; then echo "db container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w mongodb; then echo "mongodb container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w memcached1; then echo "memcached1 container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w memcached2; then echo "memcached2 container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w memcached3; then echo "memcached3 container is not running !"; fi
-	if ! echo "$running_containers" | grep -q -w memcached4; then echo "memcached4 container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w rabbitmq; then echo "rabbitmq container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w iipOff; then echo "iipOff container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w iipCyto; then echo "iipCyto container is not running !"; fi
