@@ -21,6 +21,7 @@ MAINTAINER Cytomine Team "support@cytomine.be"
 RUN apt-get -y update && apt-get install -y software-properties-common && \
     add-apt-repository -y ppa:semiosis/ppa && apt-get -y update && apt-get install -y \
       ant \
+      dnsutils \
       git \
       gobject-introspection \
       gtk-doc-tools \
