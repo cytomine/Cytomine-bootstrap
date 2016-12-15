@@ -272,11 +272,11 @@ nb_docker=$((nb_docker+1))
 
 
 # wait for the admin password is setted by the core
-OUTPUT_CORE_CYTOMINE=$(sudo docker exec -i -t core tail -n 200 /var/lib/tomcat7/logs/catalina.out)
+OUTPUT_CORE_CYTOMINE=$(sudo docker exec core tail -n 200 /var/lib/tomcat7/logs/catalina.out 2> /dev/null)
 COUNTER_CYTOMINE=0
 while [ "${OUTPUT_CORE_CYTOMINE#*Server startup}" = "$OUTPUT_CORE_CYTOMINE" ] && [ $COUNTER_CYTOMINE -le 720 ]
 do
-   OUTPUT_CORE_CYTOMINE=$(sudo docker exec -i -t core tail -n 200 /var/lib/tomcat7/logs/catalina.out)
+   OUTPUT_CORE_CYTOMINE=$(sudo docker exec core tail -n 200 /var/lib/tomcat7/logs/catalina.out 2> /dev/null)
    COUNTER_CYTOMINE=$((COUNTER_CYTOMINE+1))
    sleep 5
 done
