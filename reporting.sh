@@ -19,36 +19,34 @@ rm -r ./reporting.tgz
 
 mkdir -p ./reporting
 
-docker cp core:/usr/share/tomcat7/.grails/cytomineconfig.groovy ./reporting/core
-docker cp core:/var/lib/tomcat7/logs/catalina.out ./reporting/core
-docker cp ims:/usr/share/tomcat7/.grails/imageserverconfig.properties ./reporting/ims
-docker cp ims:/var/lib/tomcat7/logs/catalina.out ./reporting/ims
-docker cp retrieval:/tmp/retrieval.log ./reporting/retrieval
-docker cp iipOff:/tmp/iip-openslide.out ./reporting/iipOff
-docker cp iipJ2:/tmp/iip-openslide.out ./reporting/iipJ2
-docker cp iipCyto:/tmp/iip-openslide.out ./reporting/iipCyto
+docker cp core:/usr/share/tomcat7/.grails/cytomineconfig.groovy ./reporting/configurationCore.groovy
+docker cp core:/var/lib/tomcat7/logs/catalina.out ./reporting/catalinaCore.out
+docker cp ims:/usr/share/tomcat7/.grails/imageserverconfig.properties ./reporting/configurationIMS.properties
+docker cp ims:/var/lib/tomcat7/logs/catalina.out ./reporting/catalinaIMS.out
+docker cp retrieval:/tmp/retrieval.log ./reporting/catalinaRetrieval.out
+docker cp iipOff:/tmp/iip-openslide.out ./reporting/logIIPOff.out
+docker cp iipJ2:/tmp/iip-openslide.out ./reporting/logIIPJ2.out
+docker cp iipCyto:/tmp/iip-openslide.out ./reporting/logIIPCyto.out
 
-mv ./reporting/core/cytomineconfig.groovy ./reporting/configurationCore.groovy
-mv ./reporting/ims/imageserverconfig.properties ./reporting/configurationIMS.properties
+tail -n 200 ./reporting/catalinaCore.out           > ./reporting/catalinaCoreTail.out
+mv ./reporting/catalinaCoreTail.out                  ./reporting/catalinaCore.out
+tail -n 200 ./reporting/catalinaIMS.out            > ./reporting/catalinaIMSTail.out
+mv ./reporting/catalinaIMSTail.out                   ./reporting/catalinaIMS.out
+tail -n 200 ./reporting/catalinaRetrieval.out      > ./reporting/catalinaRetrievalTail.out
+mv ./reporting/catalinaRetrievalTail.out             ./reporting/catalinaRetrieval.out
 
-tail -n 200 ./reporting/core/catalina.out     > ./reporting/catalinaCore.out
-tail -n 200 ./reporting/ims/catalina.out      > ./reporting/catalinaIMS.out
-tail -n 200 ./reporting/retrieval/catalina.out      > ./reporting/catalinaRetrieval.out
-
-tail -n 200 ./reporting/iipOff/iip-openslide.out > ./reporting/logIIPOff.out
-tail -n 200 ./reporting/iipJ2/iip-openslide.out > ./reporting/logIIPJ2.out
-tail -n 200 ./reporting/iipCyto/iip-openslide.out > ./reporting/logIIPCyto.out
-
-rm -r ./reporting/core
-rm -r ./reporting/ims
-rm -r ./reporting/retrieval
-
-rm -r ./reporting/iipOff
-rm -r ./reporting/iipJ2
-rm -r ./reporting/iipCyto
+tail -n 200 ./reporting/logIIPOff.out           > ./reporting/logIIPOffTail.out
+mv ./reporting/logIIPOffTail.out                  ./reporting/logIIPOff.out
+tail -n 200 ./reporting/logIIPJ2.out            > ./reporting/logIIPJ2Tail.out
+mv ./reporting/logIIPJ2Tail.out                   ./reporting/logIIPJ2.out
+tail -n 200 ./reporting/logIIPCyto.out          > ./reporting/logIIPCytoTail.out
+mv ./reporting/logIIPCytoTail.out                 ./reporting/logIIPCyto.out
 
 cp ./configuration.sh ./reporting/configuration.sh
+sed -i "/SENDER_EMAIL_PASS=/c\SENDER_EMAIL_PASS=******" ./reporting/configuration.sh
+
 cp ./start_deploy.sh ./reporting/start_deploy.sh
 
 tar -zcvf reporting.tgz reporting
 rm -r ./reporting
+
