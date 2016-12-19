@@ -77,7 +77,7 @@ then
 fi
 
 # create mongodb docker
-docker run -d -p 22 --name mongodb -v mongodb_data:/var/lib/mongodb --restart=unless-stopped cytomine/mongodb > /dev/null
+docker run -d -p 22 --name mongodb -v mongodb_data:/data/db --restart=unless-stopped cytomine/mongodb > /dev/null
 nb_docker=$((nb_docker+1))
 
 # create database docker
@@ -112,6 +112,7 @@ then
 fi
 
 # create IIP dockers
+# privileged for somaxconn
 docker run -p 22 --privileged -d --name iipOff -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 --link memcached1:memcached \
 -e NB_IIP_PROCESS=10 \
