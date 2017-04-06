@@ -66,6 +66,13 @@ echo "grails.notification.smtp.port='$SENDER_EMAIL_SMTP_PORT'" >> cytomineconfig
 
 echo "grails.messageBrokerServerURL='rabbitmq:5672'" >> cytomineconfig.groovy
 
+if ! grep -q "grails.serverID" cytomineconfig.groovy;
+then
+	SERVER_ID=$(cut -c -8 /proc/sys/kernel/random/uuid)
+	echo "grails.serverID=$SERVER_ID" >> cytomineconfig.groovy
+fi
+
+
 cd /var/lib/tomcat7/  && sed -i "/basePath/c\   \"basePath\": \"http://$CORE_URL\"," restapidoc.json
 
 

@@ -29,20 +29,13 @@ then
 		echo "Type the password of the admin session (login : admin), followed by [ENTER]:"
 		read admin_pwd
 
-		echo "admin_pwd is $admin_pwd" # TO DELETE
+		echo "admin_pwd has been set"
 
-		if [ -z "$admin_pwd" ] || [ $admin_pwd = "" ]
+		if [ -z "$admin_pwd" ] || [ $admin_pwd = "" ] || [ ${#admin_pwd} -lt 5 ]
 		then
-			echo "password is null or empty. Enter a valid password please"
+			echo "password is null, empty or too short. Enter a valid password please"
 		else
-			echo "length"
-			echo ${#admin_pwd}
-			if [ ${#admin_pwd} -lt 5 ]
-			then
-				echo "password is short"
-			else
-				echo "OK" # pas oublier de passer l'admin_pwd dans le core
-			fi
+			echo "OK"
 			VALID_PWD=true
 			DATA_INSERTION=true
 		fi
