@@ -34,7 +34,7 @@ RECEIVER_EMAIL='receiver@XXX.com'
 IMS_STORAGE_PATH=/data
 IMS_BUFFER_PATH=/data/_buffer
 BACKUP_PATH=/data/backup
-MODELS_PATH=/data/algo/models/
+ALGO_PATH=/data/algo/
 RETRIEVAL_PATH=/data/thumb
 
 #middlewares

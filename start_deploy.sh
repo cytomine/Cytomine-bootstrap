@@ -288,10 +288,11 @@ docker exec core /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.g
 #docker exec ims /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.grails/imageserver.properties"
 
 
+
 # create software-router docker
 docker run -d -p 22 --link rabbitmq:rabbitmq \
 --name software_router --restart=unless-stopped \
--v $MODELS_PATH:/software_router/algo/models/ \
+-v $ALGO_PATH:/software_router/algo/ \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
@@ -301,6 +302,7 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 -e RABBITMQ_PASSWORD=$RABBITMQ_PASSWORD \
 cytomine/software_router > /dev/null
 nb_docker=$((nb_docker+1))
+
 
 
 if [ $DATA_INSERTION = true ]

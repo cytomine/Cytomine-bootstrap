@@ -1,3 +1,4 @@
+26-04-2017 : Change MODELS_PATH by it's parent, ALGO_PATH.
 31-08-2016 : rewrite all Dockerfile image and put them on DockerHub. Data_containers are now volumes. You need to backup databases, clean all containers than restore data into the new volumes as explained in documentation.
 08-04-2016 : add kmeans extension to postgres. postgis_data is affected. You need to backup databases, clean all containers than restore data into the new containers.
 01-04-2016 : rewrite cytomine/base. postgis_data is affected. You need to backup databases, clean all containers than restore data into the new containers.
