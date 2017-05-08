@@ -24,7 +24,7 @@ sed -i "s/RETRIEVAL_URL/$RETRIEVAL_URL/g" /tmp/nginx.conf.sample
 
 sed -i "s/IIP_OFF_URL/$IIP_OFF_URL/g" /tmp/nginx.conf.sample
 sed -i "s/IIP_CYTO_URL/$IIP_CYTO_URL/g" /tmp/nginx.conf.sample
-sed -i "s/IIP_JP2_URL/$IIP_JP2_URL/g" /tmp/nginx.conf.sample
+#sed -i "s/IIP_JP2_URL/$IIP_JP2_URL/g" /tmp/nginx.conf.sample
 
 sed -i "s/UPLOAD_URL/$UPLOAD_URL/g" /tmp/nginx.conf.sample
 

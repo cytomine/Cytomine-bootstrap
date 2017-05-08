@@ -50,8 +50,6 @@ docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 --restart=unless-stop
 nb_docker=$((nb_docker+1))
 docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 --restart=unless-stopped cytomine/memcached > /dev/null
 nb_docker=$((nb_docker+1))
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached3 --restart=unless-stopped cytomine/memcached > /dev/null
-nb_docker=$((nb_docker+1))
 
 RABBITMQ_PASS="mypass"
 # create rabbitmq docker
@@ -118,12 +116,6 @@ docker run -p 22 --privileged -d --name iipCyto -v $IMS_STORAGE_PATH:$IMS_STORAG
 cytomine/iipcyto > /dev/null
 nb_docker=$((nb_docker+1))
 
-docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
---link memcached3:memcached \
--e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
-cytomine/iipjpeg2000 > /dev/null
-nb_docker=$((nb_docker+1))
-
 if [ $BIOFORMAT_ENABLED = true ]
 then
 	docker run -p 22 -d --name bioformat -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
@@ -140,7 +132,6 @@ docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims --re
 -v /tmp/uploaded/ \
 -e IIP_OFF_URL=$IIP_OFF_URL \
 -e IIP_CYTO_URL=$IIP_CYTO_URL \
--e IIP_JP2_URL=$IIP_JP2_URL \
 -e IMS_URLS=$IMS_URLS \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -e IMS_BUFFER_PATH=$IMS_BUFFER_PATH \
@@ -231,7 +222,7 @@ then
 	docker run -m 1g -d -p 22 -p 80:80 --link core:core --link ims:ims \
 	--volumes-from ims --link retrieval:retrieval \
 	--link iipOff:iip_official \
-	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
+	--link iipCyto:iip_cyto \
 	--link iris:iris \
 	--name nginx \
 	--restart=unless-stopped \
@@ -240,7 +231,6 @@ then
 	-e RETRIEVAL_URL=$RETRIEVAL_URL \
 	-e IIP_OFF_URL=$IIP_OFF_URL \
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
-	-e IIP_JP2_URL=$IIP_JP2_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
 	-e IRIS_URL=$IRIS_URL \
 	-e IRIS_ENABLED=$IRIS_ENABLED \
@@ -249,7 +239,7 @@ else
 	docker run -m 1g -d -p 22 -p 80:80 --link core:core --link ims:ims \
 	--volumes-from ims --link retrieval:retrieval \
 	--link iipOff:iip_official \
-	--link iipCyto:iip_cyto --link iipJ2:iip_jpeg2000 \
+	--link iipCyto:iip_cyto \
 	--name nginx \
 	--restart=unless-stopped \
 	-e CORE_URL=$CORE_URL \
@@ -257,7 +247,6 @@ else
 	-e RETRIEVAL_URL=$RETRIEVAL_URL \
 	-e IIP_OFF_URL=$IIP_OFF_URL \
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
-	-e IIP_JP2_URL=$IIP_JP2_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
 	-e IRIS_ENABLED=$IRIS_ENABLED \
 	cytomine/nginx > /dev/null
@@ -291,11 +280,13 @@ docker exec core /bin/bash -c "sed -i '/adminPrivateKey/d' /usr/share/tomcat7/.g
 
 # create software-router docker
 docker run -d -p 22 --link rabbitmq:rabbitmq \
+--privileged \
 --name software_router --restart=unless-stopped \
 -v $ALGO_PATH:/software_router/algo/ \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
+-e UPLOAD_URL=$UPLOAD_URL \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e RABBITMQ_LOGIN=$RABBITMQ_LOGIN \
@@ -353,11 +344,9 @@ then
 	if ! echo "$running_containers" | grep -q -w mongodb; then echo "mongodb container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w memcached1; then echo "memcached1 container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w memcached2; then echo "memcached2 container is not running !"; fi
-	if ! echo "$running_containers" | grep -q -w memcached3; then echo "memcached3 container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w rabbitmq; then echo "rabbitmq container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w iipOff; then echo "iipOff container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w iipCyto; then echo "iipCyto container is not running !"; fi
-	if ! echo "$running_containers" | grep -q -w iipJ2; then echo "iipJ2 container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w retrieval; then echo "retrieval container is not running !"; fi
 	if ! echo "$running_containers" | grep -q -w software_router; then echo "software_router container is not running !"; fi
 

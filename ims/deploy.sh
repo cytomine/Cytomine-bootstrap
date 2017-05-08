@@ -24,7 +24,6 @@ if [ $IS_LOCAL = true ]; then
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_OFF_URL" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_CYTO_URL" >> /etc/hosts
-	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_JP2_URL" >> /etc/hosts
 	for x in $arr
 	do
 	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
@@ -51,12 +50,16 @@ echo "cytomine.vipsthumbnail=/usr/local/bin/vipsthumbnail" >> imageserverconfig.
 
 echo "cytomine.iipImageServerBase=http://$IIP_OFF_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 echo "cytomine.iipImageServerCyto=http://$IIP_CYTO_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
-echo "cytomine.iipImageServerJpeg2000=http://$IIP_JP2_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 
 echo "bioformat.application.enabled=$BIOFORMAT_ENABLED" >> imageserverconfig.properties
 echo "bioformat.application.location=$BIOFORMAT_LOCATION" >> imageserverconfig.properties
 echo "bioformat.application.port=$BIOFORMAT_PORT" >> imageserverconfig.properties
 
+if [ ! -z "$IIP_JP2_URL" ]; then
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_JP2_URL" >> /etc/hosts
+	echo "cytomine.iipImageServerJpeg2000=http://$IIP_JP2_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
+	echo "cytomine.Jpeg2000Enabled=true" >> imageserverconfig.properties
+fi
 
 mv /tmp/setenv.sh /usr/share/tomcat7/bin/
 
