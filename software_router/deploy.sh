@@ -24,6 +24,7 @@ arr=$(echo $arr | tr "]" "\n")
 if [ $IS_LOCAL = true ]; then
 	echo "#Custom adding" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
+	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $UPLOAD_URL" >> /etc/hosts
 	for x in $arr
 	do
 	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
@@ -74,6 +75,6 @@ groovy -cp 'lib/jars/Cytomine-client-java.jar' injectSoftware.groovy http://$COR
 
 touch /tmp/test.out
 
-java -jar Cytomine-software-router.jar
+java -jar Cytomine-software-router.jar > /tmp/test.out &
 
 tail -f /tmp/test.out

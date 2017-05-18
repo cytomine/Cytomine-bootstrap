@@ -45,8 +45,8 @@ mv ${BackupFile} ${BackupOutDir}                                                
 echo ""                                                                         >> ${Backuplog}
 echo "Removing backup files older than 7 days ..."                              >> ${Backuplog}
 echo ""                                                                         >> ${Backuplog}
-find ${BackupOutDir} -name *.sql -ctime +7 -exec rm -f -v {} \;  |\
- sed -e "s/^removed/  removed/g"                                                >> ${Backuplog} 2>&1
+find ${BackupOutDir} -name PRODbackup* -type d -ctime +7 -exec rm -rf -v {} \;  |\
+sed -e "s/^removed/  removed/g"                                                >> ${Backuplog} 2>&1
 echo ""                                                                         >> ${Backuplog}
 echo "Following backup files left in ${BackupOutDir} ..."                          >> ${Backuplog}
 echo ""                                                                         >> ${Backuplog}

@@ -69,7 +69,7 @@ echo "grails.messageBrokerServerURL='rabbitmq:5672'" >> cytomineconfig.groovy
 if ! grep -q "grails.serverID" cytomineconfig.groovy;
 then
 	SERVER_ID=$(cut -c -8 /proc/sys/kernel/random/uuid)
-	echo "grails.serverID=$SERVER_ID" >> cytomineconfig.groovy
+	echo "grails.serverID='$SERVER_ID'" >> cytomineconfig.groovy
 fi
 
 
