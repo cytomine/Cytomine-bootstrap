@@ -31,7 +31,6 @@ if [ $IS_LOCAL = true ]; then
 	done
 fi
 
-
 cd /software_router/
 mv /tmp/config.groovy .
 
@@ -56,6 +55,8 @@ cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/object_fin
 cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/segmentation_model_builder .
 cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/segmentation_prediction .
 
+mkdir -p /software_router/algo/simple_elastix
+mv /tmp/get_and_move.py /software_router/algo/simple_elastix/get_and_move.py
 
 cp -R /root/Cytomine/Cytomine-tools/computeAnnotationStats .
 cp /root/Cytomine/Cytomine-tools/computeTermArea.groovy .
@@ -76,5 +77,8 @@ groovy -cp 'lib/jars/Cytomine-client-java.jar' injectSoftware.groovy http://$COR
 touch /tmp/test.out
 
 java -jar Cytomine-software-router.jar > /tmp/test.out &
+
+bash wrapdocker #&& service docker start
+
 
 tail -f /tmp/test.out
