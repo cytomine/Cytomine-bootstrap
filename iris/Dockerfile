@@ -27,6 +27,6 @@ ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 
 # Fix path
-ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
 ENTRYPOINT ["/tmp/deploy.sh"]

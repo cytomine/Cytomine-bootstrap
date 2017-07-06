@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM cytomine/java7
+FROM cytomine/java8
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
@@ -73,7 +73,7 @@ RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install groovy 
 
 
 RUN mkdir -p /software_router && cd /software_router && wget https://github.com/cytomine/Cytomine-software-router/releases/download/v1/cytomine-software-router.jar -O Cytomine-software-router.jar
-RUN cd /software_router && wget https://github.com/cytomine/Cytomine-java-client/releases/download/v1.1.1/cytomine-java-client-1.1.1.jar -O cytomine-java-client.jar
+RUN cd /software_router && wget http://cytomine.be/release/java/cytomine-java-client.jar -O cytomine-java-client.jar
 
 # Install Docker from Docker Inc. repositories.
 RUN curl -sSL https://get.docker.com/ | sh

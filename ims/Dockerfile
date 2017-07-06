@@ -48,8 +48,8 @@ RUN cd /tmp && wget http://launchpadlibrarian.net/147357169/libopenjpeg-dev_1.3%
 RUN cd /tmp && wget http://www.vips.ecs.soton.ac.uk/supported/8.0/vips-8.0.2.tar.gz && tar -zxvf ./vips-8.0.2.tar.gz && cd ./vips-8.0.2 && sh bootstrap.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide"  ./configure && make && make install
 
 #openslide-java
-RUN update-java-alternatives -s java-7-oracle
-RUN export JAVA_HOME=/usr/lib/jvm/java-7-oracle && export CFLAGS="-I/usr/lib/jvm/java-7-oracle" && cd /tmp && git clone https://github.com/cytomine/openslide-java && cd /tmp/openslide-java && git checkout 93af97eeca8f0b63e9f71a6916af474ecc474dc8 && autoreconf -i && ./configure && make && make install
+RUN update-java-alternatives -s java-8-oracle
+RUN export JAVA_HOME=/usr/lib/jvm/java-8-oracle && export CFLAGS="-I/usr/lib/jvm/java-8-oracle" && cd /tmp && git clone https://github.com/cytomine/openslide-java && cd /tmp/openslide-java && git checkout 93af97eeca8f0b63e9f71a6916af474ecc474dc8 && autoreconf -i && ./configure && make && make install
 
 
 EXPOSE 8081

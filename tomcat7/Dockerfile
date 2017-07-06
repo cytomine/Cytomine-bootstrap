@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM cytomine/java7
+FROM cytomine/java8
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 

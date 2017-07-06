@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-cd /tmp/BioFormatStandAlone_jar/ && java -jar BioFormatStandAlone.jar $BIOFORMAT_PORT &
+cd /tmp/BioFormatStandAlone_jar/ && java -jar BioFormatStandAlone.jar $BIOFORMAT_PORT > /tmp/tailFile &
 
 echo "#Setting env var" >> /tmp/crontab
 echo "BIOFORMAT_PORT=$BIOFORMAT_PORT" >> /tmp/crontab
@@ -30,5 +30,4 @@ echo "run cron"
 cron
 
 
-touch /tmp/tailFile
 tail -F /tmp/tailFile

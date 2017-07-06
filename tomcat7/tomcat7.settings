@@ -9,7 +9,7 @@ TOMCAT7_GROUP=tomcat7
 # The home directory of the Java development kit (JDK). You need at least
 # JDK version 1.5. If JAVA_HOME is not set, some common directories for 
 # OpenJDK, the Sun JDK, and various J2SE 1.5 versions are tried.
-#JAVA_HOME=/usr/lib/jvm/openjdk-6-jdk
+JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
 # You may pass JVM startup parameters to Java here. If unset, the default
 # options will be: -Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC
