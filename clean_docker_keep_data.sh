@@ -19,8 +19,6 @@ docker stop memcached1
 docker rm -v memcached1
 docker stop memcached2
 docker rm -v memcached2
-docker stop memcached3
-docker rm -v memcached3
 docker stop rabbitmq
 docker rm -v rabbitmq
 docker stop mongodb
