@@ -18,7 +18,7 @@ FROM cytomine/base
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
-RUN echo "deb http://www.rabbitmq.com/debian/ testing main"  | sudo tee  /etc/apt/sources.list.d/rabbitmq.list > /dev/null
+RUN echo "deb http://www.rabbitmq.com/debian/ testing main"  | tee  /etc/apt/sources.list.d/rabbitmq.list > /dev/null
 RUN wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
 RUN apt-key add rabbitmq-signing-key-public.asc && apt-get update && apt-get install rabbitmq-server -y --force-yes
 

@@ -21,9 +21,9 @@ fi
 #exec /usr/sbin/rabbitmq-server
 service rabbitmq-server start
 rabbitmq-plugins enable rabbitmq_management
-sudo rabbitmqctl add_user router router
-sudo rabbitmqctl set_user_tags router administrator
-sudo rabbitmqctl set_permissions -p / router ".*" ".*" ".*"
+rabbitmqctl add_user router router
+rabbitmqctl set_user_tags router administrator
+rabbitmqctl set_permissions -p / router ".*" ".*" ".*"
 
 touch /tmp/test.out
 
