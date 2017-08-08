@@ -18,21 +18,23 @@ FROM cytomine/base
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
-RUN apt-get -y update && apt-get install -y software-properties-common && apt-get -y build-dep nginx
+RUN apt-get -y update && apt-get install -y \
+        git \
+        libpcre3 \
+        libpcre3-dev \
+        libssl-dev \
+        zlib1g-dev
 
-#create tmp directories
-RUN mkdir /tmp/nginx_upload
-RUN mkdir /tmp/nginx_upload-patch
+RUN mkdir -p /opt/nginx
+WORKDIR /opt/nginx
+RUN wget http://nginx.org/download/nginx-1.10.1.tar.gz
+RUN tar -zxvf nginx-1.10.1.tar.gz
 
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-#fetch libs & patchs
-RUN cd /tmp && wget http://nginx.org/download/nginx-1.4.4.tar.gz && tar -zxvf ./nginx-1.4.4.tar.gz
-RUN cd /tmp && wget https://github.com/vkholodkov/nginx-upload-module/archive/2.2.zip && unzip /tmp/2.2.zip -d /tmp/nginx_upload	
+RUN git clone https://github.com/vkholodkov/nginx-upload-module.git
+RUN cd nginx-upload-module/ && git checkout 2.2 && git reset --hard && git clean -f && git pull && git status
 
-RUN cd /tmp && wget https://gist.github.com/adamchal/6457039/download -O nginx_upload-progress.tar.gz && unzip -d "/tmp/nginx_upload-patch" "/tmp/nginx_upload-progress.tar.gz" && f=("/tmp/nginx_upload-patch"/*) && mv "/tmp/nginx_upload-patch"/*/* "/tmp/nginx_upload-patch" && rmdir "${f[@]}"
-
-RUN cp /tmp/nginx_upload-patch/ngx_http_upload_module.c /tmp/nginx_upload/nginx-upload-module-2.2/nginx-upload-module-2.2
-RUN cd /tmp/nginx-1.4.4 && ./configure --add-module=/tmp/nginx_upload/nginx-upload-module-2.2 && make && make install
+WORKDIR /opt/nginx/nginx-1.10.1
+RUN ./configure --add-module=/opt/nginx/nginx-upload-module && make && sudo make install
 
 ADD nginx.conf.sample /tmp/nginx.conf.sample
 
