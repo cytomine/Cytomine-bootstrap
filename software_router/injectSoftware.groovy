@@ -45,6 +45,19 @@ println "LandMark added"
 SoftwareExample.addSoftwareExportLandmark(cytomine);
 println "Export LandMark added"
 
+SoftwareExample.addSoftwareGlmBuilderPigeon(cytomine);
+println "GlmBuilderPigeon added"
+SoftwareExample.addSoftwareDmblLandmarkModelBuilder(cytomine);
+println "DmblLandmarkModelBuilder added"
+SoftwareExample.addSoftwareLcLandmarkModelBuilder(cytomine);
+println "LcLandmarkModelBuilder added"
+SoftwareExample.addSoftwareLandmarkGenericPredictor(cytomine);
+println "LandmarkGenericPredictor added"
+SoftwareExample.addSoftwareLandmarkDmblPredictor(cytomine);
+println "LandmarkDmblPredictor added"
+SoftwareExample.addSoftwareLandmarkLcPredictor(cytomine);
+println "LandmarkLcPredictor added"
+
 
 println "DONE"
 println "Softwares :"+cytomine.getSoftwares();

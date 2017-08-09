@@ -54,6 +54,10 @@ cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/landmark_p
 cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/object_finder .
 cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/segmentation_model_builder .
 cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/segmentation_prediction .
+cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/ldm_model_builder .
+cp -R /root/Cytomine/Cytomine-python-datamining/cytomine-applications/ldm_prediction .
+
+
 
 mkdir -p /software_router/algo/simple_elastix
 mv /tmp/get_and_move.py /software_router/algo/simple_elastix/get_and_move.py
