@@ -45,8 +45,8 @@ println "LandMark added"
 SoftwareExample.addSoftwareExportLandmark(cytomine);
 println "Export LandMark added"
 
-SoftwareExample.addSoftwareGlmBuilderPigeon(cytomine);
-println "GlmBuilderPigeon added"
+SoftwareExample.addSoftwareGlmBuilder(cytomine);
+println "GlmBuilder added"
 SoftwareExample.addSoftwareDmblLandmarkModelBuilder(cytomine);
 println "DmblLandmarkModelBuilder added"
 SoftwareExample.addSoftwareLcLandmarkModelBuilder(cytomine);
