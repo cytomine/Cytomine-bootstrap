@@ -33,8 +33,8 @@ docker stop iipOff
 docker rm -v iipOff
 docker stop iipCyto
 docker rm -v iipCyto
-docker stop iipJ2
-docker rm -v iipJ2
+#docker stop iipJ2
+#docker rm -v iipJ2
 docker stop bioformat
 docker rm -v bioformat
 docker stop ims
