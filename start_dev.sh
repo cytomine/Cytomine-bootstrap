@@ -45,11 +45,11 @@ then
 fi
 
 # create mongodb docker
-docker run -d -p 22 -p 27017:27017 --name mongodb -v mongodb_data:/var/lib/mongodb cytomine/mongodb
+docker run -d -p 22 -p 27017:27017 --name mongodb -v mongodb_data:/data/db cytomine/mongodb
 nb_docker=$((nb_docker+1))
 
 # create database docker
-docker run -d -p 22 -p 5432:5432 -m 8g --name db -v postgis_data:/var/lib/postgresql cytomine/postgis
+docker run -d -p 22 -p 5432:5432 -m 8g --name db -v postgis_data:/var/lib/postgresql cytomine/postgisdev
 nb_docker=$((nb_docker+1))
 
 if [ $BACKUP_BOOL = true ] 
@@ -159,13 +159,12 @@ then
 	-e IMS_URLS="$IMS_URLS" \
 	-e RETRIEVAL_URL=$RETRIEVAL_URL \
 	-e IIP_OFF_URL=$IIP_OFF_URL \
-	-e IIP_VENT_URL=$IIP_VENT_URL \
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
 	-e IIP_JP2_URL=$IIP_JP2_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
 	-e IRIS_URL=$IRIS_URL \
 	-e IRIS_ENABLED=$IRIS_ENABLED \
-	cytomine/nginx
+	cytomine/nginxdev
 else
 	docker run -m 1g -d -p 22 -p 80:80 \
 	-v /tmp/uploaded/:/tmp/uploaded/ --link retrieval:retrieval \
@@ -176,23 +175,28 @@ else
 	-e IMS_URLS="$IMS_URLS" \
 	-e RETRIEVAL_URL=$RETRIEVAL_URL \
 	-e IIP_OFF_URL=$IIP_OFF_URL \
-	-e IIP_VENT_URL=$IIP_VENT_URL \
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
 	-e IIP_JP2_URL=$IIP_JP2_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
 	-e IRIS_ENABLED=$IRIS_ENABLED \
-	cytomine/nginx
+	cytomine/nginxdev
 fi
 nb_docker=$((nb_docker+1))
 
 
+echo "Now launch core"
+read waiting
+
+
 # create software-router docker
 docker run -d -p 22 --link rabbitmq:rabbitmq \
+--privileged \
 --name software_router \
--v $MODELS_PATH:/software_router/algo/models/ \
+-v $ALGO_PATH:/software_router/algo/ \
 -e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
+-e UPLOAD_URL=$UPLOAD_URL \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e RABBITMQ_LOGIN=$RABBITMQ_LOGIN \
