@@ -55,6 +55,9 @@ echo "bioformat.application.enabled=$BIOFORMAT_ENABLED" >> imageserverconfig.pro
 echo "bioformat.application.location=$BIOFORMAT_LOCATION" >> imageserverconfig.properties
 echo "bioformat.application.port=$BIOFORMAT_PORT" >> imageserverconfig.properties
 
+echo "cytomine.hdf5.scriptToFindFiles=webapps/ROOT/WEB-INF/scripts/relatedFiles.sh" >> imageserverconfig.properties
+
+
 if [ ! -z "$IIP_JP2_URL" ]; then
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_JP2_URL" >> /etc/hosts
 	echo "cytomine.iipImageServerJpeg2000=http://$IIP_JP2_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
