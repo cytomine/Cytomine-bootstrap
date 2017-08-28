@@ -27,8 +27,6 @@ docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 cytomine/memcached
 nb_docker=$((nb_docker+1))
 docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 cytomine/memcached
 nb_docker=$((nb_docker+1))
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached3 cytomine/memcached
-nb_docker=$((nb_docker+1))
 
 RABBITMQ_PASS="mypass"
 # create rabbitmq docker
@@ -49,7 +47,7 @@ docker run -d -p 22 -p 27017:27017 --name mongodb -v mongodb_data:/data/db cytom
 nb_docker=$((nb_docker+1))
 
 # create database docker
-docker run -d -p 22 -p 5432:5432 -m 8g --name db -v postgis_data:/var/lib/postgresql cytomine/postgisdev
+docker run -d -p 22 -p 5432:5432 -m 8g --name db -v postgis_data:/var/lib/postgresql cytomine/postgis
 nb_docker=$((nb_docker+1))
 
 if [ $BACKUP_BOOL = true ] 
@@ -93,7 +91,7 @@ cytomine/iipcyto
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipJ2 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
---link memcached3:memcached \
+--link memcached1:memcached \
 -e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 cytomine/iipjpeg2000
 nb_docker=$((nb_docker+1))
