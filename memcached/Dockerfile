@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM cytomine/base
+FROM cytomine/base:v1.1
 
 MAINTAINER Cytomine Team<support@cytomine.be>
 

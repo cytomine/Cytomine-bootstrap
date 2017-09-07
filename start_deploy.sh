@@ -46,16 +46,16 @@ nb_docker=$(echo "$(sudo docker ps)" | wc -l)
 nb_docker=$((nb_docker-1)) # remove the header line
 
 # create memcached docker
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 --restart=unless-stopped cytomine/memcached > /dev/null
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached1 --restart=unless-stopped cytomine/memcached:v1.1 > /dev/null
 nb_docker=$((nb_docker+1))
-docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 --restart=unless-stopped cytomine/memcached > /dev/null
+docker run -d -e MEMCACHED_PASS="mypass" --name memcached2 --restart=unless-stopped cytomine/memcached:v1.1 > /dev/null
 nb_docker=$((nb_docker+1))
 
 RABBITMQ_PASS="mypass"
 # create rabbitmq docker
 docker run -d -p 22 -p 5672:5672 -p 15672:15672 --name rabbitmq --restart=unless-stopped \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
-cytomine/rabbitmq  > /dev/null
+cytomine/rabbitmq:v1.1  > /dev/null
 nb_docker=$((nb_docker+1))
 
 # create data volumes
@@ -68,11 +68,13 @@ then
 fi
 
 # create mongodb docker
-docker run -d -p 22 --name mongodb -v mongodb_data:/data/db --restart=unless-stopped cytomine/mongodb > /dev/null
+docker run -d -p 22 --name mongodb -v mongodb_data:/data/db \
+--restart=unless-stopped cytomine/mongodb:v1.1 > /dev/null
 nb_docker=$((nb_docker+1))
 
 # create database docker
-docker run -d -p 22 -m 8g --name db -v postgis_data:/var/lib/postgresql --restart=unless-stopped cytomine/postgis > /dev/null
+docker run -d -p 22 -m 8g --name db -v postgis_data:/var/lib/postgresql \
+--restart=unless-stopped cytomine/postgis:v1.1 > /dev/null
 nb_docker=$((nb_docker+1))
 
 if [ $BACKUP_BOOL = true ] 
@@ -88,7 +90,7 @@ then
 	-e DATABASE='docker' \
 	-e USER='docker' \
 	-e PASSWD='docker' \
-	cytomine/backup > /dev/null
+	cytomine/backup:v1.1 > /dev/null
 	nb_docker=$((nb_docker+1))
 
 	docker run -p 22 -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup --restart=unless-stopped \
@@ -98,7 +100,7 @@ then
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
 	-e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
 	-e RECEIVER_EMAIL=$RECEIVER_EMAIL \
-	cytomine/backup > /dev/null
+	cytomine/backup:v1.1 > /dev/null
 	nb_docker=$((nb_docker+1))
 fi
 
@@ -107,20 +109,20 @@ fi
 docker run -p 22 --privileged -d --name iipOff -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 --link memcached1:memcached \
 -e NB_IIP_PROCESS=10 \
-cytomine/iipofficial > /dev/null
+cytomine/iipofficial:v1.1 > /dev/null
 nb_docker=$((nb_docker+1))
 
 docker run -p 22 --privileged -d --name iipCyto -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 --link memcached2:memcached \
 -e NB_IIP_PROCESS=10 \
-cytomine/iipcyto > /dev/null
+cytomine/iipcyto:v1.1 > /dev/null
 nb_docker=$((nb_docker+1))
 
 if [ $BIOFORMAT_ENABLED = true ]
 then
 	docker run -p 22 -d --name bioformat -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --restart=unless-stopped \
 	-e BIOFORMAT_PORT=$BIOFORMAT_PORT \
-	cytomine/bioformat > /dev/null
+	cytomine/bioformat:v1.1 > /dev/null
 	nb_docker=$((nb_docker+1))
 fi
 
@@ -142,7 +144,7 @@ docker run -p 22 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -m 8g -d --name ims --re
 -e BIOFORMAT_ENABLED=$BIOFORMAT_ENABLED \
 -e BIOFORMAT_LOCATION=$BIOFORMAT_ALIAS \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
-cytomine/ims > /dev/null
+cytomine/ims:v1.1 > /dev/null
 nb_docker=$((nb_docker+1))
 
 # add a dynamic link to bioformat
@@ -161,6 +163,7 @@ RABBITMQ_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 
 # create CORE docker
 docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --link mongodb:mongodb --restart=unless-stopped \
+-v /etc/localtime:/etc/localtime \
 -e CORE_URL=$CORE_URL \
 -e IMS_URLS=$IMS_URLS \
 -e RETRIEVAL_URL=$RETRIEVAL_URL \
@@ -182,7 +185,7 @@ docker run -m 8g -d -p 22 --name core --link rabbitmq:rabbitmq --link db:db --li
 -e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
 -e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
 -e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
-cytomine/core > /dev/null
+cytomine/core:v1.1 > /dev/null
 nb_docker=$((nb_docker+1))
 
 # create retrieval docker
@@ -192,7 +195,7 @@ docker run -m 8g -d -p 22 --name retrieval --restart=unless-stopped \
 -e IS_LOCAL=$IS_LOCAL \
 -e ENGINE=$RETRIEVAL_ENGINE \
 -e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
-cytomine/retrieval > /dev/null
+cytomine/retrieval:v1.0 > /dev/null
 nb_docker=$((nb_docker+1))
 
 if [ $IRIS_ENABLED = true ]
@@ -211,7 +214,7 @@ then
 	-e IRIS_ADMIN_NAME="$IRIS_ADMIN_NAME" \
 	-e IRIS_ADMIN_ORGANIZATION_NAME="$IRIS_ADMIN_ORGANIZATION_NAME" \
 	-e IRIS_ADMIN_EMAIL="$IRIS_ADMIN_EMAIL" \
-	cytomine/iris > /dev/null
+	cytomine/iris:v1.0 > /dev/null
 	nb_docker=$((nb_docker+1))
 fi
 
@@ -234,7 +237,7 @@ then
 	-e UPLOAD_URL=$UPLOAD_URL \
 	-e IRIS_URL=$IRIS_URL \
 	-e IRIS_ENABLED=$IRIS_ENABLED \
-	cytomine/nginx > /dev/null
+	cytomine/nginx:v1.1 > /dev/null
 else
 	docker run -m 1g -d -p 22 -p 80:80 --link core:core --link ims:ims \
 	--volumes-from ims --link retrieval:retrieval \
@@ -249,7 +252,7 @@ else
 	-e IIP_CYTO_URL=$IIP_CYTO_URL \
 	-e UPLOAD_URL=$UPLOAD_URL \
 	-e IRIS_ENABLED=$IRIS_ENABLED \
-	cytomine/nginx > /dev/null
+	cytomine/nginx:v1.1 > /dev/null
 fi
 nb_docker=$((nb_docker+1))
 
@@ -291,7 +294,7 @@ docker run -d -p 22 --link rabbitmq:rabbitmq \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 -e RABBITMQ_LOGIN=$RABBITMQ_LOGIN \
 -e RABBITMQ_PASSWORD=$RABBITMQ_PASSWORD \
-cytomine/software_router > /dev/null
+cytomine/software_router:v1.1 > /dev/null
 nb_docker=$((nb_docker+1))
 
 
@@ -312,7 +315,7 @@ then
 			-e UPLOAD_URL=$UPLOAD_URL \
 			-e PUBLIC_KEY=$SUPERADMIN_PUB_KEY \
 			-e PRIVATE_KEY=$SUPERADMIN_PRIV_KEY \
-			cytomine/data_test > /dev/null
+			cytomine/data_test:v1.1 > /dev/null
 			nb_docker=$((nb_docker+1))
 
 			echo "Data test in installation."

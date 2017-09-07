@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM cytomine/base
+FROM cytomine/base:v1.1
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
@@ -24,13 +24,24 @@ RUN apt-get -y update && \
       libjpeg8-dev \
       libmemcached-dev \
       libopenjpeg-dev \
+      libssl-dev \
       libtiff5-dev \
       psmisc \
       software-properties-common && \
-    apt-get -y build-dep iipimage-server nginx openslide
+      apt-get -y build-dep iipimage-server openslide
 
-RUN cd /tmp && wget http://nginx.org/download/nginx-1.4.4.tar.gz && tar -zxvf ./nginx-1.4.4.tar.gz
-RUN cd /tmp/nginx-1.4.4 && ./configure && make && make install
+
+RUN mkdir -p /opt/nginx
+WORKDIR /opt/nginx
+RUN wget http://nginx.org/download/nginx-1.10.1.tar.gz
+RUN tar -zxvf nginx-1.10.1.tar.gz
+
+RUN git clone https://github.com/vkholodkov/nginx-upload-module.git
+RUN cd nginx-upload-module/ && git checkout 2.2 && git reset --hard && git clean -f && git pull && git status
+
+WORKDIR /opt/nginx/nginx-1.10.1
+RUN ./configure --add-module=/opt/nginx/nginx-upload-module && make && sudo make install
+
 
 RUN mkdir -p /opt/cytomine/bin
 

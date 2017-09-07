@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM cytomine/iipbase 
+FROM cytomine/iipbase:v1.1
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
@@ -23,7 +23,7 @@ RUN cd /tmp && wget http://launchpadlibrarian.net/147357170/libopenjpeg2_1.3%2Bd
 RUN cd /tmp && wget http://launchpadlibrarian.net/147357169/libopenjpeg-dev_1.3%2Bdfsg-4.6ubuntu2_amd64.deb && dpkg -i libopenjpeg-dev_1.3+dfsg-4.6ubuntu2_amd64.deb
 
 #openslide 2015/04/21
-RUN cd /tmp && git clone https://github.com/openslide/openslide && cd /tmp/openslide && git checkout 4cd4b83c3ffff0382126d0618c85407f2c469b28 && autoreconf -i && ./configure && make && make install
+RUN cd /tmp && git clone https://github.com/openslide/openslide && cd /tmp/openslide && git checkout tags/v3.4.1 && autoreconf -i && ./configure && make && make install
 
 #IIP Image Server
 RUN cd /tmp && git clone https://github.com/cytomine/iipsrv && cd /tmp/iipsrv && git checkout 6a42b2e28e07347be7e42048be72e078c8bc1ef7 && sh autogen.sh && LDFLAGS="-L/usr/local/lib -lopenslide" CPPFLAGS="-I/usr/local/include/openslide" ./configure && make 

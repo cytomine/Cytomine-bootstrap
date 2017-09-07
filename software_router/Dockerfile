@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM cytomine/java8
+FROM cytomine/java8:v1.1
 
 MAINTAINER Cytomine Team "support@cytomine.be"
 
@@ -29,10 +29,10 @@ RUN conda install joblib=0.11 --yes
 RUN conda install pillow=3.4.2 --yes
 RUN conda install numpy=1.11.2 --yes
 RUN conda install shapely --yes
-#RUN conda install opencv --yes
 RUN conda install scipy=0.18.1 --yes
 RUN conda install scikit-learn=0.18.1 --yes
-RUN conda install opencv=3.1.0 --yes
+RUN conda install opencv=2.4.10 --yes
+RUN conda install libgfortran==1 --yes
 
 RUN apt-get -y update && apt-get install -y \
       apt-transport-https \
@@ -53,18 +53,17 @@ RUN dpkg-reconfigure locales
 
 # Cytomine-python-datamining
 
-RUN mkdir -p /root/Cytomine/ && cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-datamining.git && cd Cytomine-python-datamining/ && git checkout 11f23f28a1921af29ba7d9e05333a9386f87458c
-
+RUN mkdir -p /root/Cytomine/ && cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-datamining.git && cd Cytomine-python-datamining/ && git checkout tags/v1.1
 RUN cd /root/Cytomine/Cytomine-python-datamining/cytomine-datamining/algorithms/pyxit/ && cython _estimator.pyx && python setup.py build && python setup.py install
 
 
 # Cytomine-python-client
 
-RUN cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-client.git && cd Cytomine-python-client/ && git checkout tags/v1.0
+RUN cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-python-client.git && cd Cytomine-python-client/ && git checkout tags/v1.1
 RUN cd /root/Cytomine/Cytomine-python-client/client/ && python setup.py build && python setup.py install
 RUN cd /root/Cytomine/Cytomine-python-client/utilities/ &&  python setup.py build && python setup.py install
 
-RUN cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-tools.git && cd Cytomine-tools/ && git checkout tags/v1.0
+RUN cd /root/Cytomine/ && git clone https://github.com/cytomine/Cytomine-tools.git && cd Cytomine-tools/ && git checkout tags/v1.1
 
 
 # Groovy Installation
@@ -74,8 +73,8 @@ RUN cd /tmp/ && curl http://get.sdkman.io | bash
 RUN /bin/bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install groovy 2.4.4 --yes"
 
 
-RUN mkdir -p /software_router && cd /software_router && wget http://cytomine.be/release/java/Cytomine-software-router.jar -O Cytomine-software-router.jar
-RUN cd /software_router && wget http://cytomine.be/release/java/cytomine-java-client.jar -O cytomine-java-client.jar
+RUN mkdir -p /software_router && cd /software_router && wget https://github.com/cytomine/Cytomine-software-router/releases/download/v1.1/Cytomine-software-router.jar -O Cytomine-software-router.jar
+RUN cd /software_router && wget https://github.com/cytomine/Cytomine-java-client/releases/download/v1.1.2/cytomine-java-client.jar -O cytomine-java-client.jar
 
 # Install Docker from Docker Inc. repositories.
 RUN curl -sSL https://get.docker.com/ | sh
@@ -85,9 +84,7 @@ ADD ./wrapdocker /usr/local/bin/wrapdocker
 RUN chmod +x /usr/local/bin/wrapdocker
 
 
-#RUN conda create -n sldc python=2.7 pillow numpy joblib shapely opencv scipy && source activate sldc
-
-RUN git clone https://github.com/waliens/sldc.git && cd sldc && python setup.py install
+#RUN git clone https://github.com/waliens/sldc.git && cd sldc && python setup.py install
 
 ADD config.groovy /tmp/config.groovy
 
@@ -96,14 +93,10 @@ ENV GROOVY_HOME /root/.sdkman/candidates/groovy/current
 ENV GROOVY_PATH /root/.sdkman/candidates/groovy/current/bin/groovy
 
 RUN mkdir -p /software_router/algo
-RUN echo "Maj tar"
-ADD cytomineEnv.tar.gz /root/miniconda2/envs
 
 ADD deploy.sh /tmp/deploy.sh
 RUN chmod +x /tmp/deploy.sh
 ADD injectSoftware.groovy /tmp/injectSoftware.groovy
 RUN chmod +x /tmp/injectSoftware.groovy
-
-ADD get_and_move.py /tmp/get_and_move.py
 
 ENTRYPOINT ["/tmp/deploy.sh"]
