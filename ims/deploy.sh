@@ -24,6 +24,9 @@ if [ $IS_LOCAL = true ]; then
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $CORE_URL" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_OFF_URL" >> /etc/hosts
 	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_CYTO_URL" >> /etc/hosts
+	if [ ! -z "$IIP_JP2_URL" ]; then
+		echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_JP2_URL" >> /etc/hosts
+	fi
 	for x in $arr
 	do
 	    echo "$(route -n | awk '/UG[ \t]/{print $2}')       $x" >> /etc/hosts
@@ -59,7 +62,6 @@ echo "cytomine.hdf5.scriptToFindFiles=webapps/ROOT/WEB-INF/scripts/relatedFiles.
 
 
 if [ ! -z "$IIP_JP2_URL" ]; then
-	echo "$(route -n | awk '/UG[ \t]/{print $2}')       $IIP_JP2_URL" >> /etc/hosts
 	echo "cytomine.iipImageServerJpeg2000=http://$IIP_JP2_URL/fcgi-bin/iipsrv.fcgi" >> imageserverconfig.properties
 	echo "cytomine.Jpeg2000Enabled=true" >> imageserverconfig.properties
 fi
