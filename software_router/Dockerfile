@@ -33,6 +33,7 @@ RUN conda install scipy=0.18.1 --yes
 RUN conda install scikit-learn=0.18.1 --yes
 RUN conda install opencv=2.4.10 --yes
 RUN conda install libgfortran==1 --yes
+RUN conda install matplotlib=1.4 --yes
 
 RUN apt-get -y update && apt-get install -y \
       apt-transport-https \
