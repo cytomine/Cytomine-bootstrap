@@ -72,7 +72,7 @@ fi
 docker create --name retrieval \
 -v $RETRIEVAL_PATH:/data/thumb \
 -e IMS_URLS=$IMS_URLS \
--e RETRIEVAL_ENGINE =$RETRIEVAL_ENGINE  \
+-e RETRIEVAL_ENGINE=$RETRIEVAL_ENGINE  \
 -e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
 --restart=unless-stopped cytomine/retrieval:latest > /dev/null
 
@@ -95,7 +95,8 @@ docker create --name iipCyto \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
 --restart=unless-stopped cytomine/iipcyto:latest > /dev/null
 
-docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sampledocker start iipCyto
+docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sample
+docker start iipCyto
 
 
 docker create --name ims \
