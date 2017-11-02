@@ -16,23 +16,24 @@
 
 #URLs
 CORE_URL=localhost-core
-IMS_URLS="[localhost-ims,localhost-ims2]"
+IMS_URL1=localhost-ims
+IMS_URL2=localhost-ims2
 UPLOAD_URL=localhost-upload
 
 #Backups
 # BACKUP_BOOL : backup active or not
 BACKUP_BOOL=false
 # SENDER_EMAIL, SENDER_EMAIL_PASS, SENDER_EMAIL_SMTP : email params of the sending account
-SENDER_EMAIL='your.email@gmail.com'
 SENDER_EMAIL_PASS='passwd'
 SENDER_EMAIL_SMTP_HOST='smtp.gmail.com'
 SENDER_EMAIL_SMTP_PORT='587'
+SENDER_EMAIL='your.email@gmail.com'
 # RECEIVER_EMAIL : email adress of the receiver
 RECEIVER_EMAIL='receiver@XXX.com'
 
 #Paths
-IMS_STORAGE_PATH=/data
-IMS_BUFFER_PATH=/data/_buffer
+IMS_STORAGE_PATH=/data/images
+IMS_BUFFER_PATH=/data/images/_buffer
 BACKUP_PATH=/data/backup
 ALGO_PATH=/data/algo/
 RETRIEVAL_PATH=/data/thumb
@@ -40,11 +41,11 @@ RETRIEVAL_PATH=/data/thumb
 #middlewares
 RETRIEVAL_PASSWD='retrieval_default'
 RABBITMQ_LOGIN="router"
-RABBITMQ_PASSWORD="router"
+RABBITMQ_PASS="router"
 
 
 #IRIS
-IRIS_ENABLED=true
+IRIS_ENABLED=false
 IRIS_URL=localhost-iris
 IRIS_ID="LOCAL_CYTOMINE_IRIS"
 IRIS_ADMIN_NAME="Ian Admin"
@@ -55,13 +56,12 @@ IRIS_ADMIN_EMAIL="ian.admin@somewhere.edu"
 # You don't to change the datas below this line instead of advanced customization
 # ---------------------------
 
-IS_LOCAL=true
+NB_IIP_PROCESS=10
+
 IIP_OFF_URL=localhost-iip-base
 IIP_CYTO_URL=localhost-iip-cyto
 IIP_JP2_URL=localhost-iip-jp2000
 RETRIEVAL_URL=localhost-retrieval
-
-BIOFORMAT_ENABLED="true"
 
 #possible values : memory, redis
 RETRIEVAL_ENGINE=redis
@@ -71,3 +71,17 @@ MEMCACHED_PASS="mypass"
 BIOFORMAT_ALIAS="bioformat"
 BIOFORMAT_PORT="4321"
 
+
+
+#keys
+ADMIN_PWD=$(cat /proc/sys/kernel/random/uuid)
+ADMIN_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
+ADMIN_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
+SUPERADMIN_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
+SUPERADMIN_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
+RABBITMQ_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
+RABBITMQ_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
+IMS_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
+IMS_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
+SERVER_ID=$(cat /proc/sys/kernel/random/uuid)
+BIOFORMAT_ENABLED=false

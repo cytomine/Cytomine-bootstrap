@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #
 # Copyright (c) 2009-2017. Authors: see NOTICE file.
 #
@@ -14,40 +15,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-docker stop memcached1
-docker rm -v memcached1
-docker stop memcached2
-docker rm -v memcached2
+docker stop memcached
+docker rm memcached
 docker stop rabbitmq
-docker rm -v rabbitmq
+docker rm rabbitmq
 docker stop mongodb
-docker rm -v mongodb
-docker stop db
-docker rm -v db
-docker stop backup_postgis
-docker rm -v backup_postgis
+docker rm mongodb
+docker stop postgresql
+docker rm postgresql
 docker stop backup_mongo
-docker rm -v backup_mongo
-docker stop iipOff
-docker rm -v iipOff
-docker stop iipCyto
-docker rm -v iipCyto
-#docker stop iipJ2
-#docker rm -v iipJ2
-docker stop bioformat
-docker rm -v bioformat
-docker stop ims
-docker rm -v ims
-docker stop core
-docker rm -v core
+docker rm backup_mongo
+docker stop backup_postgis
+docker rm backup_postgis
 docker stop retrieval
-docker rm -v retrieval
+docker rm retrieval
+docker stop iipOff
+docker rm iipOff
+docker stop iipCyto
+docker rm iipCyto
+docker stop ims
+docker rm ims
+docker stop core
+docker rm core
 docker stop iris
-docker rm -v iris
+docker rm iris
 docker stop nginx
-docker rm -v nginx
+docker rm nginx
 docker stop software_router
-docker rm -v software_router
-docker stop data_test
-docker rm -v data_test
+docker rm software_router
