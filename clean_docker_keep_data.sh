@@ -16,30 +16,32 @@
 # limitations under the License.
 #
 docker stop memcached
-docker rm memcached
+docker rm -v memcached
 docker stop rabbitmq
-docker rm rabbitmq
+docker rm -v rabbitmq
 docker stop mongodb
-docker rm mongodb
+docker rm -v mongodb
 docker stop postgresql
-docker rm postgresql
+docker rm -v postgresql
 docker stop backup_mongo
-docker rm backup_mongo
+docker rm -v backup_mongo
 docker stop backup_postgis
-docker rm backup_postgis
+docker rm -v backup_postgis
 docker stop retrieval
-docker rm retrieval
+docker rm -v retrieval
 docker stop iipOff
-docker rm iipOff
+docker rm -v iipOff
 docker stop iipCyto
-docker rm iipCyto
+docker rm -v iipCyto
+docker stop bioformat
+docker rm -v bioformat
 docker stop ims
-docker rm ims
+docker rm -v ims
 docker stop core
-docker rm core
+docker rm -v core
 docker stop iris
-docker rm iris
+docker rm -v iris
 docker stop nginx
-docker rm nginx
+docker rm -v nginx
 docker stop software_router
-docker rm software_router
+docker rm -v software_router
