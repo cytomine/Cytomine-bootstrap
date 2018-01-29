@@ -17,7 +17,8 @@
 #
 
 docker create --name memcached \
---restart=unless-stopped cytomine/memcached:latest > /dev/null
+--restart=unless-stopped \
+cytomine/memcached:latest > /dev/null
 
 docker cp $PWD/configs/memcached/memcached.conf memcached:/etc/memcached.conf
 docker start memcached
@@ -26,33 +27,23 @@ docker start memcached
 docker create --name rabbitmq \
 -p 5672:5672 -p 15672:15672 \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
---restart=unless-stopped cytomine/rabbitmq:latest > /dev/null
-
+--restart=unless-stopped \
+cytomine/rabbitmq:latest > /dev/null
 
 docker start rabbitmq
 
 
-docker volume create --name mongodb_data > /dev/null
-# create mongodb docker
-docker run -d --name mongodb -v mongodb_data:/data/db \
---restart=unless-stopped cytomine/mongodb:latest > /dev/null
-
 docker volume create --name postgis_data > /dev/null
 # create database docker
 docker run -d -m 8g --name postgresql -v postgis_data:/var/lib/postgresql \
---restart=unless-stopped cytomine/postgis:latest > /dev/null
+--restart=unless-stopped \
+cytomine/postgis:latest > /dev/null
 
-if [ $BACKUP_BOOL = true ] 
-then
-	docker run -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup --restart=unless-stopped \
-	-e SGBD='mongodb' \
-	-e SENDER_EMAIL=$SENDER_EMAIL \
-	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
-	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
-	-e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
-	-e RECEIVER_EMAIL=$RECEIVER_EMAIL \
-	cytomine/backup:v1.1 > /dev/null
-fi
+docker volume create --name mongodb_data > /dev/null
+# create mongodb docker
+docker run -d --name mongodb -v mongodb_data:/data/db \
+--restart=unless-stopped \
+cytomine/mongodb:latest > /dev/null
 
 if [ $BACKUP_BOOL = true ] 
 then
@@ -70,12 +61,25 @@ then
 cytomine/backup:v1.1 > /dev/null
 fi
 
+if [ $BACKUP_BOOL = true ] 
+then
+	docker run -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup --restart=unless-stopped \
+	-e SGBD='mongodb' \
+	-e SENDER_EMAIL=$SENDER_EMAIL \
+	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
+	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
+	-e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
+	-e RECEIVER_EMAIL=$RECEIVER_EMAIL \
+	cytomine/backup:v1.1 > /dev/null
+fi
+
 docker create --name retrieval \
 -v $RETRIEVAL_PATH:/data/thumb \
 -e IMS_URLS=$IMS_URLS \
 -e RETRIEVAL_ENGINE=$RETRIEVAL_ENGINE \
 -e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
---restart=unless-stopped cytomine/retrieval:latest > /dev/null
+--restart=unless-stopped \
+cytomine/retrieval:latest > /dev/null
 
 docker cp $PWD/hosts/retrieval/addHosts.sh retrieval:/tmp/addHosts.sh
 docker start retrieval
@@ -85,7 +89,8 @@ docker create --name iipOff \
 --link memcached:memcached \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
---restart=unless-stopped cytomine/iipofficial:latest > /dev/null
+--restart=unless-stopped \
+cytomine/iipofficial:latest > /dev/null
 
 docker cp $PWD/configs/iipOff/nginx.conf.sample iipOff:/tmp/nginx.conf.sample
 docker start iipOff
@@ -93,15 +98,20 @@ docker start iipOff
 
 docker create --name iipCyto \
 --link memcached:memcached \
--v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
---restart=unless-stopped cytomine/iipcyto:latest > /dev/null
+-v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+--privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
+--restart=unless-stopped \
+cytomine/iipcyto:latest > /dev/null
 
 docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sample
 docker start iipCyto
 
 
 docker create --name ims \
--v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH -v /tmp/uploaded/ --restart=unless-stopped cytomine/ims:latest > /dev/null
+-v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+-v /tmp/uploaded/ \
+--restart=unless-stopped \
+cytomine/ims:latest > /dev/null
 
 docker cp $PWD/configs/ims/imageserverconfig.properties ims:/usr/share/tomcat7/.grails/imageserverconfig.properties
 docker cp $PWD/hosts/ims/addHosts.sh ims:/tmp/addHosts.sh
@@ -113,7 +123,8 @@ docker create --name core \
 --link mongodb:mongodb \
 --link rabbitmq:rabbitmq \
 -v /etc/localtime:/etc/localtime \
---restart=unless-stopped cytomine/core:latest > /dev/null
+--restart=unless-stopped \
+cytomine/core:latest > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -122,7 +133,8 @@ docker start core
 
 docker create --name iris \
 -v iris_data:/var/lib/tomcat7/db \
---restart=unless-stopped cytomine/iris:latest > /dev/null
+--restart=unless-stopped \
+cytomine/iris:latest > /dev/null
 
 docker cp $PWD/configs/iris/iris-config.groovy iris:/usr/share/tomcat7/.grails/iris-config.groovy
 docker cp $PWD/configs/iris/iris-production-config.groovy iris:/usr/share/tomcat7/.grails/iris-production-config.groovy
@@ -139,7 +151,8 @@ docker create --name nginx \
 --link iipOff:iipOff \
 --volumes-from ims \
 -p 80:80 \
---restart=unless-stopped cytomine/nginx:latest > /dev/null
+--restart=unless-stopped \
+cytomine/nginx:latest > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
 docker start nginx
@@ -165,15 +178,11 @@ docker create --name software_router \
 --link rabbitmq:rabbitmq \
 -v $ALGO_PATH:/software_router/algo/ \
 --privileged \
--e IS_LOCAL=$IS_LOCAL \
 -e CORE_URL=$CORE_URL \
--e IMS_URLS=$IMS_URLS \
--e UPLOAD_URL=$UPLOAD_URL \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
--e RABBITMQ_LOGIN=$RABBITMQ_LOGIN \
--e RABBITMQ_PASSWORD=$RABBITMQ_PASS \
---restart=unless-stopped cytomine/software_router:latest > /dev/null
+--restart=unless-stopped \
+cytomine/software_router:latest > /dev/null
 
 docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.sh
 docker start software_router
