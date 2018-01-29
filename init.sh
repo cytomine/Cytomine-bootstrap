@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-FILES=(configs/core/cytomineconfig.groovy configs/ims/imageserverconfig.properties configs/iipCyto/nginx.conf.sample configs/iipOff/nginx.conf.sample configs/iris/iris-config.groovy configs/iris/iris-production-config.groovy configs/nginx/nginx.conf configs/nginx/nginxDev.conf start_deploy.sh hosts/core/addHosts.sh hosts/ims/addHosts.sh hosts/retrieval/addHosts.sh hosts/iris/addHosts.sh hosts/software_router/addHosts.sh)
+FILES=(configs/core/cytomineconfig.groovy configs/ims/imageserverconfig.properties configs/iipCyto/nginx.conf.sample configs/iipOff/nginx.conf.sample configs/iris/iris-config.groovy configs/iris/iris-production-config.groovy configs/nginx/nginx.conf configs/nginx/nginxDev.conf configs/software_router/config.groovy start_deploy.sh hosts/core/addHosts.sh hosts/ims/addHosts.sh hosts/retrieval/addHosts.sh hosts/iris/addHosts.sh hosts/software_router/addHosts.sh)
 
 #get all the config values.
 . ./configuration.sh

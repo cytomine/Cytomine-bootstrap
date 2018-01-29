@@ -107,6 +107,15 @@ docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sample
 docker start iipCyto
 
 
+docker create --name bioformat \
+-v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
+-e BIOFORMAT_PORT=$BIOFORMAT_PORT \
+--restart=unless-stopped \
+cytomine/bioformat:dev > /dev/null
+
+docker start bioformat
+
+
 docker create --name ims \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -v /tmp/uploaded/ \
@@ -185,6 +194,7 @@ docker create --name software_router \
 cytomine/software_router:latest > /dev/null
 
 docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.sh
+docker cp $PWD/configs/software_router/config.groovy.sample software_router:/software_router/config.groovy
 docker start software_router
 
 
