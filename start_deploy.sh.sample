@@ -111,12 +111,13 @@ docker create --name bioformat \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
 --restart=unless-stopped \
-cytomine/bioformat:dev > /dev/null
+cytomine/bioformat:latest > /dev/null
 
 docker start bioformat
 
 
 docker create --name ims \
+--link bioformat:bioformat \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -v /tmp/uploaded/ \
 --restart=unless-stopped \

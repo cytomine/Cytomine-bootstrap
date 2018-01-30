@@ -68,6 +68,7 @@ RETRIEVAL_ENGINE=redis
 
 MEMCACHED_PASS="mypass"
 
+BIOFORMAT_ENABLED=true
 BIOFORMAT_ALIAS="bioformat"
 BIOFORMAT_PORT="4321"
 
@@ -84,4 +85,3 @@ RABBITMQ_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 IMS_PUB_KEY=$(cat /proc/sys/kernel/random/uuid)
 IMS_PRIV_KEY=$(cat /proc/sys/kernel/random/uuid)
 SERVER_ID=$(cat /proc/sys/kernel/random/uuid)
-BIOFORMAT_ENABLED=false

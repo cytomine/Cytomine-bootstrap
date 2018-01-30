@@ -13,7 +13,7 @@ cytomine.iipImageServerBase=http://$IIP_OFF_URL/fcgi-bin/iipsrv.fcgi
 cytomine.iipImageServerCyto=http://$IIP_CYTO_URL/fcgi-bin/iipsrv.fcgi
 
 bioformat.application.enabled=$BIOFORMAT_ENABLED
-bioformat.application.location=$BIOFORMAT_LOCATION
-bioformat.application.port=$BIOFORMAT_PORT
+bioformat.application.location=bioformat
+bioformat.application.port=4321
 
 cytomine.Jpeg2000Enabled=false
