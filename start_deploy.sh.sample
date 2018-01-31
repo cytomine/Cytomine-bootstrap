@@ -18,7 +18,7 @@
 
 docker create --name memcached \
 --restart=unless-stopped \
-cytomine/memcached:latest > /dev/null
+cytomine/memcached:v1.1.1 > /dev/null
 
 docker cp $PWD/configs/memcached/memcached.conf memcached:/etc/memcached.conf
 docker start memcached
@@ -28,7 +28,7 @@ docker create --name rabbitmq \
 -p 5672:5672 -p 15672:15672 \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
 --restart=unless-stopped \
-cytomine/rabbitmq:latest > /dev/null
+cytomine/rabbitmq:v1.1.1 > /dev/null
 
 docker start rabbitmq
 
@@ -37,13 +37,13 @@ docker volume create --name postgis_data > /dev/null
 # create database docker
 docker run -d -m 8g --name postgresql -v postgis_data:/var/lib/postgresql \
 --restart=unless-stopped \
-cytomine/postgis:latest > /dev/null
+cytomine/postgis:v1.1.1 > /dev/null
 
 docker volume create --name mongodb_data > /dev/null
 # create mongodb docker
 docker run -d --name mongodb -v mongodb_data:/data/db \
 --restart=unless-stopped \
-cytomine/mongodb:latest > /dev/null
+cytomine/mongodb:v1.1.1 > /dev/null
 
 if [ $BACKUP_BOOL = true ] 
 then
@@ -79,7 +79,7 @@ docker create --name retrieval \
 -e RETRIEVAL_ENGINE=$RETRIEVAL_ENGINE \
 -e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
 --restart=unless-stopped \
-cytomine/retrieval:latest > /dev/null
+cytomine/retrieval:v1.1.1 > /dev/null
 
 docker cp $PWD/hosts/retrieval/addHosts.sh retrieval:/tmp/addHosts.sh
 docker start retrieval
@@ -90,7 +90,7 @@ docker create --name iipOff \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
 --restart=unless-stopped \
-cytomine/iipofficial:latest > /dev/null
+cytomine/iipofficial:v1.1.1 > /dev/null
 
 docker cp $PWD/configs/iipOff/nginx.conf.sample iipOff:/tmp/nginx.conf.sample
 docker start iipOff
@@ -101,7 +101,7 @@ docker create --name iipCyto \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
 --restart=unless-stopped \
-cytomine/iipcyto:latest > /dev/null
+cytomine/iipcyto:v1.1.1 > /dev/null
 
 docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sample
 docker start iipCyto
@@ -111,7 +111,7 @@ docker create --name bioformat \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
 --restart=unless-stopped \
-cytomine/bioformat:latest > /dev/null
+cytomine/bioformat:v1.1.1 > /dev/null
 
 docker start bioformat
 
@@ -121,7 +121,7 @@ docker create --name ims \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -v /tmp/uploaded/ \
 --restart=unless-stopped \
-cytomine/ims:latest > /dev/null
+cytomine/ims:v1.1.1 > /dev/null
 
 docker cp $PWD/configs/ims/imageserverconfig.properties ims:/usr/share/tomcat7/.grails/imageserverconfig.properties
 docker cp $PWD/hosts/ims/addHosts.sh ims:/tmp/addHosts.sh
@@ -134,7 +134,7 @@ docker create --name core \
 --link rabbitmq:rabbitmq \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/core:latest > /dev/null
+cytomine/core:v1.1.1 > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -144,7 +144,7 @@ docker start core
 docker create --name iris \
 -v iris_data:/var/lib/tomcat7/db \
 --restart=unless-stopped \
-cytomine/iris:latest > /dev/null
+cytomine/iris:v1.1.1 > /dev/null
 
 docker cp $PWD/configs/iris/iris-config.groovy iris:/usr/share/tomcat7/.grails/iris-config.groovy
 docker cp $PWD/configs/iris/iris-production-config.groovy iris:/usr/share/tomcat7/.grails/iris-production-config.groovy
@@ -162,7 +162,7 @@ docker create --name nginx \
 --volumes-from ims \
 -p 80:80 \
 --restart=unless-stopped \
-cytomine/nginx:latest > /dev/null
+cytomine/nginx:v1.1.1 > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
 docker start nginx
@@ -192,7 +192,7 @@ docker create --name software_router \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 --restart=unless-stopped \
-cytomine/software_router:latest > /dev/null
+cytomine/software_router:v1.1.1 > /dev/null
 
 docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.sh
 docker cp $PWD/configs/software_router/config.groovy software_router:/software_router/config.groovy
