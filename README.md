@@ -14,4 +14,10 @@ This is the starting point to install Cytomine.
 This repository contains Dockerfile's in order to bootstrap the Cytomine Platform
 
 ## How to install it
-See our installation instructions: http://doc.cytomine.be/x/goCj
+
+- Fill the configuration.sh file
+- Run the init.sh script
+- Run the generated start_deploy.sh script
+
+For more information, see our installation instructions: http://doc.cytomine.be/x/goCj
+
