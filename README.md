@@ -11,7 +11,7 @@ We kindly ask you to cite our (Marée et al., Bioinformatics 2016) paper, our we
 
 
 This is the starting point to install Cytomine.
-This repository contains Dockerfile's in order to bootstrap the Cytomine Platform
+The Dockerfiles are into [this repository](https://github.com/cytomine/Dockerfiles)
 
 ## How to install it
 
