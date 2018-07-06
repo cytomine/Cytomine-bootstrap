@@ -119,7 +119,7 @@ docker start bioformat
 docker create --name ims \
 --link bioformat:bioformat \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
--v /tmp/uploaded/ \
+-v $IMS_BUFFER_PATH:/tmp/uploaded \
 --restart=unless-stopped \
 cytomine/ims:v1.1.1 > /dev/null
 
@@ -159,7 +159,7 @@ docker create --name nginx \
 --link iipCyto:iipCyto \
 --link core:core \
 --link iipOff:iipOff \
---volumes-from ims \
+-v $IMS_BUFFER_PATH:/tmp/uploaded \
 -p 80:80 \
 --restart=unless-stopped \
 cytomine/nginx:v1.1.1 > /dev/null
