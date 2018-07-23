@@ -27,6 +27,8 @@ docker stop backup_mongo
 docker rm -v backup_mongo
 docker stop backup_postgis
 docker rm -v backup_postgis
+docker stop slurm
+docker rm -v slurm
 docker stop retrieval
 docker rm -v retrieval
 docker stop iipOff
