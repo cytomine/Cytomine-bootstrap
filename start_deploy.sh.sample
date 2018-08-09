@@ -45,6 +45,18 @@ docker run -d --name mongodb -v mongodb_data:/data/db \
 --restart=unless-stopped \
 cytomine/mongodb:v1.1.1 > /dev/null
 
+docker volume create --name slurm_data > /dev/null
+# create slurm docker
+docker create --name slurm \
+--privileged \
+-h cytomine-slurm \
+-v slurm_data:/var/lib/mysql \
+-v /etc/localtime:/etc/localtime \
+cytomine/slurm:dev > /dev/null
+
+docker cp $PWD/hosts/slurm/addHosts.sh slurm:/tmp/addHosts.sh
+docker start slurm
+
 if [ $BACKUP_BOOL = true ] 
 then
 	# create backup docker
@@ -186,13 +198,9 @@ fi
 
 docker create --name software_router \
 --link rabbitmq:rabbitmq \
--v $ALGO_PATH:/software_router/algo/ \
---privileged \
--e CORE_URL=$CORE_URL \
--e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
--e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
+--link slurm:slurm \
 --restart=unless-stopped \
-cytomine/software_router:v1.1.1 > /dev/null
+cytomine/software_router:dev > /dev/null
 
 docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.sh
 docker cp $PWD/configs/software_router/config.groovy software_router:/software_router/config.groovy
