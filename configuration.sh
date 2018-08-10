@@ -41,7 +41,7 @@ RETRIEVAL_PATH=/data/thumb
 #middlewares
 RETRIEVAL_PASSWD='retrieval_default'
 RABBITMQ_LOGIN="router"
-RABBITMQ_PASS="router"
+RABBITMQ_PASSWORD="router"
 
 
 #IRIS

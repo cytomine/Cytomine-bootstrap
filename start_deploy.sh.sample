@@ -54,6 +54,7 @@ docker create --name slurm \
 -v /etc/localtime:/etc/localtime \
 cytomine/slurm:dev > /dev/null
 
+docker cp $PWD/configs/software_router/keys/ssh_key.pub slurm:/home/cytomine/.ssh/authorized_keys
 docker cp $PWD/hosts/slurm/addHosts.sh slurm:/tmp/addHosts.sh
 docker start slurm
 
@@ -204,6 +205,7 @@ cytomine/software_router:dev > /dev/null
 
 docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.sh
 docker cp $PWD/configs/software_router/config.groovy software_router:/software_router/config.groovy
+docker cp $PWD/configs/software_router/keys/ssh_key software_router:/root/.ssh/id_rsa
 docker start software_router
 
 
