@@ -27,7 +27,7 @@ while read LINE; do
         IFS='=' read -ra ADDR <<< "$LINE"
         VARIABLES+=(${ADDR[0]})
     fi
-done <<< $(cat configuration.sh)
+done <<< "$(cat configuration.sh)"
 
 for i in ${FILES[@]}; do
     if [ -f "$i.sample" ]; then
