@@ -51,6 +51,7 @@ docker create --name slurm \
 --privileged \
 -h cytomine-slurm \
 -v slurm_data:/var/lib/mysql \
+-v singularity_images:/data/softwares/images \
 -v /etc/localtime:/etc/localtime \
 cytomine/slurm:dev > /dev/null
 
@@ -182,6 +183,7 @@ docker start nginx
 
 
 docker create --name software_router \
+-v singularity_images:/data/softwares/images \
 --link rabbitmq:rabbitmq \
 --link slurm:slurm \
 --restart=unless-stopped \
