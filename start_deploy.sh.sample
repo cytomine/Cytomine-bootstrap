@@ -45,6 +45,14 @@ docker run -d --name mongodb -v mongodb_data:/data/db \
 --restart=unless-stopped \
 cytomine/mongodb:v1.1.1 > /dev/null
 
+if [ ! -e $PWD/configs/software_router/keys/ssh_key ]
+then
+    echo "ssh keys for software_router must exists !"
+    echo "generate them and put them in the $PWD/configs/software_router/keys folder "
+    exit 1
+fi
+
+
 docker volume create --name slurm_data > /dev/null
 # create slurm docker
 docker create --name slurm \
