@@ -18,4 +18,4 @@ bioformat.application.location=bioformat
 bioformat.application.port=4321
 
 cytomine.Jpeg2000Enabled=false
-cytomine.deleteImageFilesFrequency = "60000"
+cytomine.deleteImageFilesFrequency=60000
