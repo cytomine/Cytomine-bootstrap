@@ -189,7 +189,7 @@ docker create --name software_router \
 --link rabbitmq:rabbitmq \
 -v $ALGO_PATH:/software_router/algo/ \
 --privileged \
--e CORE_URL=$CORE_URL \
+-e CORE_URL=http://$CORE_URL \
 -e RABBITMQ_PUB_KEY=$RABBITMQ_PUB_KEY \
 -e RABBITMQ_PRIV_KEY=$RABBITMQ_PRIV_KEY \
 --restart=unless-stopped \
