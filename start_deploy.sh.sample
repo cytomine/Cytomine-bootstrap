@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (c) 2009-2017. Authors: see NOTICE file.
+# Copyright (c) 2009-2018. Authors: see NOTICE file.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 docker create --name memcached \
 --restart=unless-stopped \
-cytomine/memcached:v1.1.1 > /dev/null
+cytomine/memcached:v1.1.2 > /dev/null
 
 docker cp $PWD/configs/memcached/memcached.conf memcached:/etc/memcached.conf
 docker start memcached
@@ -28,7 +28,7 @@ docker create --name rabbitmq \
 -p 5672:5672 -p 15672:15672 \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
 --restart=unless-stopped \
-cytomine/rabbitmq:v1.1.1 > /dev/null
+cytomine/rabbitmq:v1.1.2 > /dev/null
 
 docker start rabbitmq
 
@@ -37,13 +37,13 @@ docker volume create --name postgis_data > /dev/null
 # create database docker
 docker run -d -m 8g --name postgresql -v postgis_data:/var/lib/postgresql \
 --restart=unless-stopped \
-cytomine/postgis:v1.1.1 > /dev/null
+cytomine/postgis:v2.0.0 > /dev/null
 
 docker volume create --name mongodb_data > /dev/null
 # create mongodb docker
 docker run -d --name mongodb -v mongodb_data:/data/db \
 --restart=unless-stopped \
-cytomine/mongodb:v1.1.1 > /dev/null
+cytomine/mongodb:v1.1.2 > /dev/null
 
 if [ ! -e $PWD/configs/software_router/keys/ssh_key ]
 then
@@ -61,7 +61,7 @@ docker create --name slurm \
 -v slurm_data:/var/lib/mysql \
 -v singularity_images:/data/softwares/images \
 -v /etc/localtime:/etc/localtime \
-cytomine/slurm:dev > /dev/null
+cytomine/slurm:v1.0.0 > /dev/null
 
 docker cp $PWD/configs/software_router/keys/ssh_key.pub slurm:/home/cytomine/.ssh/authorized_keys
 docker cp $PWD/hosts/slurm/addHosts.sh slurm:/tmp/addHosts.sh
@@ -80,7 +80,7 @@ then
 	-e DATABASE='docker' \
 	-e USER='docker' \
 	-e PASSWD='docker' \
-cytomine/backup:v1.1 > /dev/null
+	cytomine/backup:v1.1.2 > /dev/null
 fi
 
 if [ $BACKUP_BOOL = true ] 
@@ -92,7 +92,7 @@ then
 	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
 	-e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
 	-e RECEIVER_EMAIL=$RECEIVER_EMAIL \
-	cytomine/backup:v1.1 > /dev/null
+	cytomine/backup:v1.1.2 > /dev/null
 fi
 
 docker create --name retrieval \
@@ -101,7 +101,7 @@ docker create --name retrieval \
 -e RETRIEVAL_ENGINE=$RETRIEVAL_ENGINE \
 -e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
 --restart=unless-stopped \
-cytomine/retrieval:v1.1.1 > /dev/null
+cytomine/retrieval:v1.1.2 > /dev/null
 
 docker cp $PWD/hosts/retrieval/addHosts.sh retrieval:/tmp/addHosts.sh
 docker start retrieval
@@ -112,7 +112,7 @@ docker create --name iipOff \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
 --restart=unless-stopped \
-cytomine/iipofficial:v1.1.1 > /dev/null
+cytomine/iipofficial:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/iipOff/nginx.conf.sample iipOff:/tmp/nginx.conf.sample
 docker start iipOff
@@ -123,7 +123,7 @@ docker create --name iipCyto \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
 --restart=unless-stopped \
-cytomine/iipcyto:v1.1.1 > /dev/null
+cytomine/iipcyto:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sample
 docker start iipCyto
@@ -133,17 +133,18 @@ docker create --name bioformat \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
 --restart=unless-stopped \
-cytomine/bioformat:v1.1.1 > /dev/null
+cytomine/bioformat:v1.1.2 > /dev/null
 
 docker start bioformat
 
 
 docker create --name ims \
 --link bioformat:bioformat \
+-e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 --restart=unless-stopped \
-cytomine/ims:v1.1.1 > /dev/null
+cytomine/ims:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/ims/imageserverconfig.properties ims:/usr/share/tomcat7/.grails/imageserverconfig.properties
 docker cp $PWD/hosts/ims/addHosts.sh ims:/tmp/addHosts.sh
@@ -156,7 +157,7 @@ docker create --name core \
 --link rabbitmq:rabbitmq \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/core:v1.1.1 > /dev/null
+cytomine/core:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -166,7 +167,7 @@ docker start core
 docker create --name iris \
 -v iris_data:/var/lib/tomcat7/db \
 --restart=unless-stopped \
-cytomine/iris:v1.1.1 > /dev/null
+cytomine/iris:v1.1.2 > /dev/null
 
 docker cp $PWD/configs/iris/iris-config.groovy iris:/usr/share/tomcat7/.grails/iris-config.groovy
 docker cp $PWD/configs/iris/iris-production-config.groovy iris:/usr/share/tomcat7/.grails/iris-production-config.groovy
@@ -184,7 +185,7 @@ docker create --name nginx \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 -p 80:80 \
 --restart=unless-stopped \
-cytomine/nginx:v1.1.1 > /dev/null
+cytomine/nginx:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
 docker start nginx
@@ -195,7 +196,7 @@ docker create --name software_router \
 --link rabbitmq:rabbitmq \
 --link slurm:slurm \
 --restart=unless-stopped \
-cytomine/software_router:dev > /dev/null
+cytomine/software_router:v2.0.0 > /dev/null
 
 docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.sh
 docker cp $PWD/configs/software_router/config.groovy software_router:/software_router/config.groovy

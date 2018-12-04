@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #
 # Copyright (c) 2009-2018. Authors: see NOTICE file.
 #
@@ -13,14 +14,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+#made scripts in a util folder
 
-path=$( cd "$(dirname "${BASH_SOURCE}")" ; pwd -P )
-cd $path
 
-#sh create_docker_images.sh
-echo "clean containers"
-sh clean_docker_keep_data.sh > /dev/null
-echo "launch new containers"
-sh start_deploy.sh
+if [ -z "$1" ]
+then
+	echo "No argument supplied. Data is saved in manBU folder"
+	NAME="manBU"
+else
+	NAME=$1
+fi
+
+return=0
+docker exec mongodb mongodump -h localhost -o /BU && message="Backup OK. " || (message="Backup failed. " && return=1)
+docker cp mongodb:/BU $NAME && message=$message"Copy OK. " || (message=$message"Copy failed. " && return=1)
+docker exec mongodb rm -rf /BU && message=$message"Deletion OK. " || (message=$message"Deletion failed. " && return=1)
+
+if [ $return -gt 0 ]
+  then
+   echo "ERROR"
+ else
+   echo "Terminated"
+fi
+
 

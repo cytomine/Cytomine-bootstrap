@@ -1,3 +1,7 @@
+23-08-2018 : v1.2. New bootstrap architecture. The installation procedure has changed :
+ - Running the init.sh script after filling the configuration file is mandatory;
+ - Also, postgres has been updated, you need to backup databases, clean containers, delete postgres volumes then restart and restore data. You can do it by running the scripts in the utils folder.
+19-09-2017 : v1.1.
 26-04-2017 : Change MODELS_PATH by it's parent, ALGO_PATH.
 31-08-2016 : rewrite all Dockerfile image and put them on DockerHub. Data_containers are now volumes. You need to backup databases, clean all containers than restore data into the new volumes as explained in documentation.
 08-04-2016 : add kmeans extension to postgres. postgis_data is affected. You need to backup databases, clean all containers than restore data into the new containers.

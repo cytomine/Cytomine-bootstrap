@@ -5,6 +5,7 @@ cytomine.tiffinfo=tiffinfo
 cytomine.vipsthumbnail=/usr/local/bin/vipsthumbnail
 cytomine.hdf5.scriptToFindFiles=webapps/ROOT/WEB-INF/scripts/relatedFiles.sh
 
+cytomine.coreURL=http://$CORE_URL
 cytomine.storagePath=$IMS_STORAGE_PATH
 cytomine.storageBufferPath=$IMS_BUFFER_PATH
 cytomine.imageServerPublicKey=$IMS_PUB_KEY
@@ -17,3 +18,4 @@ bioformat.application.location=bioformat
 bioformat.application.port=4321
 
 cytomine.Jpeg2000Enabled=false
+cytomine.deleteImageFilesFrequency=60000
