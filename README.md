@@ -19,5 +19,5 @@ The Dockerfiles are into [this repository](https://github.com/cytomine/Dockerfil
 - Run the init.sh script
 - Run the generated start_deploy.sh script
 
-For more information, see our installation instructions: http://doc.cytomine.be/x/goCj
+For more information, see our [installation instructions](https://documentation.cytomine.org/tiki-index.php?page=How+to+install+Cytomine&structure=Admins)
 
