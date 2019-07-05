@@ -31,6 +31,9 @@ SENDER_EMAIL='your.email@gmail.com'
 # RECEIVER_EMAIL : email adress of the receiver
 RECEIVER_EMAIL='receiver@XXX.com'
 
+#Mail
+ADMIN_EMAIL='info@cytomine.coop'
+
 #Paths
 IMS_STORAGE_PATH=/data/images
 IMS_BUFFER_PATH=/data/images/_buffer
