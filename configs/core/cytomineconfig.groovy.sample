@@ -18,13 +18,11 @@ cytomine.customUI.global = [
 
 grails.serverURL='http://$CORE_URL'
 grails.imageServerURL=['http://$IMS_URL1','http://$IMS_URL2']
-grails.retrievalServerURL =['http://$RETRIEVAL_URL']
 grails.uploadURL='http://$UPLOAD_URL'
 
 storage_buffer='$IMS_BUFFER_PATH'
 storage_path='$IMS_STORAGE_PATH'
 
-grails.retrievalPassword = '$RETRIEVAL_PASSWD'
 grails.adminPassword='$ADMIN_PWD'
 grails.adminPrivateKey='$ADMIN_PRIV_KEY'
 grails.adminPublicKey='$ADMIN_PUB_KEY'
@@ -44,8 +42,6 @@ grails.admin.email='$ADMIN_EMAIL'
 grails.mongo.host = 'mongodb'
 grails.mongo.options.connectionsPerHost=10
 grails.mongo.options.threadsAllowedToBlockForConnectionMultiplier=5
-
-grails.retrievalUsername = 'cytomine'
 
 grails.messageBrokerServerURL='rabbitmq:5672'
 

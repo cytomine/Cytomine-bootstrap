@@ -27,8 +27,6 @@ docker stop backup_mongo
 docker rm -v backup_mongo
 docker stop backup_postgis
 docker rm -v backup_postgis
-docker stop retrieval
-docker rm -v retrieval
 docker stop iipOff
 docker rm -v iipOff
 docker stop iipCyto
@@ -39,8 +37,6 @@ docker stop ims
 docker rm -v ims
 docker stop core
 docker rm -v core
-docker stop iris
-docker rm -v iris
 docker stop nginx
 docker rm -v nginx
 docker stop software_router

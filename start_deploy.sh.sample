@@ -45,46 +45,6 @@ docker run -d --name mongodb -v mongodb_data:/data/db \
 --restart=unless-stopped \
 cytomine/mongodb:v1.1.2 > /dev/null
 
-if [ $BACKUP_BOOL = true ] 
-then
-	# create backup docker
-	docker run -d --name backup_postgis --link postgresql:db -v $BACKUP_PATH/postgis:/backup --restart=unless-stopped \
-	-e SENDER_EMAIL=$SENDER_EMAIL \
-	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
-	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
-	-e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
-	-e RECEIVER_EMAIL=$RECEIVER_EMAIL \
-	-e SGBD='postgres' \
-	-e DATABASE='docker' \
-	-e USER='docker' \
-	-e PASSWD='docker' \
-	cytomine/backup:v1.1.2 > /dev/null
-fi
-
-if [ $BACKUP_BOOL = true ] 
-then
-	docker run -d --name backup_mongo --link mongodb:db -v $BACKUP_PATH/mongo:/backup --restart=unless-stopped \
-	-e SGBD='mongodb' \
-	-e SENDER_EMAIL=$SENDER_EMAIL \
-	-e SENDER_EMAIL_PASS=$SENDER_EMAIL_PASS \
-	-e SENDER_EMAIL_SMTP_HOST=$SENDER_EMAIL_SMTP_HOST \
-	-e SENDER_EMAIL_SMTP_PORT=$SENDER_EMAIL_SMTP_PORT \
-	-e RECEIVER_EMAIL=$RECEIVER_EMAIL \
-	cytomine/backup:v1.1.2 > /dev/null
-fi
-
-docker create --name retrieval \
--v $RETRIEVAL_PATH:/data/thumb \
--e IMS_URLS=$IMS_URLS \
--e RETRIEVAL_ENGINE=$RETRIEVAL_ENGINE \
--e RETRIEVAL_PASSWD=$RETRIEVAL_PASSWD \
---restart=unless-stopped \
-cytomine/retrieval:v1.1.2 > /dev/null
-
-docker cp $PWD/hosts/retrieval/addHosts.sh retrieval:/tmp/addHosts.sh
-docker start retrieval
-
-
 docker create --name iipOff \
 --link memcached:memcached \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
@@ -142,21 +102,8 @@ docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
 docker start core
 
 
-docker create --name iris \
--v iris_data:/var/lib/tomcat7/db \
---restart=unless-stopped \
-cytomine/iris:v1.1.2 > /dev/null
-
-docker cp $PWD/configs/iris/iris-config.groovy iris:/usr/share/tomcat7/.grails/iris-config.groovy
-docker cp $PWD/configs/iris/iris-production-config.groovy iris:/usr/share/tomcat7/.grails/iris-production-config.groovy
-docker cp $PWD/hosts/iris/addHosts.sh iris:/tmp/addHosts.sh
-docker start iris
-
-
 docker create --name nginx \
---link iris:iris \
 --link ims:ims \
---link retrieval:retrieval \
 --link iipCyto:iipCyto \
 --link core:core \
 --link iipOff:iipOff \
@@ -166,6 +113,7 @@ docker create --name nginx \
 cytomine/nginx:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
+docker cp $PWD/configs/nginx/dist nginx:/tmp/.
 docker start nginx
 
 

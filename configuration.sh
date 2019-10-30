@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2009-2018. Authors: see NOTICE file.
+# Copyright (c) 2009-2019. Authors: see NOTICE file.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,9 +20,8 @@ IMS_URL1=localhost-ims
 IMS_URL2=localhost-ims2
 UPLOAD_URL=localhost-upload
 
-#Backups
-# BACKUP_BOOL : backup active or not
-BACKUP_BOOL=false
+#Mail
+ADMIN_EMAIL='info@cytomine.coop'
 # SENDER_EMAIL, SENDER_EMAIL_PASS, SENDER_EMAIL_SMTP : email params of the sending account
 SENDER_EMAIL_PASS='passwd'
 SENDER_EMAIL_SMTP_HOST='smtp.gmail.com'
@@ -31,29 +30,16 @@ SENDER_EMAIL='your.email@gmail.com'
 # RECEIVER_EMAIL : email adress of the receiver
 RECEIVER_EMAIL='receiver@XXX.com'
 
-#Mail
-ADMIN_EMAIL='info@cytomine.coop'
-
 #Paths
 IMS_STORAGE_PATH=/data/images
 IMS_BUFFER_PATH=/data/images/_buffer
 BACKUP_PATH=/data/backup
 ALGO_PATH=/data/algo/
-RETRIEVAL_PATH=/data/thumb
 
 #middlewares
-RETRIEVAL_PASSWD='retrieval_default'
 RABBITMQ_LOGIN="router"
 RABBITMQ_PASS="router"
 
-
-#IRIS
-IRIS_ENABLED=false
-IRIS_URL=localhost-iris
-IRIS_ID="LOCAL_CYTOMINE_IRIS"
-IRIS_ADMIN_NAME="Ian Admin"
-IRIS_ADMIN_ORGANIZATION_NAME="University of Somewhere, Department of Whatever"
-IRIS_ADMIN_EMAIL="ian.admin@somewhere.edu"
 
 
 # You don't to change the datas below this line instead of advanced customization
@@ -64,10 +50,6 @@ NB_IIP_PROCESS=10
 IIP_OFF_URL=localhost-iip-base
 IIP_CYTO_URL=localhost-iip-cyto
 IIP_JP2_URL=localhost-iip-jp2000
-RETRIEVAL_URL=localhost-retrieval
-
-#possible values : memory, redis
-RETRIEVAL_ENGINE=redis
 
 MEMCACHED_PASS="mypass"
 
