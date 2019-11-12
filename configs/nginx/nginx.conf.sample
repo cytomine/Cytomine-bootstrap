@@ -48,60 +48,30 @@ http {
         root /tmp/dist;
         index index.html;
 
-        location /j_spring_security { # check and logout
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header Host $host;
-            proxy_pass http://core:8080;
-        }
-        location /login {
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header Host $host;
-            proxy_pass http://core:8080;
-        }
-        location /logout {
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header Host $host;
-            proxy_pass http://core:8080;
-        }
         location /api {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
             proxy_pass http://core:8080;
         }
-        location /server {
+        location /j_spring_security { # check and logout
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
             proxy_pass http://core:8080;
         }
-        location /session {
+        location ~ /(login|logout) {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
             proxy_pass http://core:8080;
         }
-        location /custom-ui {
+        location ~ /(server|session|custom-ui|static) {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
             proxy_pass http://core:8080;
         }
-        location /restApiDoc {
+        location ~ /(restApiDoc|js/jsondoc|css/jsondoc) {
                proxy_set_header X-Real-IP $remote_addr;
                proxy_set_header Host $host;
                proxy_pass http://core:8080;
-        }
-        location /js/jsondoc {
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header Host $host;
-                proxy_pass http://core:8080;
-        }
-        location /css/jsondoc {
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header Host $host;
-                proxy_pass http://core:8080;
-        }
-        location /static {
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header Host $host;
-                proxy_pass http://core:8080;
         }
 
     }

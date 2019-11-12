@@ -42,7 +42,7 @@ RABBITMQ_PASS="router"
 
 
 
-# You don't to change the datas below this line instead of advanced customization
+# You don't have to change the datas below this line instead of advanced customization
 # ---------------------------
 
 NB_IIP_PROCESS=10
