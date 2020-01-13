@@ -19,10 +19,6 @@ rm -r ./reporting.tgz
 
 mkdir -p ./reporting
 
-docker cp retrieval:/tmp/retrieval.log ./reporting/catalinaRetrieval.out
-tail -n 200 ./reporting/catalinaRetrieval.out      > ./reporting/catalinaRetrievalTail.out
-mv ./reporting/catalinaRetrievalTail.out             ./reporting/catalinaRetrieval.out
-
 docker cp iipOff:/tmp/iip-openslide.out ./reporting/logIIPOff.out
 tail -n 200 ./reporting/logIIPOff.out           > ./reporting/logIIPOffTail.out
 mv ./reporting/logIIPOffTail.out                  ./reporting/logIIPOff.out
