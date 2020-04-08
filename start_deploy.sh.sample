@@ -95,7 +95,7 @@ docker create --name core \
 --link rabbitmq:rabbitmq \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/core:v2.1.0 > /dev/null
+cytomine/core:v2.1.1 > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
