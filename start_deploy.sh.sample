@@ -118,6 +118,7 @@ docker create --name core \
 --link mongodb:mongodb \
 --link rabbitmq:rabbitmq \
 -v /etc/localtime:/etc/localtime \
+-v /data/softwares/code:/data/softwares/code \
 --restart=unless-stopped \
 cytomine/core:v2.1.0 > /dev/null
 
