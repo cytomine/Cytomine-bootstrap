@@ -47,9 +47,12 @@ http {
         listen       80;
         server_name  $CORE_URL;
 
-        root /tmp/dist;
-        index index.html;
 
+        location / {
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Host $host;
+            proxy_pass http://web_ui;
+        }
         location /api {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;

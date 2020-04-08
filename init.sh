@@ -15,15 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-FILES=(configs/core/cytomineconfig.groovy configs/ims/imageserverconfig.properties configs/iipCyto/nginx.conf.sample configs/iipOff/nginx.conf.sample configs/nginx/nginx.conf configs/nginx/nginxDev.conf configs/nginx/dist/configuration.json configs/software_router/config.groovy start_deploy.sh hosts/core/addHosts.sh hosts/ims/addHosts.sh hosts/software_router/addHosts.sh)
+FILES=(configs/core/cytomineconfig.groovy configs/ims/imageserverconfig.properties configs/iipCyto/nginx.conf.sample configs/iipOff/nginx.conf.sample configs/nginx/nginx.conf configs/nginx/nginxDev.conf configs/nginx/dist/configuration.json configs/software_router/config.groovy configs/web_ui/configuration.json start_deploy.sh hosts/core/addHosts.sh hosts/ims/addHosts.sh hosts/software_router/addHosts.sh)
 
-if [ ! -d ./configs/nginx/dist ];
-then
-	echo "download compiled JS files"
-	wget https://github.com/cytomine/Cytomine-Web-UI/releases/download/v1.1.0/dist.zip -O dist.zip
-	unzip dist.zip -d configs/nginx
-	rm dist.zip
-fi
 
 #get all the config values.
 . ./configuration.sh

@@ -102,18 +102,28 @@ docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
 docker start core
 
 
+docker create --name web_UI \
+-v /etc/localtime:/etc/localtime \
+--restart=unless-stopped \
+cytomine/web_ui:v1.1.1 > /dev/null
+
+docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
+docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf
+docker start web_UI
+
+
 docker create --name nginx \
 --link ims:ims \
 --link iipCyto:iipCyto \
 --link core:core \
 --link iipOff:iipOff \
+--link web_UI:web_UI \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 -p 80:80 \
 --restart=unless-stopped \
 cytomine/nginx:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
-docker cp $PWD/configs/nginx/dist nginx:/tmp/.
 docker start nginx
 
 

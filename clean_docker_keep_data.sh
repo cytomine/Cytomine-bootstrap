@@ -37,6 +37,8 @@ docker stop ims
 docker rm -v ims
 docker stop core
 docker rm -v core
+docker stop web_UI
+docker rm -v web_UI
 docker stop nginx
 docker rm -v nginx
 docker stop software_router
