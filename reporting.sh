@@ -37,6 +37,9 @@ docker cp core:/var/lib/tomcat7/logs/catalina.out ./reporting/catalinaCore.out
 tail -n 500 ./reporting/catalinaCore.out           > ./reporting/catalinaCoreTail.out
 mv ./reporting/catalinaCoreTail.out                  ./reporting/catalinaCore.out
 
+cp configs/nginx/nginx.conf ./reporting/nginx.conf
+
+
 cp ./start_deploy.sh ./reporting/start_deploy.sh
 
 tar -zcvf reporting.tgz reporting
