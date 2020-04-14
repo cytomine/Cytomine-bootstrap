@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (c) 2009-2018. Authors: see NOTICE file.
+# Copyright (c) 2009-2020. Authors: see NOTICE file.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -120,11 +120,21 @@ docker create --name core \
 -v /etc/localtime:/etc/localtime \
 -v /data/softwares/code:/data/softwares/code \
 --restart=unless-stopped \
-cytomine/core:v2.1.0 > /dev/null
+cytomine/core:v2.1.1 > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
 docker start core
+
+
+docker create --name web_UI \
+-v /etc/localtime:/etc/localtime \
+--restart=unless-stopped \
+cytomine/web_ui:v1.1.1 > /dev/null
+
+docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
+docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf
+docker start web_UI
 
 
 docker create --name nginx \
@@ -132,13 +142,13 @@ docker create --name nginx \
 --link iipCyto:iipCyto \
 --link core:core \
 --link iipOff:iipOff \
+--link web_UI:web_UI \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 -p 80:80 \
 --restart=unless-stopped \
 cytomine/nginx:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
-docker cp $PWD/configs/nginx/dist nginx:/tmp/.
 docker start nginx
 
 

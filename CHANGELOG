@@ -1,3 +1,5 @@
+10-04-2020 : v2.1. New container web_ui containing the Cytomine front-end
+12-10-2019 : v2.0. New Cytomine front-end
 23-08-2018 : v1.2. New bootstrap architecture. The installation procedure has changed :
  - Running the init.sh script after filling the configuration file is mandatory;
  - Also, postgres has been updated, you need to backup databases, clean containers, delete postgres volumes then restart and restore data. You can do it by running the scripts in the utils folder.

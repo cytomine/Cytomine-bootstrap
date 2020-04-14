@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2009-2019. Authors: see NOTICE file.
+# Copyright (c) 2009-2020. Authors: see NOTICE file.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,14 +40,19 @@ http {
     keepalive_timeout  120;
     proxy_connect_timeout 75;
 
+    large_client_header_buffers 4 16k;
+
     server {
         client_max_body_size 0;
         listen       80;
         server_name  $CORE_URL;
 
-        root /tmp/dist;
-        index index.html;
 
+        location / {
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Host $host;
+            proxy_pass http://web_ui;
+        }
         location /api {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;

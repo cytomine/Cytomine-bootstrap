@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (c) 2009-2018. Authors: see NOTICE file.
+# Copyright (c) 2009-2020. Authors: see NOTICE file.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,6 +36,9 @@ cp configs/core/cytomineconfig.groovy ./reporting/configurationCore.groovy
 docker cp core:/var/lib/tomcat7/logs/catalina.out ./reporting/catalinaCore.out
 tail -n 500 ./reporting/catalinaCore.out           > ./reporting/catalinaCoreTail.out
 mv ./reporting/catalinaCoreTail.out                  ./reporting/catalinaCore.out
+
+cp configs/nginx/nginx.conf ./reporting/nginx.conf
+
 
 cp ./start_deploy.sh ./reporting/start_deploy.sh
 

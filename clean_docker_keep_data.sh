@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (c) 2009-2018. Authors: see NOTICE file.
+# Copyright (c) 2009-2020. Authors: see NOTICE file.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ docker stop ims
 docker rm -v ims
 docker stop core
 docker rm -v core
+docker stop web_UI
+docker rm -v web_UI
 docker stop nginx
 docker rm -v nginx
 docker stop software_router
