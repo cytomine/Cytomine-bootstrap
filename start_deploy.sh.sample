@@ -95,7 +95,7 @@ docker create --name core \
 --link rabbitmq:rabbitmq \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/core:v2.1.1 > /dev/null
+cytomine/core:v2.1.2 > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -105,7 +105,7 @@ docker start core
 docker create --name web_UI \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/web_ui:v1.1.1 > /dev/null
+cytomine/web_ui:v1.1.2 > /dev/null
 
 docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
 docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf
