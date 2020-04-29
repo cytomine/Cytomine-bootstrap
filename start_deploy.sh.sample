@@ -154,6 +154,8 @@ docker start nginx
 
 docker create --name software_router \
 -v singularity_images:/data/softwares/images \
+-v /var/run/docker.sock:/var/run/docker.sock \
+--privileged \
 --link rabbitmq:rabbitmq \
 --link slurm:slurm \
 --restart=unless-stopped \
