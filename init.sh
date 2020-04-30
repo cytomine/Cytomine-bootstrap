@@ -39,3 +39,6 @@ for i in ${FILES[@]}; do
         done
     fi
 done
+
+echo "Files generated."
+echo "In a production environment, it's recommended to generate your own ssh keys into the configs/software_router/keys folder."
