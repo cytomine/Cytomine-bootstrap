@@ -65,35 +65,12 @@ http {
         ssl_certificate_key /etc/letsencrypt/live/$CORE_URL/privkey.pem;
         include ssl.conf;
 
-        set $cors_origin "";
-        set $cors_cred   "";
-        set $cors_header "";
-        set $cors_method "";
-
-        if ($http_origin ~* $ALLOW_ORIGINS) {
-            set $cors_origin $http_origin;
-            set $cors_cred true;
-            set $cors_method 'GET, PUT, POST, DELETE, OPTIONS';
-            set $cors_header 'Content-Type, Content-Range, Content-Length, Content-Disposition, Content-Description, Cache-Control, Date, dateFull, authorization, content-type-full, X-Requested-With, Pragma';
-        }
-
         location / {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
             proxy_pass http://web_ui;
         }
         location /api {
-            if ($request_method = 'OPTIONS') {
-                add_header Access-Control-Allow-Origin         $cors_origin always;
-                add_header Access-Control-Allow-Credentials    $cors_cred always;
-                add_header Access-Control-Allow-Headers                $cors_header always;
-                add_header Access-Control-Allow-Methods        $cors_method always;
-                add_header 'Access-Control-Max-Age'            1728000;
-                add_header 'Content-Type'                      'text/plain charset=UTF-8';
-                add_header 'Content-Length'                    0;
-                return 204;
-            }
-
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
             proxy_pass http://core:8080;
@@ -109,17 +86,6 @@ http {
             proxy_pass http://core:8080;
         }
         location ~ /(server|session|custom-ui|static) {
-            if ($request_method = 'OPTIONS') {
-                add_header Access-Control-Allow-Origin         $cors_origin always;
-                add_header Access-Control-Allow-Credentials    $cors_cred always;
-                add_header Access-Control-Allow-Headers                $cors_header always;
-                add_header Access-Control-Allow-Methods        $cors_method always;
-                add_header 'Access-Control-Max-Age'            1728000;
-                add_header 'Content-Type'                      'text/plain charset=UTF-8';
-                add_header 'Content-Length'                    0;
-                return 204;
-            }
-
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
             proxy_pass http://core:8080;
@@ -129,12 +95,6 @@ http {
             proxy_set_header Host $host;
             proxy_pass http://core:8080;
         }
-
-        add_header Access-Control-Allow-Origin      $cors_origin always;
-        add_header Access-Control-Allow-Credentials $cors_cred always;
-        add_header Access-Control-Allow-Headers     $cors_header always;
-        add_header Access-Control-Allow-Methods     $cors_method always;
-        add_header Cache-Control 'no-cache';
     }
     server {
         client_max_body_size 0;
