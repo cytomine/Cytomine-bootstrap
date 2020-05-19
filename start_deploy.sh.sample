@@ -145,11 +145,14 @@ docker create --name nginx \
 --link iipOff:iipOff \
 --link web_UI:web_UI \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
--p 80:80 \
+-v /etc/letsencrypt:/etc/letsencrypt \
+-v /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem \
+-p 80:80 -p 443:443 \
 --restart=unless-stopped \
-cytomine/nginx:v1.2.0 > /dev/null
+cytomine/nginx:v1.3.0 > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
+docker cp $PWD/configs/nginx/ssl.conf nginx:/usr/local/nginx/conf/ssl.conf
 docker start nginx
 
 
@@ -166,5 +169,3 @@ docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.s
 docker cp $PWD/configs/software_router/config.groovy software_router:/software_router/config.groovy
 docker cp $PWD/configs/software_router/keys/ssh_key software_router:/root/.ssh/id_rsa
 docker start software_router
-
-
