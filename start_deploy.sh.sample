@@ -147,7 +147,7 @@ docker create --name nginx \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 -p 80:80 \
 --restart=unless-stopped \
-cytomine/nginx:v1.2.0 > /dev/null
+cytomine/nginx:v1.3.0 > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
 docker start nginx
