@@ -79,6 +79,13 @@ http {
                proxy_pass http://core:8080;
         }
 
+        proxy_intercept_errors on;
+
+        error_page 404 = /cytomine-page-not-found;
+        location /cytomine-page-not-found {
+                default_type "text/html";
+                alias /opt/nginx/nginx-1.10.1/html/404.html;
+        }
     }
     server {
         client_max_body_size 0;
