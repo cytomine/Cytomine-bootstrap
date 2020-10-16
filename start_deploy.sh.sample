@@ -62,6 +62,7 @@ docker create --name slurm \
 -v slurm_data:/var/lib/mysql \
 -v singularity_images:/data/softwares/images \
 -v /etc/localtime:/etc/localtime \
+--restart=unless-stopped \
 cytomine/slurm:v1.0.0 > /dev/null
 
 docker cp $PWD/configs/software_router/keys/ssh_key.pub slurm:/home/cytomine/.ssh/authorized_keys
