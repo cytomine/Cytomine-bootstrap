@@ -68,6 +68,8 @@ cytomine/slurm:v1.0.0 > /dev/null
 docker cp $PWD/configs/software_router/keys/ssh_key.pub slurm:/home/cytomine/.ssh/authorized_keys
 docker cp $PWD/hosts/slurm/addHosts.sh slurm:/tmp/addHosts.sh
 docker start slurm
+docker exec -it slurm chown cytomine:cytomine /home/cytomine/.ssh/authorized_keys
+docker exec -it slurm chmod 600 /home/cytomine/.ssh/authorized_keys
 
 
 docker create --name iipOff \
@@ -166,5 +168,6 @@ docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.s
 docker cp $PWD/configs/software_router/config.groovy software_router:/software_router/config.groovy
 docker cp $PWD/configs/software_router/keys/ssh_key software_router:/root/.ssh/id_rsa
 docker start software_router
+docker exec -it software_router chmod 600 /root/.ssh/id_rsa
 
 
