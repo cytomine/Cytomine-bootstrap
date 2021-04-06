@@ -109,7 +109,7 @@ docker create --name ims \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 --restart=unless-stopped \
-cytomine/ims:v1.2.5 > /dev/null
+cytomine/ims:v1.2.6 > /dev/null
 
 docker cp $PWD/configs/ims/imageserverconfig.properties ims:/usr/share/tomcat7/.grails/imageserverconfig.properties
 docker cp $PWD/hosts/ims/addHosts.sh ims:/tmp/addHosts.sh
@@ -123,7 +123,7 @@ docker create --name core \
 -v /etc/localtime:/etc/localtime \
 -v /data/softwares/code:/data/softwares/code \
 --restart=unless-stopped \
-cytomine/core:v3.0.2 > /dev/null
+cytomine/core:v3.0.3 > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
