@@ -18,4 +18,4 @@ cytomine.software.descriptorFile = "descriptor.json"
 
 cytomine.software.ssh.maxRetries = 3
 // In seconds
-cytomine.software.repositoryManagerRefreshRate = 300
+cytomine.software.repositoryManagerRefreshRate = 3600
