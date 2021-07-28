@@ -1,1 +1,3 @@
-add ims config file for multidim
+cytomine.ims.server.url='$IMS_URL1'
+cytomine.ims.server.publicKey='$IMS_PUB_KEY'
+cytomine.ims.server.privateKey='$IMS_PRIV_KEY'
