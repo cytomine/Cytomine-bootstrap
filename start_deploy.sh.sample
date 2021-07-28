@@ -112,6 +112,7 @@ docker create --name ims \
 cytomine/ims:v1.2.6 > /dev/null
 
 docker cp $PWD/configs/ims/imageserverconfig.properties ims:/usr/share/tomcat7/.grails/imageserverconfig.properties
+docker cp $PWD/configs/ims/ims-config.groovy ims:/usr/share/tomcat7/.grails/ims-config.groovy
 docker cp $PWD/hosts/ims/addHosts.sh ims:/tmp/addHosts.sh
 docker start ims
 
