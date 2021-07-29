@@ -109,7 +109,7 @@ docker create --name ims \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 --restart=unless-stopped \
-cytomine/ims:v1.2.6 > /dev/null
+cytomine/ims:v1.3.0 > /dev/null
 
 docker cp $PWD/configs/ims/imageserverconfig.properties ims:/usr/share/tomcat7/.grails/imageserverconfig.properties
 docker cp $PWD/configs/ims/ims-config.groovy ims:/usr/share/tomcat7/.grails/ims-config.groovy
@@ -124,7 +124,7 @@ docker create --name core \
 -v /etc/localtime:/etc/localtime \
 -v /data/softwares/code:/data/softwares/code \
 --restart=unless-stopped \
-cytomine/core:v3.0.3 > /dev/null
+cytomine/core:3.2.0 > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -134,7 +134,7 @@ docker start core
 docker create --name web_UI \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/web_ui:v1.2.2 > /dev/null
+cytomine/web_ui:v1.4.0 > /dev/null
 
 docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
 docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf
@@ -163,7 +163,7 @@ docker create --name software_router \
 --link rabbitmq:rabbitmq \
 --link slurm:slurm \
 --restart=unless-stopped \
-cytomine/software_router:v2.0.0 > /dev/null
+cytomine/software_router:v2.1.0 > /dev/null
 
 docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.sh
 docker cp $PWD/configs/software_router/config.groovy software_router:/software_router/config.groovy
