@@ -16,9 +16,9 @@ cytomine.customUI.global = [
 ]
 
 
-grails.serverURL='http://$CORE_URL'
-grails.imageServerURL=['http://$IMS_URL1','http://$IMS_URL2']
-grails.uploadURL='http://$UPLOAD_URL'
+grails.serverURL='$HTTP_PROTOCOL://$CORE_URL'
+grails.imageServerURL=['$HTTP_PROTOCOL://$IMS_URL1','$HTTP_PROTOCOL://$IMS_URL2']
+grails.uploadURL='$HTTP_PROTOCOL://$UPLOAD_URL'
 
 storage_buffer='$IMS_BUFFER_PATH'
 storage_path='$IMS_STORAGE_PATH'
@@ -44,5 +44,8 @@ grails.mongo.options.connectionsPerHost=10
 grails.mongo.options.threadsAllowedToBlockForConnectionMultiplier=5
 
 grails.messageBrokerServerURL='rabbitmq:5672'
+
+grails.plugin.springsecurity.successHandler.ajaxSuccessUrl = "${grails.serverURL}/login/ajaxSuccess"
+grails.plugin.springsecurity.failureHandler.ajaxAuthFailUrl = "${grails.serverURL}/login/authfail?ajax=true"
 
 grails.serverID='$SERVER_ID'

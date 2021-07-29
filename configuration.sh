@@ -20,6 +20,9 @@ IMS_URL1=localhost-ims
 IMS_URL2=localhost-ims2
 UPLOAD_URL=localhost-upload
 
+# Protocol for URLs accessible from outside (CORE_URL, IMS_URL, UPLOAD_URL, IRIS_URL)
+HTTP_PROTOCOL=http # Accepted values: http, https
+
 #Mail
 ADMIN_EMAIL='info@cytomine.coop'
 # SENDER_EMAIL, SENDER_EMAIL_PASS, SENDER_EMAIL_SMTP : email params of the sending account
@@ -42,6 +45,8 @@ ALGO_PATH=/data/algo/
 #middlewares
 RABBITMQ_LOGIN="router"
 RABBITMQ_PASSWORD="router"
+
+CORE_DEVELOPMENT=false
 
 
 

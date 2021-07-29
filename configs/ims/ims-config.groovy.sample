@@ -1,3 +1,3 @@
-cytomine.ims.server.url='http://$IMS_URL1'
+cytomine.ims.server.url='$HTTP_PROTOCOL://$IMS_URL1'
 cytomine.ims.server.publicKey='$IMS_PUB_KEY'
 cytomine.ims.server.privateKey='$IMS_PRIV_KEY'
