@@ -121,7 +121,7 @@ docker create --name core \
 --link mongodb:mongodb \
 --link rabbitmq:rabbitmq \
 -v /etc/localtime:/etc/localtime \
--v /data/softwares/code:/data/softwares/code \
+-v $UPLOADED_SOFTWARES_PATH:/data/softwares/code \
 --restart=unless-stopped \
 cytomine/core:v3.0.3 > /dev/null
 

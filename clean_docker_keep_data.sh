@@ -23,10 +23,6 @@ docker stop mongodb
 docker rm -v mongodb
 docker stop postgresql
 docker rm -v postgresql
-docker stop backup_mongo
-docker rm -v backup_mongo
-docker stop backup_postgis
-docker rm -v backup_postgis
 docker stop slurm
 docker rm -v slurm
 docker stop iipOff

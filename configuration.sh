@@ -36,8 +36,7 @@ ADMIN_EMAIL='info@cytomine.coop'
 #Paths
 IMS_STORAGE_PATH=/data/images
 IMS_BUFFER_PATH=/data/images/_buffer
-BACKUP_PATH=/data/backup
-ALGO_PATH=/data/algo/
+UPLOADED_SOFTWARES_PATH=/data/softwares/code
 
 #middlewares
 RABBITMQ_LOGIN="router"
