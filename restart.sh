@@ -22,5 +22,5 @@ cd $path
 echo "clean containers"
 sh clean_docker_keep_data.sh > /dev/null
 echo "launch new containers"
-sh start_deploy_custom.sh
+sh start_deploy.sh
 

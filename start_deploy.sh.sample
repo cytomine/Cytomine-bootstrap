@@ -43,7 +43,7 @@ docker volume create --name mongodb_data > /dev/null
 # create mongodb docker
 docker run -d --name mongodb -v mongodb_data:/data/db \
 --restart=unless-stopped \
-cytomine/mongodb:v1.2.0 > /dev/null
+cytomine/mongodb:v1.1.2 > /dev/null
 
 
 if [ ! -e $PWD/configs/software_router/keys/ssh_key ]
@@ -124,9 +124,9 @@ docker create --name core \
 -v /etc/localtime:/etc/localtime \
 -v /data/softwares/code:/data/softwares/code \
 --restart=unless-stopped \
-cytomine/core:3.2.0 > /dev/null
+cytomine/core:v3.2.0 > /dev/null
 
-docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
+docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat9/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
 docker start core
 
