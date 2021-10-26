@@ -88,7 +88,7 @@ docker create --name iipCyto \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
 --restart=unless-stopped \
-cytomine/iipcyto:v1.3.0 > /dev/null
+cytomine/iipcyto:v1.2.3 > /dev/null
 
 docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sample
 docker start iipCyto
