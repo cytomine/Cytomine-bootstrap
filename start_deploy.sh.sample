@@ -18,7 +18,7 @@
 
 docker create --name memcached \
 --restart=unless-stopped \
-cytomine/memcached:v1.1.2 > /dev/null
+cytomine/memcached:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/memcached/memcached.conf memcached:/etc/memcached.conf
 docker start memcached
@@ -28,7 +28,7 @@ docker create --name rabbitmq \
 -p 5672:5672 -p 15672:15672 \
 -e RABBITMQ_PASS=$RABBITMQ_PASS \
 --restart=unless-stopped \
-cytomine/rabbitmq:v1.1.2 > /dev/null
+cytomine/rabbitmq:v1.2.0 > /dev/null
 
 docker start rabbitmq
 
@@ -37,7 +37,7 @@ docker volume create --name postgis_data > /dev/null
 # create database docker
 docker run -d -m 8g --name postgresql -v postgis_data:/var/lib/postgresql \
 --restart=unless-stopped \
-cytomine/postgis:v2.0.0 > /dev/null
+cytomine/postgis:v2.1.0 > /dev/null
 
 docker volume create --name mongodb_data > /dev/null
 # create mongodb docker
@@ -63,7 +63,7 @@ docker create --name slurm \
 -v singularity_images:/data/softwares/images \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/slurm:v1.0.0 > /dev/null
+cytomine/slurm:v1.1.0 > /dev/null
 
 docker cp $PWD/configs/software_router/keys/ssh_key.pub slurm:/home/cytomine/.ssh/authorized_keys
 docker cp $PWD/hosts/slurm/addHosts.sh slurm:/tmp/addHosts.sh
@@ -77,7 +77,7 @@ docker create --name iipOff \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
 --restart=unless-stopped \
-cytomine/iipofficial:v1.2.0 > /dev/null
+cytomine/iipofficial:v1.3.0 > /dev/null
 
 docker cp $PWD/configs/iipOff/nginx.conf.sample iipOff:/tmp/nginx.conf.sample
 docker start iipOff
@@ -88,7 +88,7 @@ docker create --name iipCyto \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
 --restart=unless-stopped \
-cytomine/iipcyto:v1.2.2 > /dev/null
+cytomine/iipcyto:v1.3.0 > /dev/null
 
 docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sample
 docker start iipCyto
@@ -98,7 +98,7 @@ docker create --name bioformat \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
 --restart=unless-stopped \
-cytomine/bioformat:v1.1.2 > /dev/null
+cytomine/bioformat:v1.2.0 > /dev/null
 
 docker start bioformat
 
@@ -109,9 +109,9 @@ docker create --name ims \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 --restart=unless-stopped \
-cytomine/ims:v1.2.6 > /dev/null
+cytomine/ims:v2.0.0 > /dev/null
 
-docker cp $PWD/configs/ims/imageserverconfig.properties ims:/usr/share/tomcat7/.grails/imageserverconfig.properties
+docker cp $PWD/configs/ims/ims-config.groovy ims:/usr/share/tomcat9/.grails/ims-config.groovy
 docker cp $PWD/hosts/ims/addHosts.sh ims:/tmp/addHosts.sh
 docker start ims
 
@@ -123,9 +123,9 @@ docker create --name core \
 -v /etc/localtime:/etc/localtime \
 -v $UPLOADED_SOFTWARES_PATH:/data/softwares/code \
 --restart=unless-stopped \
-cytomine/core:v3.1.0 > /dev/null
+cytomine/core:v3.2.0 > /dev/null
 
-docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat7/.grails/cytomineconfig.groovy
+docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat9/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
 docker start core
 
@@ -133,7 +133,7 @@ docker start core
 docker create --name web_UI \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/web_ui:v1.3.0 > /dev/null
+cytomine/web_ui:v1.4.0 > /dev/null
 
 docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
 docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf
@@ -149,7 +149,7 @@ docker create --name nginx \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 -p 80:80 \
 --restart=unless-stopped \
-cytomine/nginx:v1.3.1 > /dev/null
+cytomine/nginx:v1.4.0 > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
 docker start nginx
