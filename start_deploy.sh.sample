@@ -127,6 +127,7 @@ cytomine/core:v3.2.0 > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat9/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
+docker cp $PWD/configs/core/server.xml core:/usr/local/tomcat/conf/server.xml
 docker start core
 
 
