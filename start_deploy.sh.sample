@@ -103,17 +103,18 @@ cytomine/bioformat:v1.2.0 > /dev/null
 docker start bioformat
 
 
-docker create --name ims \
---link bioformat:bioformat \
--e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
+docker create --name pims \
+--link rabbitmq:rabbitmq \
+-e WEB_CONCURRENCY="1" \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
+-v /data/pims:/data/pims \
 --restart=unless-stopped \
-cytomine/ims:v2.0.0 > /dev/null
+cytomine/pims:v0.1.2 > /dev/null
 
-docker cp $PWD/configs/ims/ims-config.groovy ims:/usr/share/tomcat9/.grails/ims-config.groovy
-docker cp $PWD/hosts/ims/addHosts.sh ims:/tmp/addHosts.sh
-docker start ims
+docker cp "${PWD}/configs/pims/pims-config.env" pims:/app/pims-config.env
+docker cp "${PWD}/hosts/pims/addHosts.sh" pims:/tmp/addHosts.sh
+docker start pims
 
 
 docker create --name core \
@@ -123,7 +124,7 @@ docker create --name core \
 -v /etc/localtime:/etc/localtime \
 -v $UPLOADED_SOFTWARES_PATH:/data/softwares/code \
 --restart=unless-stopped \
-cytomine/core:v3.2.0 > /dev/null
+cytomine/core:v3.2.0-PIMS-dev > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat9/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -133,7 +134,7 @@ docker start core
 docker create --name web_UI \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/web_ui:v1.4.0 > /dev/null
+cytomine/web_ui:v1.4.0-pims-dev > /dev/null
 
 docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
 docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf

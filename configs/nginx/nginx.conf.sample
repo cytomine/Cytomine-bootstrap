@@ -97,7 +97,7 @@ http {
         location / {
             add_header Access-Control-Allow-Origin *;
             proxy_set_header Host $host;
-            proxy_pass http://ims:8080;
+            proxy_pass http://pims:5000;
         }
     }
     server {
@@ -108,7 +108,7 @@ http {
         location / {
             add_header Access-Control-Allow-Origin *;
             proxy_set_header Host $host;
-            proxy_pass http://ims:8080;
+            proxy_pass http://pims:5000;
         }
     }
     server {
@@ -149,7 +149,7 @@ http {
         # Pass altered request body to a backend
         location @test {
             add_header 'Access-Control-Allow-Origin' '*';
-            proxy_pass   http://ims:8080;
+            proxy_pass   http://pims:5000;
             proxy_read_timeout 600;
         }
         error_page   500 502 503 504  /50x.html;
