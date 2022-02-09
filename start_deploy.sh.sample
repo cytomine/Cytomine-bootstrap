@@ -105,7 +105,7 @@ docker start bioformat
 
 docker create --name pims \
 --link rabbitmq:rabbitmq \
--e WEB_CONCURRENCY="1" \
+-e WEB_CONCURRENCY="2" \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 -v /data/pims:/data/pims \
@@ -128,6 +128,7 @@ cytomine/core:v3.2.0-PIMS-dev > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat9/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
+docker cp $PWD/configs/core/server.xml core:/usr/local/tomcat/conf/server.xml
 docker start core
 
 
@@ -142,7 +143,7 @@ docker start web_UI
 
 
 docker create --name nginx \
---link ims:ims \
+--link pims:pims \
 --link iipCyto:iipCyto \
 --link core:core \
 --link iipOff:iipOff \
