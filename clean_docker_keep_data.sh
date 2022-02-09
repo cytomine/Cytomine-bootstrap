@@ -25,10 +25,6 @@ docker stop postgresql
 docker rm -v postgresql
 docker stop slurm
 docker rm -v slurm
-docker stop iipOff
-docker rm -v iipOff
-docker stop iipCyto
-docker rm -v iipCyto
 docker stop bioformat
 docker rm -v bioformat
 docker stop pims
