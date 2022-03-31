@@ -1,0 +1,73 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgresql:5432/docker
+    username: docker
+    password: docker
+
+  mail:
+    host: $SENDER_EMAIL_SMTP_HOST
+    port: $SENDER_EMAIL_SMTP_PORT
+    username: postmaster@sandboxdcb415e3e7c84c6f942004c60c005909.mailgun.org # CONFIGURE_YOUR_MAILGUN_CREDENTIALS # example: postmaster@sandboxdcb41...5909.mailgun.org
+    password: $SENDER_EMAIL_PASS  #CONFIGURE_YOUR_MAILGUN_CREDENTIALS # example: 0da253cf5...24-4662f38e
+    auth: true
+
+  data:
+    mongodb:
+      authentication-database: admin
+      username: mongoadmin
+      password: secret
+      database: cytomine
+      port: 27017
+      host: mongodb
+
+#  grails.mongo.options.threadsAllowedToBlockForConnectionMultiplier=5
+
+application:
+  customUI:
+    global:
+      dashboard: ["ALL"]
+      search: [ "ROLE_ADMIN" ]
+      project: [ "ALL" ]
+      ontology: [ "ROLE_ADMIN" ]
+      storage: [ "ROLE_USER","ROLE_ADMIN" ]
+      software: [ "ROLE_ADMIN" ]
+      activity: [ "ALL" ]
+      admin: [ "ROLE_ADMIN" ]
+      help: [ "ALL" ]
+      feedback: ["ROLE_USER","ROLE_ADMIN"]
+      explore: ["ROLE_USER","ROLE_ADMIN"]
+
+  serverId: $SERVER_ID
+  serverURL: http://$CORE_URL
+  imageServerURL: ['http://$IMS_URL1','http://$IMS_URL2']
+#   grails.uploadURL='http://localhost-upload' // still useful?
+
+  storagePath: "$IMS_STORAGE_PATH"
+
+  adminPassword: $ADMIN_PWD
+  adminEmail: $ADMIN_EMAIL
+  adminPrivateKey: $ADMIN_PRIV_KEY
+  adminPublicKey: $ADMIN_PUB_KEY
+  superAdminPrivateKey: $SUPERADMIN_PRIV_KEY
+  superAdminPublicKey: $SUPERADMIN_PUB_KEY
+  ImageServerPrivateKey: $IMS_PRIV_KEY
+  ImageServerPublicKey: $IMS_PUB_KEY
+  rabbitMQPrivateKey: $RABBITMQ_PRIV_KEY
+  rabbitMQPublicKey: $RABBITMQ_PUB_KEY
+
+  notification:
+    email: $SENDER_EMAIL
+
+  softwareSources: softwareSources/
+  useHTTPInternally: true
+
+  instanceHostWebsite: http://$CORE_URL
+  instanceHostSupportMail:
+  instanceHostPhoneNumber:
+
+  authentication:
+    jwt:
+      # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+      secret: +MbQeThWmZq4t6w9z$C&F)J@NcRfUjXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y$B?
+  
+ # grails.messageBrokerServerURL='rabbitmq:5672

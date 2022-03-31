@@ -33,17 +33,20 @@ cytomine/rabbitmq:v1.2.0 > /dev/null
 docker start rabbitmq
 
 
-docker volume create --name postgis_data > /dev/null
+docker volume create --name postgis_data_spring > /dev/null
 # create database docker
-docker run -d -m 8g --name postgresql -v postgis_data:/var/lib/postgresql \
+docker run -d -m 8g --name postgresql -v postgis_data_spring:/var/lib/postgresql \
 --restart=unless-stopped \
 cytomine/postgis:v2.1.0 > /dev/null
 
-docker volume create --name mongodb_data > /dev/null
+docker volume create --name mongodb_data_spring > /dev/null
 # create mongodb docker
-docker run -d --name mongodb -v mongodb_data:/data/db \
+docker run -d --name mongodb -v mongodb_data_spring:/data/db \
+-e MONGO_INITDB_ROOT_USERNAME=mongoadmin  \
+-e MONGO_INITDB_ROOT_PASSWORD=secret  \
+-e MONGO_INITDB_DATABASE=cytomine  \
 --restart=unless-stopped \
-cytomine/mongodb:v1.1.2 > /dev/null
+mongo:4.4 > /dev/null
 
 
 if [ ! -e $PWD/configs/software_router/keys/ssh_key ]
@@ -54,12 +57,12 @@ then
 fi
 
 
-docker volume create --name slurm_data > /dev/null
+docker volume create --name slurm_data_spring > /dev/null
 # create slurm docker
 docker create --name slurm \
 --privileged \
 -h cytomine-slurm \
--v slurm_data:/var/lib/mysql \
+-v slurm_data_spring:/var/lib/mysql \
 -v singularity_images:/data/softwares/images \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
@@ -123,18 +126,17 @@ docker create --name core \
 -v /etc/localtime:/etc/localtime \
 -v $UPLOADED_SOFTWARES_PATH:/data/softwares/code \
 --restart=unless-stopped \
-cytomine/core:v3.2.0 > /dev/null
+cytomine/core:ci-20220325103857-SNAPSHOT > /dev/null
 
-docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat9/.grails/cytomineconfig.groovy
+docker cp $PWD/configs/core/application.yml core:/app/application.yml
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
-docker cp $PWD/configs/core/server.xml core:/usr/local/tomcat/conf/server.xml
 docker start core
 
 
 docker create --name web_UI \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/web_ui:v1.4.0 > /dev/null
+cytomine/web_ui:v2.0.0 > /dev/null
 
 docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
 docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf
