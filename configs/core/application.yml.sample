@@ -67,7 +67,7 @@ application:
 
   authentication:
     jwt:
-      # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
-      secret: +MbQeThWmZq4t6w9z$C&F)J@NcRfUjXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y$B?
+      # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 256` on your command line to generate a 256 bits one)
+      secret: $JWT_SECRET_KEY
   
  # grails.messageBrokerServerURL='rabbitmq:5672
