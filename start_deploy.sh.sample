@@ -126,7 +126,7 @@ docker create --name core \
 -v /etc/localtime:/etc/localtime \
 -v $UPLOADED_SOFTWARES_PATH:/data/softwares/code \
 --restart=unless-stopped \
-cytomine/core:main-20220331131641-SNAPSHOT > /dev/null
+cytomine/core:v4.0.0-beta.2 > /dev/null
 
 docker cp $PWD/configs/core/application.yml core:/app/application.yml
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -136,7 +136,7 @@ docker start core
 docker create --name web_UI \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/web_ui:vspring-boot-core-migration-20220331131729-SNAPSHOT > /dev/null
+cytomine/web_ui:v2.1.0-beta.0 > /dev/null
 
 docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
 docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf
