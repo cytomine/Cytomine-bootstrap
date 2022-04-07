@@ -7,8 +7,8 @@ spring:
   mail:
     host: $SENDER_EMAIL_SMTP_HOST
     port: $SENDER_EMAIL_SMTP_PORT
-    username: postmaster@sandboxdcb415e3e7c84c6f942004c60c005909.mailgun.org # CONFIGURE_YOUR_MAILGUN_CREDENTIALS # example: postmaster@sandboxdcb41...5909.mailgun.org
-    password: $SENDER_EMAIL_PASS  #CONFIGURE_YOUR_MAILGUN_CREDENTIALS # example: 0da253cf5...24-4662f38e
+    username: $SENDER_EMAIL
+    password: $SENDER_EMAIL_PASS
     auth: true
 
   data:
@@ -19,6 +19,13 @@ spring:
       database: cytomine
       port: 27017
       host: mongodb
+
+javamelody:
+  enabled: true
+#  url-exclude-pattern: /notify*
+  init-parameters:
+    authorized-users: admin:$JAVA_MELODY_PWD
+    storage-directory: /javamelody-core
 
 #  grails.mongo.options.threadsAllowedToBlockForConnectionMultiplier=5
 

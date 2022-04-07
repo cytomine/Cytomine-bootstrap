@@ -125,8 +125,10 @@ docker create --name core \
 --link rabbitmq:rabbitmq \
 -v /etc/localtime:/etc/localtime \
 -v $UPLOADED_SOFTWARES_PATH:/data/softwares/code \
+-v javamelody-core:/javamelody-core \
 --restart=unless-stopped \
-cytomine/core:v4.0.0-beta.2 > /dev/null
+-h core \
+cytomine/core:v4.0.0-beta.8 > /dev/null
 
 docker cp $PWD/configs/core/application.yml core:/app/application.yml
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
