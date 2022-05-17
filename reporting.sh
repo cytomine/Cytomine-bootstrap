@@ -19,26 +19,14 @@ rm -r ./reporting.tgz
 
 mkdir -p ./reporting
 
-docker cp iipOff:/tmp/iip-openslide.out ./reporting/logIIPOff.out
-tail -n 200 ./reporting/logIIPOff.out           > ./reporting/logIIPOffTail.out
-mv ./reporting/logIIPOffTail.out                  ./reporting/logIIPOff.out
+cp configs/pims/pims-config.env ./reporting/pims-config.env
 
-docker cp iipCyto:/tmp/iip-openslide.out ./reporting/logIIPCyto.out
-tail -n 200 ./reporting/logIIPCyto.out          > ./reporting/logIIPCytoTail.out
-mv ./reporting/logIIPCytoTail.out                 ./reporting/logIIPCyto.out
-
-cp configs/ims/imageserverconfig.properties ./reporting/configurationIMS.properties
-docker cp ims:/var/lib/tomcat7/logs/catalina.out ./reporting/catalinaIMS.out
-tail -n 500 ./reporting/catalinaIMS.out            > ./reporting/catalinaIMSTail.out
-mv ./reporting/catalinaIMSTail.out                   ./reporting/catalinaIMS.out
-
-cp configs/core/cytomineconfig.groovy ./reporting/configurationCore.groovy
+cp configs/core/application.yml ./reporting/application.yml
 docker cp core:/var/lib/tomcat7/logs/catalina.out ./reporting/catalinaCore.out
 tail -n 500 ./reporting/catalinaCore.out           > ./reporting/catalinaCoreTail.out
 mv ./reporting/catalinaCoreTail.out                  ./reporting/catalinaCore.out
 
 cp configs/nginx/nginx.conf ./reporting/nginx.conf
-
 
 cp ./start_deploy.sh ./reporting/start_deploy.sh
 

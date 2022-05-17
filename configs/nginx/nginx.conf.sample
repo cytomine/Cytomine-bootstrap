@@ -98,7 +98,7 @@ http {
         location / {
             add_header Access-Control-Allow-Origin *;
             proxy_set_header Host $host;
-            proxy_pass http://ims:8080;
+            proxy_pass http://pims:5000;
         }
     }
     server {
@@ -109,7 +109,7 @@ http {
         location / {
             add_header Access-Control-Allow-Origin *;
             proxy_set_header Host $host;
-            proxy_pass http://ims:8080;
+            proxy_pass http://pims:5000;
         }
     }
     server {
@@ -150,38 +150,12 @@ http {
         # Pass altered request body to a backend
         location @test {
             add_header 'Access-Control-Allow-Origin' '*';
-            proxy_pass   http://ims:8080;
+            proxy_pass   http://pims:5000;
             proxy_read_timeout 600;
         }
         error_page   500 502 503 504  /50x.html;
         location = /50x.html {
             root   html;
-        }
-    }
-    server {
-        client_max_body_size 0;
-        listen       80;
-        server_name  $IIP_OFF_URL;
-
-        location / {
-            proxy_set_header X-Forwarded-Host $host;
-            proxy_set_header Host $host;
-            proxy_set_header X-Forwarded-Server $host;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_pass http://iipOff:80;
-        }
-    }
-    server {
-        client_max_body_size 0;
-        listen       80;
-        server_name  $IIP_CYTO_URL;
-
-        location / {
-            proxy_set_header X-Forwarded-Host $host;
-            proxy_set_header Host $host;
-            proxy_set_header X-Forwarded-Server $host;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_pass http://iipCyto:80;
         }
     }
 }

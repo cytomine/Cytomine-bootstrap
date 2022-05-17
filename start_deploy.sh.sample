@@ -33,15 +33,15 @@ cytomine/rabbitmq:v1.2.0 > /dev/null
 docker start rabbitmq
 
 
-docker volume create --name postgis_data_spring > /dev/null
+docker volume create --name postgis_data > /dev/null
 # create database docker
-docker run -d -m 8g --name postgresql -v postgis_data_spring:/var/lib/postgresql \
+docker run -d -m 8g --name postgresql -v postgis_data:/var/lib/postgresql \
 --restart=unless-stopped \
 cytomine/postgis:v2.1.0 > /dev/null
 
-docker volume create --name mongodb_data_spring > /dev/null
+docker volume create --name mongodb_data > /dev/null
 # create mongodb docker
-docker run -d --name mongodb -v mongodb_data_spring:/data/db \
+docker run -d --name mongodb -v mongodb_data:/data/db \
 -e MONGO_INITDB_ROOT_USERNAME=mongoadmin  \
 -e MONGO_INITDB_ROOT_PASSWORD=secret  \
 -e MONGO_INITDB_DATABASE=cytomine  \
@@ -57,12 +57,12 @@ then
 fi
 
 
-docker volume create --name slurm_data_spring > /dev/null
+docker volume create --name slurm_data > /dev/null
 # create slurm docker
 docker create --name slurm \
 --privileged \
 -h cytomine-slurm \
--v slurm_data_spring:/var/lib/mysql \
+-v slurm_data:/var/lib/mysql \
 -v singularity_images:/data/softwares/images \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
@@ -74,29 +74,6 @@ docker start slurm
 docker exec -it slurm chown cytomine:cytomine /home/cytomine/.ssh/authorized_keys
 docker exec -it slurm chmod 600 /home/cytomine/.ssh/authorized_keys
 
-
-docker create --name iipOff \
---link memcached:memcached \
--v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
---privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
---restart=unless-stopped \
-cytomine/iipofficial:v1.3.0 > /dev/null
-
-docker cp $PWD/configs/iipOff/nginx.conf.sample iipOff:/tmp/nginx.conf.sample
-docker start iipOff
-
-
-docker create --name iipCyto \
---link memcached:memcached \
--v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
---privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
---restart=unless-stopped \
-cytomine/iipcyto:v1.3.0 > /dev/null
-
-docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sample
-docker start iipCyto
-
-
 docker create --name bioformat \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 -e BIOFORMAT_PORT=$BIOFORMAT_PORT \
@@ -105,19 +82,17 @@ cytomine/bioformat:v1.2.0 > /dev/null
 
 docker start bioformat
 
-
-docker create --name ims \
---link bioformat:bioformat \
--e IMS_STORAGE_PATH=$IMS_STORAGE_PATH \
--v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
--v $IMS_BUFFER_PATH:/tmp/uploaded \
+docker create --name pims \
+--link rabbitmq:rabbitmq \
+-e WEB_CONCURRENCY="1" \
+-v /data/images:/data/images \
+-v /data/images/_buffer:/tmp/uploaded \
 --restart=unless-stopped \
-cytomine/ims:v2.0.0 > /dev/null
+repository.cytom.in:5004/pims-corporate:vmaster-20220504133610-SNAPSHOT > /dev/null
 
-docker cp $PWD/configs/ims/ims-config.groovy ims:/usr/share/tomcat9/.grails/ims-config.groovy
-docker cp $PWD/hosts/ims/addHosts.sh ims:/tmp/addHosts.sh
-docker start ims
-
+docker cp "${PWD}/configs/pims/pims-config.env" pims:/app/pims-config.env
+docker cp "${PWD}/hosts/pims/addHosts.sh" pims:/tmp/addHosts.sh
+docker start pims
 
 docker create --name core \
 --link postgresql:postgresql \
@@ -128,7 +103,7 @@ docker create --name core \
 -v javamelody-core:/javamelody-core \
 --restart=unless-stopped \
 -h core \
-cytomine/core:v4.0.0-beta.8 > /dev/null
+cytomine/core:v4.1.0-beta.1 > /dev/null
 
 docker cp $PWD/configs/core/application.yml core:/app/application.yml
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -138,7 +113,7 @@ docker start core
 docker create --name web_UI \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/web_ui:v2.1.0-beta.0 > /dev/null
+cytomine/web_ui:v2.2.0-beta.4 > /dev/null
 
 docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
 docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf
@@ -146,10 +121,8 @@ docker start web_UI
 
 
 docker create --name nginx \
---link ims:ims \
---link iipCyto:iipCyto \
+--link pims:pims \
 --link core:core \
---link iipOff:iipOff \
 --link web_UI:web_UI \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
 -p 80:80 \

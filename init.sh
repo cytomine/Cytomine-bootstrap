@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-FILES=(configs/core/application.yml configs/ims/ims-config.groovy configs/iipCyto/nginx.conf.sample configs/iipOff/nginx.conf.sample configs/nginx/nginx.conf configs/nginx/nginxDev.conf configs/nginx/dist/configuration.json configs/software_router/config.groovy configs/web_ui/configuration.json start_deploy.sh hosts/core/addHosts.sh hosts/ims/addHosts.sh hosts/software_router/addHosts.sh hosts/slurm/addHosts.sh)
+FILES=(configs/core/application.yml configs/ims/ims-config.groovy configs/pims/pims-config.env  configs/nginx/nginx.conf configs/nginx/nginxDev.conf configs/nginx/dist/configuration.json configs/software_router/config.groovy configs/web_ui/configuration.json start_deploy.sh hosts/core/addHosts.sh hosts/pims/addHosts.sh hosts/software_router/addHosts.sh hosts/slurm/addHosts.sh)
 
 
 #get all the config values.

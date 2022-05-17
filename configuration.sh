@@ -47,12 +47,6 @@ RABBITMQ_PASSWORD="router"
 # You don't have to change the datas below this line instead of advanced customization
 # ---------------------------
 
-NB_IIP_PROCESS=10
-
-IIP_OFF_URL=localhost-iip-base
-IIP_CYTO_URL=localhost-iip-cyto
-IIP_JP2_URL=localhost-iip-jp2000
-
 MEMCACHED_PASS="mypass"
 
 BIOFORMAT_ENABLED=true
