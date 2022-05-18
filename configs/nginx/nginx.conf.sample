@@ -44,10 +44,27 @@ http {
     large_client_header_buffers 4 16k;
 
     server {
+        listen 80 default_server;
+        server_name _;
+
+        location /.well-known/acme-challenge {
+            root /usr/local/nginx/html;
+            index index.html;
+        }
+
+        location / {
+            return 301 https://$host$request_uri;
+        }
+    }
+
+    server {
         client_max_body_size 0;
-        listen       80;
+        listen       443 ssl;
         server_name  $CORE_URL;
 
+        ssl_certificate /etc/letsencrypt/live/$CORE_URL/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/$CORE_URL/privkey.pem;
+        include ssl.conf;
 
         location / {
             proxy_set_header X-Real-IP $remote_addr;
@@ -76,9 +93,9 @@ http {
             proxy_pass http://core:8080;
         }
         location ~ /(restApiDoc|js/jsondoc|css/jsondoc) {
-               proxy_set_header X-Real-IP $remote_addr;
-               proxy_set_header Host $host;
-               proxy_pass http://core:8080;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Host $host;
+            proxy_pass http://core:8080;
         }
 
         proxy_intercept_errors on;
@@ -91,19 +108,12 @@ http {
     }
     server {
         client_max_body_size 0;
-        listen       80;
+        listen       443 ssl;
         server_name  $IMS_URL1;
 
-        location / {
-            add_header Access-Control-Allow-Origin *;
-            proxy_set_header Host $host;
-            proxy_pass http://ims:8080;
-        }
-    }
-    server {
-        client_max_body_size 0;
-        listen       80;
-        server_name  $IMS_URL2;
+        ssl_certificate /etc/letsencrypt/live/$IMS_URL1/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/$IMS_URL1/privkey.pem;
+        include ssl.conf;
 
         location / {
             add_header Access-Control-Allow-Origin *;
@@ -113,8 +123,27 @@ http {
     }
     server {
         client_max_body_size 0;
-        listen       80;
+        listen       443 ssl;
+        server_name  $IMS_URL2;
+
+        ssl_certificate /etc/letsencrypt/live/$IMS_URL2/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/$IMS_URL2/privkey.pem;
+        include ssl.conf;
+
+        location / {
+            add_header Access-Control-Allow-Origin *;
+            proxy_set_header Host $host;
+            proxy_pass http://ims:8080;
+        }
+    }
+    server {
+        client_max_body_size 0;
+        listen       443 ssl;
         server_name  $UPLOAD_URL;
+
+        ssl_certificate /etc/letsencrypt/live/$UPLOAD_URL/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/$UPLOAD_URL/privkey.pem;
+        include ssl.conf;
 
         # Upload form should be submitted to this location
         location /upload {
