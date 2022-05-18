@@ -148,11 +148,14 @@ docker create --name nginx \
 --link iipOff:iipOff \
 --link web_UI:web_UI \
 -v $IMS_BUFFER_PATH:/tmp/uploaded \
--p 80:80 \
+-v /etc/letsencrypt:/etc/letsencrypt \
+-v /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem \
+-p 80:80 -p 443:443 \
 --restart=unless-stopped \
 cytomine/nginx:v1.4.0 > /dev/null
 
 docker cp $PWD/configs/nginx/nginx.conf nginx:/usr/local/nginx/conf/nginx.conf
+docker cp $PWD/configs/nginx/ssl.conf nginx:/usr/local/nginx/conf/ssl.conf
 docker start nginx
 
 

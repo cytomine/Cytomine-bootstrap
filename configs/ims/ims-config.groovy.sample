@@ -1,5 +1,5 @@
-cytomine.ims.server.url = "http://$IMS_URL1"
-cytomine.ims.server.core.url = "http://$CORE_URL"
+cytomine.ims.server.url = "https://$IMS_URL1"
+cytomine.ims.server.core.url = "https://$CORE_URL"
 cytomine.ims.server.publicKey = "$IMS_PUB_KEY"
 cytomine.ims.server.privateKey = "$IMS_PRIV_KEY"
 
