@@ -82,6 +82,10 @@ http {
                proxy_pass http://core:8080;
         }
 
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
         proxy_intercept_errors on;
 
         error_page 404 = /cytomine-page-not-found;
