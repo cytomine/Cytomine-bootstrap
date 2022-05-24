@@ -103,7 +103,7 @@ docker create --name core \
 -v javamelody-core:/javamelody-core \
 --restart=unless-stopped \
 -h core \
-cytomine/core:v4.1.0-beta.1 > /dev/null
+cytomine/core:v4.1.0-beta.3 > /dev/null
 
 docker cp $PWD/configs/core/application.yml core:/app/application.yml
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -113,7 +113,7 @@ docker start core
 docker create --name web_UI \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/web_ui:v2.2.0-beta.4 > /dev/null
+cytomine/web_ui:v2.2.0-beta.5 > /dev/null
 
 docker cp "${PWD}/configs/web_ui/configuration.json" web_UI:/app/configuration.json
 docker cp "${PWD}/configs/web_ui/nginx.conf" web_UI:/etc/nginx/nginx.conf
