@@ -106,6 +106,7 @@ docker create --name core \
 cytomine/core:v4.1.0-beta.1 > /dev/null
 
 docker cp $PWD/configs/core/application.yml core:/app/application.yml
+docker cp $PWD/configs/core/logback.yml core:/app/logback.yml
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
 docker start core
 

@@ -28,6 +28,8 @@ javamelody:
     storage-directory: /javamelody-core
 
 #  grails.mongo.options.threadsAllowedToBlockForConnectionMultiplier=5
+logging:
+  config: file:/app/logback.xml
 
 application:
   customUI:
