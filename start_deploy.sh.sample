@@ -88,7 +88,7 @@ docker create --name iipCyto \
 -v $IMS_STORAGE_PATH:$IMS_STORAGE_PATH \
 --privileged -e NB_IIP_PROCESS=$NB_IIP_PROCESS \
 --restart=unless-stopped \
-cytomine/iipcyto:v1.3.0 > /dev/null
+cytomine/iipcyto:v1.2.3 > /dev/null
 
 docker cp $PWD/configs/iipCyto/nginx.conf.sample iipCyto:/tmp/nginx.conf.sample
 docker start iipCyto
@@ -123,7 +123,7 @@ docker create --name core \
 -v /etc/localtime:/etc/localtime \
 -v $UPLOADED_SOFTWARES_PATH:/data/softwares/code \
 --restart=unless-stopped \
-cytomine/core:v3.2.0 > /dev/null
+cytomine/core:v3.2.3 > /dev/null
 
 docker cp $PWD/configs/core/cytomineconfig.groovy core:/usr/share/tomcat9/.grails/cytomineconfig.groovy
 docker cp $PWD/hosts/core/addHosts.sh core:/tmp/addHosts.sh
@@ -163,7 +163,7 @@ docker create --name software_router \
 --link rabbitmq:rabbitmq \
 --link slurm:slurm \
 --restart=unless-stopped \
-cytomine/software_router:v2.1.0 > /dev/null
+cytomine/software_router:v2.1.1 > /dev/null
 
 docker cp $PWD/hosts/software_router/addHosts.sh software_router:/tmp/addHosts.sh
 docker cp $PWD/configs/software_router/config.groovy software_router:/software_router/config.groovy
