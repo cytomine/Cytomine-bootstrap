@@ -88,7 +88,7 @@ docker create --name pims \
 -v /data/images:/data/images \
 -v /data/images/_buffer:/tmp/uploaded \
 --restart=unless-stopped \
-repository.cytom.in:5004/pims-corporate:vmaster-20220504133610-SNAPSHOT > /dev/null
+cytomine/pims:v0.12.4 > /dev/null
 
 docker cp "${PWD}/configs/pims/pims-config.env" pims:/app/pims-config.env
 docker cp "${PWD}/hosts/pims/addHosts.sh" pims:/tmp/addHosts.sh
