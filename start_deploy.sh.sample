@@ -63,7 +63,7 @@ docker create --name slurm \
 -v singularity_images:/data/softwares/images \
 -v /etc/localtime:/etc/localtime \
 --restart=unless-stopped \
-cytomine/slurm:v1.1.0 > /dev/null
+cytomine/slurm:v1.2.0 > /dev/null
 
 docker cp $PWD/configs/software_router/keys/ssh_key.pub slurm:/home/cytomine/.ssh/authorized_keys
 docker cp $PWD/hosts/slurm/addHosts.sh slurm:/tmp/addHosts.sh
