@@ -23,8 +23,6 @@ docker stop mongodb
 docker rm -v mongodb
 docker stop postgresql
 docker rm -v postgresql
-docker stop slurm
-docker rm -v slurm
 docker stop bioformat
 docker rm -v bioformat
 docker stop pims
@@ -35,5 +33,3 @@ docker stop web_UI
 docker rm -v web_UI
 docker stop nginx
 docker rm -v nginx
-docker stop software_router
-docker rm -v software_router
