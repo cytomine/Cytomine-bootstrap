@@ -25,6 +25,8 @@ docker stop postgresql
 docker rm -v postgresql
 docker stop bioformat
 docker rm -v bioformat
+docker stop pims-cache
+docker rm -v pims-cache
 docker stop pims
 docker rm -v pims
 docker stop core

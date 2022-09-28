@@ -56,7 +56,11 @@ cytomine/bioformat:v1.2.0 > /dev/null
 
 docker start bioformat
 
+docker create --name pims-cache -p 6379:6379 redis  > /dev/null
+docker start pims-cache
+
 docker create --name pims \
+--link pims-cache:pims-cache \
 --link rabbitmq:rabbitmq \
 -m 4g \
 --cpus=4 \
