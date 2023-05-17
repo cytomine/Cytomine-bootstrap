@@ -1,17 +1,8 @@
-# CYTOMINE DOCKER DEPLOYMENT #
+# How to install Cytomine Community Edition Legacy
 
-This is the starting point to install Cytomine.
-The Dockerfiles are into [this repository](https://github.com/cytomine/Dockerfiles)
+For more information, see our [installation instructions](https://doc.cytomine.org/admin-guide/legacy/legacy-install)
 
-## How to install it
-
-- Fill the configuration.sh file
-- Run the init.sh script
-- Run the generated start_deploy.sh script
-
-For more information, see our [installation instructions](https://doc.cytomine.org/admin-guide/install)
-
-## Remarks
+# Remarks
 
 When using our software, we kindly ask you to show our website URL and our logo in all your work (web site, publications, studies, oral presentations, manuals, ...). If you use Cytomine for scientific purpose, please cite Marée et al., Bioinformatics 2016 as reference paper. See our license files for additional details.
 - URL: http://www.cytomine.org/
