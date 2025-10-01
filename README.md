@@ -1,5 +1,8 @@
 # How to install Cytomine Community Edition Legacy
 
+> [!WARNING]  
+> **Deprecated:** This repository is no longer maintained. Please see [cytomine/cytomine](https://github.com/cytomine/cytomine) for the latest version.
+
 For more information, see our [installation instructions](https://doc.cytomine.org/admin-guide/legacy/legacy-install)
 
 DISCLAIMERS :
